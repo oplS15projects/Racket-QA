@@ -31,9 +31,11 @@
 ;; * with the standard Racket file I/O APIs.
 ;; *
 ;; * ex)
-;; * (define smtp-settings-file (settings-file-path "smtp-settings.conf"))
-;; * (define out (open-output-file settings-file-path #:mode 'binary))
-;; * (fprintf out "~a\t~a\t~a~n" server username password)
+;; * > (define smtp-settings-file (settings-file-path "smtp-settings.conf"))
+;; * > smtp-settings-file
+;; * "C:\\Users\\yongjec\\AppData\\Roaming\\Racket QA\\smtp-settings.conf"
+;; * > (define out (open-output-file smtp-settings-file #:mode 'binary))
+;; * > (fprintf out "~a\t~a\t~a~n" server username password)
 ;; *
 ;; * Include (require "user-settings-directory.rkt") to your source file
 ;; * to use the procedures in this API set. (might need reload)
