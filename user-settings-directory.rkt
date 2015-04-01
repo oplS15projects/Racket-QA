@@ -1,7 +1,7 @@
 ;; **********************************************************************
 ;; * The set of APIs defined in this file defines a name and path to the user-
-;; * specific settings directory for the Racket QA application and provides 
-;; * uniform ways to access the directory and the files in the directory 
+;; * specific settings directory for the Racket QA application and provides
+;; * uniform ways to access the directory and the files in the directory
 ;; * by other modules of the application.
 ;; *
 ;; * The APIs defined in this module use following directories as the
@@ -14,10 +14,10 @@
 ;; * the specific platform they are calling the procedures in. All
 ;; * procedures in this API set will automatically find out the OS type at
 ;; * runtime and use the correct directory.
-;; * 
-;; * Moreover, users can use both / or \\ directory separators in the 
+;; *
+;; * Moreover, users can use both / or \\ directory separators in the
 ;; * arguments to the procedures in this API regardless of the platform
-;; * they are being called. The procedures will automatically use the 
+;; * they are being called. The procedures will automatically use the
 ;; * correct separator for the platform type.
 ;; *
 ;; * ex)
@@ -61,7 +61,7 @@
 ;; (settings-directory-name)
 ;; "Racket QA"                    ;(Windows)
 ;;
-;; (settings-directory-name)      
+;; (settings-directory-name)
 ;; ".Racket_QA"                   ;(Linux)
 ;;
 (define (settings-directory-name)
@@ -75,10 +75,10 @@
 ;;
 ;; > (settings-directory-path)
 ;; "C:\\Users\\yongjec\\AppData\\Roaming\\Racket QA"  ;(Windows)
-;; 
+;;
 ;; > (settings-directory-path)
 ;; "/home/yongjec/.Racket_QA"                         ;(Liunx)
-;; 
+;;
 (define (settings-directory-path)
   (cond ((eq? (system-type) 'windows)
          (string-append (getenv "APPDATA") "\\" SETTINGS-DIRECTORY-NAME-WINDOWS))
@@ -101,19 +101,19 @@
 ;; "/home/yongjec/.Racket_QA/smtp-info.conf"                                                    ;(Linux)
 ;;
 ;; > (full-file-path-in-settings-directory "dir/filename.txt")                             ;(Windows)
-;; "C:\\Users\\yongjec\\AppData\\Roaming\\Racket QA\\dir\\filename.txt"  
+;; "C:\\Users\\yongjec\\AppData\\Roaming\\Racket QA\\dir\\filename.txt"
 ;; > (full-file-path-in-settings-directory "dir\\filename.txt")                            ;(Windows)
-;; "C:\\Users\\yongjec\\AppData\\Roaming\\Racket QA\\dir\\filename.txt"  
+;; "C:\\Users\\yongjec\\AppData\\Roaming\\Racket QA\\dir\\filename.txt"
 ;;
 ;; > (full-file-path-in-settings-directory "dir/filename.txt")                             ;(Linux)
-;; "/home/yongjec/.Racket_QA/dir/filename.txt"                           
+;; "/home/yongjec/.Racket_QA/dir/filename.txt"
 ;; > (full-file-path-in-settings-directory "dir\\filename.txt")                            ;(Linux)
-;; "/home/yongjec/.Racket_QA/dir/filename.txt"                           
+;; "/home/yongjec/.Racket_QA/dir/filename.txt"
 ;;
 ;; (define smtp-settings-file (full-file-path-in-settings-directory "smtp-settings.conf"))
 ;; (define out (open-output-file full-file-path-in-settings-directory #:mode 'binary #:exists 'truncate/replace))
 ;; (fprintf out "~a\t~a\t~a~n" server username password)
-;; 
+;;
 (define (full-file-path-in-settings-directory filename)
   (define cleansed-filename (cleanse-path-string filename))
   (cond ((eq? (system-type) 'windows)
@@ -137,7 +137,7 @@
 ;;
 ;; > (settings-directory-exists?)
 ;; #f
-;; 
+;;
 ;; > (create-settings-directory)
 ;; > (settings-directory-exists?)
 ;; #t
@@ -145,7 +145,7 @@
 ;; > (settings-directory-path)
 ;; "C:\\Users\\yongjec\\AppData\\Roaming\\Racket QA"  ;(Windows)
 ;; "/home/yongjec/.Racket_QA"                         ;(Linux)
-;; 
+;;
 (define (create-settings-directory)
   (when (not (directory-exists? (settings-directory-path)))
     (make-directory* (settings-directory-path))))
@@ -266,7 +266,7 @@
   (define filename (get-filename-from-filepath filepath))
   (cond ((eq? (system-type) 'windows)
          (process (string-append "attrib +h \"" filepath "\"")))
-        ((and (eq? (system-type) 'unix)              
+        ((and (eq? (system-type) 'unix)
               (not (first-char-is-dot? filename)))
          (define new-filepath
            (string-append dirpath "/." filename))
@@ -328,6 +328,8 @@
 ;; > (cleanse-path-string "Addresses\\master.db")
 ;; "Addresses/master.db"                            ;(Linux)
 ;;
+;; > (cleanse-path-string "smtp-config.conf")
+;; "smtp-config.conf"
 (define (cleanse-path-string str)
   (cond ((eq? (system-type) 'windows)
            (string-replace str "/" "\\"))
