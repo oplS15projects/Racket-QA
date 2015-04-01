@@ -46,18 +46,9 @@
 (require racket/file
          racket/system)
 
-(provide settings-directory-exists?
-         create-settings-directory
-         settings-directory-name
-         settings-directory-path
-         full-file-path-in-settings-directory
-         file-exists-in-settings-directory?
-         directory-exists-in-settings-directory?
-         make-directory-in-settings-directory
-         delete-file-from-settings-directory
-         rename-something-in-settings-directory
-         hide-file-or-directory)
-
+(provide (except-out (all-defined-out)
+                     SETTINGS-DIRECTORY-NAME-WINDOWS
+                     SETTINGS-DIRECTORY-NAME-UNIX))
 
 
 (define SETTINGS-DIRECTORY-NAME-WINDOWS "Racket QA")
@@ -124,12 +115,7 @@
 ;; (fprintf out "~a\t~a\t~a~n" server username password)
 ;; 
 (define (full-file-path-in-settings-directory filename)
-  (define cleansed-filename
-    (cond ((eq? (system-type) 'windows)
-           (string-replace filename "/" "\\"))
-          ((eq? (system-type) 'unix)
-           (string-replace filename "\\" "/"))
-          (else filename)))
+  (define cleansed-filename (cleanse-path-string filename))
   (cond ((eq? (system-type) 'windows)
          (string-append (settings-directory-path) "\\" cleansed-filename))
         ((eq? (system-type) 'unix)
@@ -180,12 +166,7 @@
 ;; #t
 ;;
 (define (file-exists-in-settings-directory? filename)
-  (define cleansed-filename
-    (cond ((eq? (system-type) 'windows)
-           (string-replace filename "/" "\\"))
-          ((eq? (system-type) 'unix)
-           (string-replace filename "\\" "/"))
-          (else filename)))
+  (define cleansed-filename (cleanse-path-string filename))
   (file-exists? (full-file-path-in-settings-directory cleansed-filename)))
 
 
@@ -204,12 +185,7 @@
 ;; #t
 ;;
 (define (directory-exists-in-settings-directory? dirname)
-  (define cleansed-dirname
-    (cond ((eq? (system-type) 'windows)
-           (string-replace dirname "/" "\\"))
-          ((eq? (system-type) 'unix)
-           (string-replace dirname "\\" "/"))
-          (else dirname)))
+  (define cleansed-dirname (cleanse-path-string dirname))
   (cond ((eq? (system-type) 'windows)
          (directory-exists? (string-append (settings-directory-path) "\\" cleansed-dirname)))
         ((eq? (system-type) 'unix)
@@ -229,12 +205,7 @@
 ;; > (make-directory-in-settings-directory "Addresses\\Lowell Office")  ;(Windows/Linux)
 ;;
 (define (make-directory-in-settings-directory dirname)
-  (define cleansed-dirname
-    (cond ((eq? (system-type) 'windows)
-           (string-replace dirname "/" "\\"))
-          ((eq? (system-type) 'unix)
-           (string-replace dirname "\\" "/"))
-          (else dirname)))
+  (define cleansed-dirname (cleanse-path-string dirname))
   (if (not (directory-exists-in-settings-directory? cleansed-dirname))
       (cond ((eq? (system-type) 'windows)
              (make-directory* (string-append (settings-directory-path) "\\" cleansed-dirname)))
@@ -256,12 +227,7 @@
 ;; > (delete-file-from-settings-directory "Addresses\\unneeded-addresses.dat")  ;(Windows/Linux)
 ;;
 (define (delete-file-from-settings-directory filename)
-  (define cleansed-filename
-    (cond ((eq? (system-type) 'windows)
-           (string-replace filename "/" "\\"))
-          ((eq? (system-type) 'unix)
-           (string-replace filename "\\" "/"))
-          (else filename)))
+  (define cleansed-filename (cleanse-path-string filename))
   (if (file-exists? (full-file-path-in-settings-directory cleansed-filename))
       (delete-file (full-file-path-in-settings-directory cleansed-filename))
       #f))
@@ -277,18 +243,8 @@
 ;; > (rename-in-settings-directory "New DB/old-db-name.dat" "New DB/new-db-name.dat")    ;(Windows/Linux)
 ;;
 (define (rename-something-in-settings-directory old new)
-  (define cleansed-old
-    (cond ((eq? (system-type) 'windows)
-           (string-replace old "/" "\\"))
-          ((eq? (system-type) 'unix)
-           (string-replace old "\\" "/"))
-          (else old)))
-  (define cleansed-new
-    (cond ((eq? (system-type) 'windows)
-           (string-replace new "/" "\\"))
-          ((eq? (system-type) 'unix)
-           (string-replace new "\\" "/"))
-          (else new)))
+  (define cleansed-old (cleanse-path-string old))
+  (define cleansed-new (cleanse-path-string new))
   (cond ((or (file-exists-in-settings-directory? cleansed-old)
              (directory-exists-in-settings-directory? cleansed-old))
          (rename-file-or-directory
@@ -357,3 +313,24 @@
 ;;
 (define (first-char-is-dot? a-string)
   (pair? (regexp-match #rx"^\\." a-string)))
+
+
+;; For Windows, replaces all / to \\.
+;; For Linux, does the opposite.
+;;
+;; > (cleanse-path-string "Addresses/master.db")
+;; "Addresses\\master.db"                           ;(Windows)
+;; > (cleanse-path-string "Addresses\\master.db")
+;; "Addresses\\master.db"                           ;(Windows)
+;;
+;; > (cleanse-path-string "Addresses/master.db")
+;; "Addresses/master.db"                            ;(Linux)
+;; > (cleanse-path-string "Addresses\\master.db")
+;; "Addresses/master.db"                            ;(Linux)
+;;
+(define (cleanse-path-string str)
+  (cond ((eq? (system-type) 'windows)
+           (string-replace str "/" "\\"))
+          ((eq? (system-type) 'unix)
+           (string-replace str "\\" "/"))
+          (else str)))
