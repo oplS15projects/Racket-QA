@@ -31,7 +31,7 @@
 ;; * with the standard Racket file I/O APIs.
 ;; *
 ;; * ex)
-;; * > (define smtp-settings-file (settings-file-path "smtp-settings.conf"))
+;; * > (define smtp-settings-file (full-file-path-in-settings-directory "smtp-settings.conf"))
 ;; * > smtp-settings-file
 ;; * "C:\\Users\\yongjec\\AppData\\Roaming\\Racket QA\\smtp-settings.conf"
 ;; * > (define out (open-output-file smtp-settings-file #:mode 'binary))
@@ -50,7 +50,7 @@
          create-settings-directory
          settings-directory-name
          settings-directory-path
-         settings-file-path
+         full-file-path-in-settings-directory
          file-exists-in-settings-directory?
          directory-exists-in-settings-directory?
          make-directory-in-settings-directory
@@ -101,29 +101,29 @@
 ;; the standard Racket file procedures to create or open a file
 ;; for read/write.
 ;;
-;; > (settings-file-path "a file you want the full path string.txt")
+;; > (full-file-path-in-settings-directory "a file you want the full path string.txt")
 ;; "C:\\Users\\yongjec\\AppData\\Roaming\\Racket QA\\a file you want the full path string.txt"  ;(Windows)
 ;; "/home/yongjec/.Racket_QA/a file you want the full path.txt"                                 ;(Linux)
 ;;
-;; > (settings-file-path "smtp-info.conf")
+;; > (full-file-path-in-settings-directory "smtp-info.conf")
 ;; "C:\\Users\\yongjec\\AppData\\Roaming\\Racket QA\\smtp-info.conf"                            ;(Windows)
 ;; "/home/yongjec/.Racket_QA/smtp-info.conf"                                                    ;(Linux)
 ;;
-;; > (settings-file-path "dir/filename.txt")                             ;(Windows)
+;; > (full-file-path-in-settings-directory "dir/filename.txt")                             ;(Windows)
 ;; "C:\\Users\\yongjec\\AppData\\Roaming\\Racket QA\\dir\\filename.txt"  
-;; > (settings-file-path "dir\\filename.txt")                            ;(Windows)
+;; > (full-file-path-in-settings-directory "dir\\filename.txt")                            ;(Windows)
 ;; "C:\\Users\\yongjec\\AppData\\Roaming\\Racket QA\\dir\\filename.txt"  
 ;;
-;; > (settings-file-path "dir/filename.txt")                             ;(Linux)
+;; > (full-file-path-in-settings-directory "dir/filename.txt")                             ;(Linux)
 ;; "/home/yongjec/.Racket_QA/dir/filename.txt"                           
-;; > (settings-file-path "dir\\filename.txt")                            ;(Linux)
+;; > (full-file-path-in-settings-directory "dir\\filename.txt")                            ;(Linux)
 ;; "/home/yongjec/.Racket_QA/dir/filename.txt"                           
 ;;
-;; (define smtp-settings-file (settings-file-path "smtp-settings.conf"))
-;; (define out (open-output-file settings-file-path #:mode 'binary #:exists 'truncate/replace))
+;; (define smtp-settings-file (full-file-path-in-settings-directory "smtp-settings.conf"))
+;; (define out (open-output-file full-file-path-in-settings-directory #:mode 'binary #:exists 'truncate/replace))
 ;; (fprintf out "~a\t~a\t~a~n" server username password)
 ;; 
-(define (settings-file-path filename)
+(define (full-file-path-in-settings-directory filename)
   (define cleansed-filename
     (cond ((eq? (system-type) 'windows)
            (string-replace filename "/" "\\"))
@@ -186,7 +186,7 @@
           ((eq? (system-type) 'unix)
            (string-replace filename "\\" "/"))
           (else filename)))
-  (file-exists? (settings-file-path cleansed-filename)))
+  (file-exists? (full-file-path-in-settings-directory cleansed-filename)))
 
 
 ;; Checks if the specified sub-directory exists in the settings directory.
@@ -262,8 +262,8 @@
           ((eq? (system-type) 'unix)
            (string-replace filename "\\" "/"))
           (else filename)))
-  (if (file-exists? (settings-file-path cleansed-filename))
-      (delete-file (settings-file-path cleansed-filename))
+  (if (file-exists? (full-file-path-in-settings-directory cleansed-filename))
+      (delete-file (full-file-path-in-settings-directory cleansed-filename))
       #f))
 
 
@@ -292,8 +292,8 @@
   (cond ((or (file-exists-in-settings-directory? cleansed-old)
              (directory-exists-in-settings-directory? cleansed-old))
          (rename-file-or-directory
-          (settings-file-path cleansed-old)
-          (settings-file-path cleansed-new)
+          (full-file-path-in-settings-directory cleansed-old)
+          (full-file-path-in-settings-directory cleansed-new)
           #t))
         (else #f)))
 
@@ -302,7 +302,7 @@
 ;; For Linux, attaches a dot before the name of the file or directory.
 ;;
 ;; > (hide-file-or-directory "D:\\Data\\AVs")
-;; > (hide-file-or-directory (settings-file-path "smtp-credentials.dat"))
+;; > (hide-file-or-directory (full-file-path-in-settings-directory "smtp-credentials.dat"))
 ;; > (hide-file-or-directory "a-file-in-current-folder.txt")
 ;;
 (define (hide-file-or-directory filepath)
