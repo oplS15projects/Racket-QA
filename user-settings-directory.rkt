@@ -1,7 +1,7 @@
 ;; **********************************************************************
 ;; * Last Updated: 8:10 AM 04/01/2015
 ;; *
-;; * The set of APIs defined in this file defines a name and path to the user-
+;; * The set of APIs defined in this file defines the location to the user-
 ;; * specific settings directory for the Racket QA application and provides
 ;; * uniform ways to obtain the path strings to the directory and the files 
 ;; * in the directory to be used by other modules of the application.
