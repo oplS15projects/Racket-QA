@@ -79,7 +79,9 @@
 
 
 ;; Returns the full path of a file as if it is located in the
-;; user-specific settings directory.
+;; user-specific settings directory. You can provide this value to
+;; the standard Racket file procedures to create or open a file
+;; for read/write.
 ;;
 ;; > (settings-file-path "a file you want the full path string.txt")
 ;; "C:\\Users\\yongjec\\AppData\\Roaming\\Racket QA\\a file you want the full path string.txt"  ;(Windows)
@@ -99,6 +101,10 @@
 ;; > (settings-file-path "dir\\filename.txt")                            ;(Linux)
 ;; "/home/yongjec/.Racket_QA/dir/filename.txt"                           
 ;;
+;; (define smtp-settings-file (settings-file-path "smtp-settings.conf"))
+;; (define out (open-output-file settings-file-path #:mode 'binary #:exists 'truncate/replace))
+;; (fprintf out "~a\t~a\t~a~n" server username password)
+;; 
 (define (settings-file-path filename)
   (define cleansed-filename
     (cond ((eq? (system-type) 'windows)
