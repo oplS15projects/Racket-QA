@@ -35,6 +35,8 @@
 ;; * (define out (open-output-file settings-file-path #:mode 'binary))
 ;; * (fprintf out "~a\t~a\t~a~n" server username password)
 ;; *
+;; * Include (require "user-settings-directory.rkt") to your source file
+;; * to use the procedures in this API set.
 ;; **********************************************************************
 
 #lang racket
