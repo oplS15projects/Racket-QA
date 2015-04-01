@@ -3,8 +3,8 @@
 ;; *
 ;; * The set of APIs defined in this file defines a name and path to the user-
 ;; * specific settings directory for the Racket QA application and provides
-;; * uniform ways to access the directory and the files in the directory
-;; * by other modules of the application.
+;; * uniform ways to obtain the path strings to the directory and the files 
+;; * in the directory to be used by other modules of the application.
 ;; *
 ;; * The APIs defined in this module use following directories as the
 ;; * user-specific settings directory by the platform convention.
@@ -91,7 +91,7 @@
 
 ;; Returns the full path of a file or directory as it is located in the
 ;; user-specific settings directory. You can provide this value to
-;; the standard Racket file procedures to create or open a file
+;; the standard Racket file I/O procedures to create or open a file
 ;; for read/write.
 ;;
 ;; > (full-path-in-settings-directory "a file you want the full path string.txt")
@@ -116,12 +116,12 @@
 ;; (define out (open-output-file full-path-in-settings-directory #:mode 'binary #:exists 'truncate/replace))
 ;; (fprintf out "~a\t~a\t~a~n" server username password)
 ;;
-(define (full-path-in-settings-directory filename)
-  (define cleansed-filename (cleanse-path-string filename))
+(define (full-path-in-settings-directory file-or-directory-name)
+  (define cleansed-name (cleanse-path-string file-or-directory-name))
   (cond ((eq? (system-type) 'windows)
-         (string-append (settings-directory-path) "\\" cleansed-filename))
+         (string-append (settings-directory-path) "\\" cleansed-name))
         ((eq? (system-type) 'unix)
-         (string-append (settings-directory-path) "/" cleansed-filename))
+         (string-append (settings-directory-path) "/" cleansed-name))
         (else #f)))
 
 
