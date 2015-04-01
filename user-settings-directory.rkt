@@ -26,6 +26,15 @@
 ;; * > (file-exists-in-settings-directory? "Addresses\\master-address.dat")
 ;; * #t
 ;; *
+;; * These APIs do not provide a means to directly write or modify data.
+;; * Instead, they provide path strings that can be used in conjunction
+;; * with the standard Racket file I/O APIs.
+;; *
+;; * ex)
+;; * (define smtp-settings-file (settings-file-path "smtp-settings.conf"))
+;; * (define out (open-output-file settings-file-path #:mode 'binary))
+;; * (fprintf out "~a\t~a\t~a~n" server username password)
+;; *
 ;; **********************************************************************
 
 #lang racket
