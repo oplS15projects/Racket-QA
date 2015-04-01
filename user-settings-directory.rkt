@@ -11,7 +11,7 @@
 ;; * $HOME/.Racket_QA     (Linux)
 ;; *
 ;; * Users of this API need not concern about distinguishing
-;; * the specific platform they are calling these procedures in. All
+;; * the specific platform they are calling the procedures in. All
 ;; * procedures in this API set will automatically find out the OS type at
 ;; * runtime and use the correct directory.
 ;; * 
@@ -41,6 +41,9 @@
 
 #lang racket
 
+(require racket/file
+         racket/system)
+
 (provide settings-directory-exists?
          create-settings-directory
          settings-directory-name
@@ -50,7 +53,9 @@
          directory-exists-in-settings-directory?
          make-directory-in-settings-directory
          delete-file-from-settings-directory
-         rename-something-in-settings-directory)
+         rename-something-in-settings-directory
+         hide-file-or-directory)
+
 
 
 (define SETTINGS-DIRECTORY-NAME-WINDOWS "Racket QA")
@@ -289,3 +294,64 @@
           (settings-file-path cleansed-new)
           #t))
         (else #f)))
+
+
+;; For Windows, applies a 'hidden' attribute to a file or directory.
+;; For Linux, attaches a dot before the name of the file or directory.
+;;
+;; > (hide-file-or-directory "D:\\Data\\AVs")
+;; > (hide-file-or-directory (settings-file-path "smtp-credentials.dat"))
+;; > (hide-file-or-directory "a-file-in-current-folder.txt")
+;;
+(define (hide-file-or-directory filepath)
+  (define dirpath (get-dirpath-from-filepath filepath))
+  (define filename (get-filename-from-filepath filepath))
+  (cond ((eq? (system-type) 'windows)
+         (process (string-append "attrib +h \"" filepath "\"")))
+        ((and (eq? (system-type) 'unix)              
+              (not (first-char-is-dot? filename)))
+         (define new-filepath
+           (string-append dirpath "/." filename))
+         (process (string-append "mv " filepath " " new-filepath)))
+        (else #f)))
+
+
+;; Extracts the directory portion from a file path.
+;;
+;; > (get-dirpath-from-filepath "/home/yongjec/.Racket_QA/smtp-credentials.conf")
+;; "/home/yongjec/.Racket_QA"
+;;
+(define (get-dirpath-from-filepath filepath)
+  (cond ((eq? (system-type) 'windows)
+         (cadr (regexp-match #rx"(.*)\\\\[^\\]*$" filepath)))
+        ((eq? (system-type) 'unix)
+         (cadr (regexp-match #rx"(.*)/[^/]*$" filepath)))
+        (else #f)))
+
+
+;; Extracts the file name portion from a file path.
+;;
+;; > (get-filename-from-filepath "/home/yongjec/.Racket_QA/smtp-credentials.conf")
+;; "smtp-credentials.conf"
+;;
+(define (get-filename-from-filepath filepath)
+  (cond ((eq? (system-type) 'windows)
+         (if (pair? (regexp-match #rx"\\\\([^\\]*)$" filepath))
+             (cadr (regexp-match #rx"\\\\([^\\]*)$" filepath))
+             filepath))
+        ((eq? (system-type) 'unix)
+         (if (pair? (regexp-match #rx"/([^/]*)$" filepath))
+             (cadr (regexp-match #rx"/([^/]*)$" filepath))
+             filepath))
+        (else #f)))
+
+
+;; Checks if a string starts with a dot character.
+;;
+;; > (first-char-is-dot? "smtp-credentials.conf")
+;; #f
+;; > (first-char-is-dot? ".smtp-credentials.conf")
+;; #t
+;;
+(define (first-char-is-dot? a-string)
+  (pair? (regexp-match #rx"^\\." a-string)))
