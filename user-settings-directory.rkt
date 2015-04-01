@@ -7,7 +7,7 @@
 ;; * The APIs defined in this module use following directories as the
 ;; * user-specific settings directory by the platform convention.
 ;; *
-;; * %APPDATA%/Racket QA  (Window)
+;; * %APPDATA%/Racket QA  (Windows)
 ;; * $HOME/.Racket_QA     (Linux)
 ;; *
 ;; * Users of this API need not concern about distinguishing
