@@ -87,7 +87,7 @@
         (else #f)))
 
 
-;; Returns the full path of a file as if it is located in the
+;; Returns the full path of a file as it is located in the
 ;; user-specific settings directory. You can provide this value to
 ;; the standard Racket file procedures to create or open a file
 ;; for read/write.
