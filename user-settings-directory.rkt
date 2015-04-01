@@ -177,7 +177,7 @@
 ;; Checks if the specified sub-directory exists in the settings directory.
 ;;
 ;; > (directory-exists-in-settings-directory? "Addresses")
-;; #f
+;; #t
 ;;
 ;; > (directory-exists-in-settings-directory? "Some Non-Existing Folder")
 ;; #f
@@ -262,7 +262,7 @@
 
 ;; For Windows, applies a 'hidden' attribute to a file or directory.
 ;; For Linux, attaches a dot before the name of the file or directory.
-;; This can be 
+;; This can be used with both absolute and relative path.
 ;;
 ;; > (hide-file-or-directory "D:\\Data\\AVs")
 ;; > (hide-file-or-directory (full-path-in-settings-directory "smtp-credentials.dat"))
