@@ -36,7 +36,7 @@
 ;; * (fprintf out "~a\t~a\t~a~n" server username password)
 ;; *
 ;; * Include (require "user-settings-directory.rkt") to your source file
-;; * to use the procedures in this API set.
+;; * to use the procedures in this API set. (might need reload)
 ;; **********************************************************************
 
 #lang racket
