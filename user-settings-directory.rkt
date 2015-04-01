@@ -31,7 +31,7 @@
 ;; * with the standard Racket file I/O APIs.
 ;; *
 ;; * ex)
-;; * > (define smtp-settings-file (full-file-path-in-settings-directory "smtp-settings.conf"))
+;; * > (define smtp-settings-file (full-path-in-settings-directory "smtp-settings.conf"))
 ;; * > smtp-settings-file
 ;; * "C:\\Users\\yongjec\\AppData\\Roaming\\Racket QA\\smtp-settings.conf"
 ;; * > (define out (open-output-file smtp-settings-file #:mode 'binary))
@@ -87,34 +87,34 @@
         (else #f)))
 
 
-;; Returns the full path of a file as it is located in the
+;; Returns the full path of a file or directory as it is located in the
 ;; user-specific settings directory. You can provide this value to
 ;; the standard Racket file procedures to create or open a file
 ;; for read/write.
 ;;
-;; > (full-file-path-in-settings-directory "a file you want the full path string.txt")
+;; > (full-path-in-settings-directory "a file you want the full path string.txt")
 ;; "C:\\Users\\yongjec\\AppData\\Roaming\\Racket QA\\a file you want the full path string.txt"  ;(Windows)
 ;; "/home/yongjec/.Racket_QA/a file you want the full path.txt"                                 ;(Linux)
 ;;
-;; > (full-file-path-in-settings-directory "smtp-info.conf")
+;; > (full-path-in-settings-directory "smtp-info.conf")
 ;; "C:\\Users\\yongjec\\AppData\\Roaming\\Racket QA\\smtp-info.conf"                            ;(Windows)
 ;; "/home/yongjec/.Racket_QA/smtp-info.conf"                                                    ;(Linux)
 ;;
-;; > (full-file-path-in-settings-directory "dir/filename.txt")                             ;(Windows)
+;; > (full-path-in-settings-directory "dir/filename.txt")                             ;(Windows)
 ;; "C:\\Users\\yongjec\\AppData\\Roaming\\Racket QA\\dir\\filename.txt"
-;; > (full-file-path-in-settings-directory "dir\\filename.txt")                            ;(Windows)
+;; > (full-path-in-settings-directory "dir\\filename.txt")                            ;(Windows)
 ;; "C:\\Users\\yongjec\\AppData\\Roaming\\Racket QA\\dir\\filename.txt"
 ;;
-;; > (full-file-path-in-settings-directory "dir/filename.txt")                             ;(Linux)
+;; > (full-path-in-settings-directory "dir/filename.txt")                             ;(Linux)
 ;; "/home/yongjec/.Racket_QA/dir/filename.txt"
-;; > (full-file-path-in-settings-directory "dir\\filename.txt")                            ;(Linux)
+;; > (full-path-in-settings-directory "dir\\filename.txt")                            ;(Linux)
 ;; "/home/yongjec/.Racket_QA/dir/filename.txt"
 ;;
-;; (define smtp-settings-file (full-file-path-in-settings-directory "smtp-settings.conf"))
-;; (define out (open-output-file full-file-path-in-settings-directory #:mode 'binary #:exists 'truncate/replace))
+;; (define smtp-settings-file (full-path-in-settings-directory "smtp-settings.conf"))
+;; (define out (open-output-file full-path-in-settings-directory #:mode 'binary #:exists 'truncate/replace))
 ;; (fprintf out "~a\t~a\t~a~n" server username password)
 ;;
-(define (full-file-path-in-settings-directory filename)
+(define (full-path-in-settings-directory filename)
   (define cleansed-filename (cleanse-path-string filename))
   (cond ((eq? (system-type) 'windows)
          (string-append (settings-directory-path) "\\" cleansed-filename))
@@ -133,7 +133,9 @@
 
 ;; Creates the user-specific settings directory whose path depends on
 ;; the platform convention as returned by (settings-directory-path).
-;; This shouldn't need to be called more than once per machine/user.
+;; This shouldn't need to be called more than once per machine/user,
+;; but it is safe to call it multiple times. It will only create the
+;; directory when it is not already present.
 ;;
 ;; > (settings-directory-exists?)
 ;; #f
@@ -167,7 +169,7 @@
 ;;
 (define (file-exists-in-settings-directory? filename)
   (define cleansed-filename (cleanse-path-string filename))
-  (file-exists? (full-file-path-in-settings-directory cleansed-filename)))
+  (file-exists? (full-path-in-settings-directory cleansed-filename)))
 
 
 ;; Checks if the specified sub-directory exists in the settings directory.
@@ -194,6 +196,7 @@
 
 
 ;; Create a sub-directory in the user-specific settings directory.
+;; Has no effect if the specified directory already exists.
 ;;
 ;; > (directory-exists-in-settings-directory? "Addresses")
 ;; #f
@@ -216,6 +219,7 @@
 
 
 ;; Deletes a file from the user-specific settings directory.
+;; Has no effect if the file does not exist already.
 ;;
 ;; > (file-exists-in-settings-directory? "unneeded_file.dat")
 ;; #t
@@ -228,8 +232,8 @@
 ;;
 (define (delete-file-from-settings-directory filename)
   (define cleansed-filename (cleanse-path-string filename))
-  (if (file-exists? (full-file-path-in-settings-directory cleansed-filename))
-      (delete-file (full-file-path-in-settings-directory cleansed-filename))
+  (if (file-exists? (full-path-in-settings-directory cleansed-filename))
+      (delete-file (full-path-in-settings-directory cleansed-filename))
       #f))
 
 
@@ -248,17 +252,18 @@
   (cond ((or (file-exists-in-settings-directory? cleansed-old)
              (directory-exists-in-settings-directory? cleansed-old))
          (rename-file-or-directory
-          (full-file-path-in-settings-directory cleansed-old)
-          (full-file-path-in-settings-directory cleansed-new)
+          (full-path-in-settings-directory cleansed-old)
+          (full-path-in-settings-directory cleansed-new)
           #t))
         (else #f)))
 
 
 ;; For Windows, applies a 'hidden' attribute to a file or directory.
 ;; For Linux, attaches a dot before the name of the file or directory.
+;; This can be 
 ;;
 ;; > (hide-file-or-directory "D:\\Data\\AVs")
-;; > (hide-file-or-directory (full-file-path-in-settings-directory "smtp-credentials.dat"))
+;; > (hide-file-or-directory (full-path-in-settings-directory "smtp-credentials.dat"))
 ;; > (hide-file-or-directory "a-file-in-current-folder.txt")
 ;;
 (define (hide-file-or-directory filepath)
@@ -279,11 +284,18 @@
 ;; > (get-dirpath-from-filepath "/home/yongjec/.Racket_QA/smtp-credentials.conf")
 ;; "/home/yongjec/.Racket_QA"
 ;;
+;; > (get-dirpath-from-filepath "only_file_name.txt")
+;; ""
+;;
 (define (get-dirpath-from-filepath filepath)
   (cond ((eq? (system-type) 'windows)
-         (cadr (regexp-match #rx"(.*)\\\\[^\\]*$" filepath)))
+         (if (pair? (regexp-match #rx"(.*)\\\\[^\\]*$" filepath))
+             (cadr (regexp-match #rx"(.*)\\\\[^\\]*$" filepath))
+             ""))
         ((eq? (system-type) 'unix)
-         (cadr (regexp-match #rx"(.*)/[^/]*$" filepath)))
+         (if (pair? (regexp-match #rx"(.*)/[^/]*$" filepath))
+             (cadr (regexp-match #rx"(.*)/[^/]*$" filepath))
+             ""))
         (else #f)))
 
 
