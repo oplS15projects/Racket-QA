@@ -2,6 +2,7 @@
 
 ;; Load in definitions from test-area-runner for procedures that create strings to write out to a file
 (require "bn-to-racket.rkt") ; Windows/Unix filepath utilities
+(require "../Common/user-settings-directory.rkt") ; For writing out test results
 
 ; We want to write a new file with the definitions of test-area-runner
 ; and has a require statement with the ps1_area.rkt file. This way that
@@ -21,7 +22,7 @@
 ; loaded test-area-runner lines, so this will be at the end of the file
 ; e.g. area-filename is "ps1_area.rkt"
 ; e.g. test-area-dir is "C:\OPL\FP2\FP2\testing\ps1"
-(define (create-run-script-lines test-area-dir area-filename)
+(define (create-run-script-lines test-area-dir area-filename test-result-filepath)
   (define run-script-header (list "\n;; **********************************************************************"
                                   ";; * MAIN: RUN THE SCRIPT"
                                   ";; **********************************************************************"
@@ -30,9 +31,10 @@
                                   "(define file-lines (file->lines \"test_results.txt\"))"
                                   (string-append "(define failed-case-lines-to-write (create-failed-cases-lines "
                                                  "file-lines num-failed num-tests suite-name))")
-                                  "(remake-file \"test_email.txt\")"
-                                  (string-append "(display-lines-to-file failed-case-lines-to-write "
-                                                 "\"test_email.txt\" #:separator\"\\n\")")))
+                                  ;"(remake-file \"test_email.txt\")"
+                                  (string-append "(remake-file \"" test-result-filepath "\")")
+                                  (string-append "(display-lines-to-file failed-case-lines-to-write \""
+                                                 test-result-filepath "\" #:separator\"\\n\")")))
   run-script-header
 )
 
@@ -81,6 +83,15 @@
 ; Add click button to the horizontal panel
 (new button% [parent dialog] [label "Make Run Script"]
       [callback (lambda (button event)
+                  
+                  ;; Determine where the test results will go.
+                  (when (not (settings-directory-exists?))
+                    (create-settings-directory))
+                  (when (not (directory-exists-in-settings-directory? "QA Test Result"))
+                    (make-directory-in-settings-directory "QA Test Result"))
+                  (define result-file-path
+                    (double-backslash (full-path-in-settings-directory
+                     (cleanse-path-string "QA Test Result/test-result-email.txt"))))
 
                   ;; Variables specifying test data                 
                   (define output-dir (get-dir-from-filepath (send suite-filepath get-value)))
@@ -89,7 +100,7 @@
                   
                   ;; Run script lines to add with test-area-runner
                   (define test-area-runner-lines (file->lines "test-area-runner.rkt"))
-                  (define run-script-lines (create-run-script-lines output-dir area-file))
+                  (define run-script-lines (create-run-script-lines output-dir area-file result-file-path))
                   (define all-run-script-lines (append test-area-runner-lines run-script-lines))
                   
                   ;; Write the lines out to the file
