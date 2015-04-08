@@ -1,0 +1,70 @@
+#lang racket/gui
+
+(require "email-db.rkt")
+
+(provide open-email-db-entry-edit)
+
+(define email-db-entry-edit-dialog
+  (new dialog%
+       (label "Edit Email DB Entry")
+       (width 300)
+       (height 250)
+       (style '(close-button))))
+
+(define v-pane
+  (new vertical-pane%
+       (spacing 2)
+       (border 10)
+       (parent email-db-entry-edit-dialog)))
+
+(define name-text-field
+  (new text-field%
+       (parent v-pane)
+       (label "First Name")
+       (init-value "")
+       (style '(single vertical-label))))
+
+(define address-text-field
+  (new text-field%
+       (parent v-pane)
+       (label "Email")
+       (init-value "")
+       (style '(single vertical-label))))
+
+(define button-pane
+  (new horizontal-pane%
+       (parent v-pane)
+       (vert-margin 5)
+       (alignment '(center center))))
+
+;; Cancel button
+(new button% 
+     (parent button-pane) 
+     (label "Cancel")
+     (callback (λ (button event)
+                 (set! new-entry '())
+                 (send email-db-entry-edit-dialog show #f))))
+
+;; Ok button saves entry
+(new button% 
+     (parent button-pane) 
+     (label "Ok")
+     (callback (λ (button event)
+                 (define name (send name-text-field get-value))
+                 (define address (send address-text-field get-value))
+                 (define entry (make-email-db-entry name address))
+                 ;; save them to the db
+                 (set! new-entry entry)
+                 (send email-db-entry-edit-dialog show #f))))
+
+(when (system-position-ok-before-cancel?)
+  (send button-pane change-children reverse))
+
+(define new-entry '())
+(define (open-email-db-entry-edit button event old-entry)
+  (send name-text-field set-value (email-db-entry-name old-entry))
+  (send address-text-field set-value (email-db-entry-email-address old-entry))
+  (send email-db-entry-edit-dialog show #t)
+  ;; blocking here.
+  ;; new-entry is set by the time the dialog closes.
+  new-entry)
