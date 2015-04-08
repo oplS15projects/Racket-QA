@@ -2,13 +2,13 @@
 
 (require racket/file
          racket/gui/base
-         "user-settings-directory.rkt")
+         "../Common/user-settings-directory.rkt")
 
 
 ;; Exporting all definitions only so they can be tested by a test code
 ;; during development.
-(provide (all-defined-out))
-
+(provide (except-out (all-defined-out)
+                     SYSTEM-TYPE))
 
 (define SYSTEM-TYPE (system-type))
 (define EMAIL-DB-DIRNAME (cond ((eq? SYSTEM-TYPE 'windows) "Email DB")

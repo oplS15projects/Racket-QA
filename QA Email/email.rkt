@@ -6,8 +6,8 @@
          racket/file  
          racket/gui/base             
          racket/system
-         "address-db.rkt"
-         "user-settings-directory.rkt")
+         "email-db.rkt"
+         "../Common/user-settings-directory.rkt")
 
 ;; SMTP log-in credentials will only be hard-coded for demo purpose.
 ;; For production copy(?), they will be obtained from the user at first 
@@ -16,7 +16,6 @@
 (define SMTP-PORT 465)
 (define SMTP-USER "test.racketscience")
 (define SMTP-PASSWORD "12#$zxCV")
-(define SYSTEM-TYPE (system-type))
 
 (define (construct-header from to subject)
   (define CRLF "\r\n")
