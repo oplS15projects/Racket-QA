@@ -21,21 +21,44 @@
 (define (is-test? line)
   (if (regexp-match #rx"^\\s*ok.*" line) #t #f))
 
+(define (get-loaded-file line)
+  (define all-parts (string-split line ","))
+  (if (= (length all-parts) 4)
+      (string-trim (car all-parts))
+      "none")
+)
+
 ;; Gets first test input part of the line to parse in regexp in find-test-input
 (define (get-test-input line)
-  (car (string-split line ",")))
+  (define all-parts (string-split line ","))
+  (if (= (length all-parts) 3)
+      (car all-parts)
+      (string-append "(" (string-trim (cadr all-parts)))))
 
 ;; Gets second expected value part of the line to parse in regexp in find-expected-value
 (define (get-expected-value line)
-  (cadr (string-split line ",")))
+  (define all-parts (string-split line ","))
+  (if (= (length all-parts) 3)
+      (cadr all-parts)
+      (caddr all-parts)))
 
 ;; Gets third test name part of the line to parse in regexp in find-test-name
 (define (get-test-name line)
-  (caddr (string-split line ",")))
+  (define all-parts (string-split line ","))
+  (if (= (length all-parts) 3)
+      (caddr all-parts)
+      (cadddr all-parts)))
 
 ;; **********************************************************************
 ;; * Constructors for removing unnecessary parts of the perl test case
 ;; **********************************************************************
+
+(define (find-loaded-file line)
+  (define expected (regexp-match #rx"\\\"\\s*(.*)\\s*\\\"" line))
+  (if (not (equal? expected #f))
+      (string-trim (cadr expected))
+      "none")
+)
 
 ;; first-test for scheme test inputs
 (define (find-test-input line)
@@ -52,7 +75,7 @@
 (define (find-expected-value line)
   (define expected (regexp-match #rx"^\\s*(.*)\\)$" line))
   (if (not (equal? expected #f))
-      (string-trim (cadr expected))
+      (string-trim (string-trim (cadr expected)) "\"")
       #f))
 
 ;; third-test for test names
@@ -93,6 +116,15 @@
        (get-all-expected-values all-lines)
        (get-all-test-names all-lines)))
 
+(define (get-all-loaded-files all-lines)
+  (remove-duplicates (map find-loaded-file (map get-loaded-file (filter is-test? all-lines)))))
+
+(define (create-requires-for-loads loaded-file-list)
+  (if (null? loaded-file-list)
+      nil
+      (cons (string-append "(require \"" (car loaded-file-list) "\")") (create-requires-for-loads (cdr loaded-file-list))))
+)
+
 ;; **********************************************************************
 ;; * Procedures for creating strings representing what we want to write
 ;; * out to our suite file for the test cases inside the test suite.
@@ -103,11 +135,6 @@
   (if (not (equal? sym-to-number #f))
       (string-append "  (test-case \"" (caddr sublist) "\" (check-equal? " (car sublist) " " (cadr sym-to-number) "))")
       (string-append "  (test-case \"" (caddr sublist) "\" (check-equal? " (car sublist) " " (cadr sublist) "))")))
-
-(define (test-cases-to-one-string current test-cases)
-  (if (null? test-cases)
-      current
-      (test-cases-to-one-string (string-append current (car test-cases)) (cdr test-cases))))
 
 (define (create-test-suite suite-name test-cases)
   (define suite-header (list ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;"
@@ -129,11 +156,14 @@
     0))
 
 ;; Create header of the suite file
-(define (make-suite-header assignment-name)
+(define (make-suite-header assignment-name all-lines)
+  (define all-source-requires (create-requires-for-loads (get-all-loaded-files all-lines)))
   (define rkt-header (list "#lang racket\n"
-                           "(require rackunit)"
-                           (string-append "(require \"" assignment-name ".rkt\")\n")))                
-  rkt-header
+                           "(require rackunit)"))
+  (define single-assignment-require (list (string-append "(require \"" assignment-name ".rkt\")\n")))
+  (if (= (length all-source-requires) 1)
+      (append rkt-header single-assignment-require)
+      (append rkt-header all-source-requires))
 )
 
 ;; Create test-list for this bottlenose suite
@@ -166,18 +196,27 @@
 ;; * Test Area File Creation Procedures
 ;; **********************************************************************
 
-(define (gui-or-text test-mode)
+(define (gui-or-text test-mode number-of-tests)
   (cond ((equal? test-mode "make-gui-runner")
          (list ";; map is used here to allow each test suite to appear in the same GUI window."
+               (string-append "(define num-tests " (number->string number-of-tests) ")")
                "(map (make-gui-runner) test-list)\n"))
         ((equal? test-mode "run-tests")
          (list ";; map is used here to allow each test suite to be run in the textual interface."
-               "(map run-tests test-list)\n"))
+               "(remake-file \"test_results.txt\")"
+               "(define test-result-file (open-output-file \"test_results.txt\"))"
+               "(current-error-port test-result-file) ; File containing failed cases"
+               (string-append "(define num-tests " (number->string number-of-tests) ")")
+               "(define num-failed (car (map run-tests test-list))) ; run-tests returns list with number of failed cases"
+               "(define num-passed (- num-tests num-failed)) ; How many passed"
+               "(define failed (/ num-failed num-tests))"
+               "(define successful (/ num-passed num-tests))"
+               "(close-output-port test-result-file)"))
         (else nil)) ;; end cond
 ) ;; end define
         
 
-(define (create-test-area-lines assignment-name test-mode)
+(define (create-test-area-lines assignment-name test-mode number-of-tests)
   (define rkt-header (list "#lang racket\n"
                            ";; Racket Unit Testing Libraries"
                            "(require racket/include)"
@@ -185,8 +224,12 @@
                            "(require rackunit/text-ui)"
                            "(require rackunit/gui)\n"
                            ";; Suite file for this assignment"
-                           (string-append "(require \"" assignment-name "_suite.rkt\")\n")))
-  (define gui-or-text-lines (gui-or-text test-mode))
+                           (string-append "(define suite-name \"" assignment-name "\")")
+                           (string-append "(require \"" assignment-name "_suite.rkt\")\n")
+                           ";; Function for recreating a file when running these tests"
+                           (string-append "(define (remake-file file-path)\n  (if (file-exists? file-path)"
+                                          "\n      (delete-file file-path) 0))\n")))
+  (define gui-or-text-lines (gui-or-text test-mode number-of-tests))
   (define test-area-lines (append rkt-header gui-or-text-lines (list "\n(provide (all-defined-out))\n")))
   test-area-lines
 )
@@ -203,6 +246,51 @@
          (display-lines-to-file lines absolute-dir #:separator"\n"))
         (else "undefined"))
 )
+
+;; **********************************************************************
+;; * Windows/Unix Filepath Utilities
+;; **********************************************************************
+
+(define (get-assn-from-filepath absolute-dir)
+  (define separation-back-slash (string-split absolute-dir "\\"))
+  (define assignment-back (if (not (equal? (regexp-match #rx"\\\\" absolute-dir) #f))
+                              (regexp-match #rx"^\\s*(.*)\\.rkt$" (last separation-back-slash))
+                              #f))
+  (define separation-forward-slash (string-split absolute-dir "/"))
+  (define assignment-forward (if (not (equal? (regexp-match #rx"/" absolute-dir) #f))
+                                 (regexp-match #rx"^\\s*(.*)\\.rkt$" (last separation-forward-slash))
+                                 #f))
+  (cond ((not (equal? assignment-back #f)) (cadr assignment-back))
+        ((not (equal? assignment-forward #f)) (cadr assignment-forward))
+        (else "undefined")))
+
+(define (get-dir-from-filepath absolute-dir)
+  (define path-back (regexp-match #rx"\\\\" absolute-dir))
+  (define path-forward (regexp-match #rx"/" absolute-dir))
+  (cond ((not (equal? path-back #f))
+         (string-join (butlast (string-split absolute-dir "\\")) "\\"))
+        ((not (equal? path-forward #f))
+         (string-join (butlast (string-split absolute-dir "/")) "/"))
+        (else "undefined"))
+)
+
+(define (get-full-path absolute-dir assignment-name filetype)
+  (define path-back (regexp-match #rx"\\\\" absolute-dir))
+  (define path-forward (regexp-match #rx"/" absolute-dir))
+  (cond ((not (equal? path-back #f))
+         (string-append absolute-dir "\\" assignment-name filetype))
+        ((not (equal? path-forward #f))
+         (string-append "/" absolute-dir "/" assignment-name filetype))
+        (else "undefined"))
+)
+
+(define (butlast lst)
+  (define (helper current lst counter)
+    (if (> counter 1)
+        (helper (append current (list (car lst)))
+                (cdr lst) (- counter 1))
+        current));; end helper
+ (helper '() lst (length lst))) ;; end outer define
 
 (provide (all-defined-out))
 
