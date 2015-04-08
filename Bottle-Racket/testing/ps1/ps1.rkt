@@ -42,11 +42,12 @@
 ;; DONE
 (define comb
   (lambda (n k)
-    (cond ((= k 0) 1) ;; There is 1 way to choose nothing out of n
-          ((= n k) 1) ;; There is 1 way to choose n elements out of n
-          ((< k 0) 0) ;; There are 0 ways to choose - elements out of n
-          ((< n 0) 0) ;; There are 0 ways to choose any elements out of -
-          (else(/ (fact n) (* (fact k) (fact(- n k)))))) ;; otherwise, perform n choose k
+;    (cond ((= k 0) 1) ;; There is 1 way to choose nothing out of n
+;          ((= n k) 1) ;; There is 1 way to choose n elements out of n
+;          ((< k 0) 0) ;; There are 0 ways to choose - elements out of n
+;          ((< n 0) 0) ;; There are 0 ways to choose any elements out of -
+;          (else(/ (fact n) (* (fact k) (fact(- n k)))))) ;; otherwise, perform n choose k
+     1
     ))
 
 ;; exercise 6: triple its argument
