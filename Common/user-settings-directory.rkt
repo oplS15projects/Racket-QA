@@ -369,3 +369,8 @@
                (eq? (system-type) 'macosx))
            (string-replace str "\\" "/"))
           (else str)))
+
+;; For Windows
+(define (double-backslash windows-str)
+  (when (eq? (system-type) 'windows)
+    (string-replace windows-str "\\" "\\\\")))
