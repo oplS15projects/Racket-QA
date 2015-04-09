@@ -12,7 +12,8 @@
 
 (provide send-text
          send-html-file
-         send-text-file)
+         send-text-file
+         valid-address?)
 
 ;; SMTP log-in credentials will only be hard-coded for demo purpose.
 ;; For production copy(?), they will be obtained from the user at first 
