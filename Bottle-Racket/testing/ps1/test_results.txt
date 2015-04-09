@@ -1,0 +1,43 @@
+Starting Test Suite 'ps1'
+--------------------
+ps1 > (comb 3 2)
+(comb 3 2)
+FAILURE
+name:       check-equal?
+location:   ps1_suite.rkt:21:26
+actual:     1
+expected:   3
+Check failure
+--------------------
+--------------------
+ps1 > (comb 4 2)
+(comb 4 2)
+FAILURE
+name:       check-equal?
+location:   ps1_suite.rkt:22:26
+actual:     1
+expected:   6
+Check failure
+--------------------
+--------------------
+ps1 > (comb 10 2)
+(comb 10 2)
+FAILURE
+name:       check-equal?
+location:   ps1_suite.rkt:23:27
+actual:     1
+expected:   45
+Check failure
+--------------------
+--------------------
+ps1 > (comb 93 37)
+(comb 93 37)
+FAILURE
+name:       check-equal?
+location:   ps1_suite.rkt:24:28
+actual:     1
+expected:   118206769052646517220135262
+Check failure
+--------------------
+Finished Test Suite 'ps1'
+26 success(es) 4 failure(s) 0 error(s) 30 test(s) run
