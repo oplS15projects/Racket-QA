@@ -3,6 +3,7 @@
 ;; Load in definitions from test-area-runner for procedures that create strings to write out to a file
 (require "bn-to-racket.rkt") ; Windows/Unix filepath utilities
 (require "../Common/user-settings-directory.rkt") ; For writing out test results
+(require "../QA-Email/email.rkt")
 
 ; We want to write a new file with the definitions of test-area-runner
 ; and has a require statement with the ps1_area.rkt file. This way that
@@ -114,6 +115,7 @@
                   ;; Run the generated test running script. Change working directory to that script's directory.
                   (current-directory output-dir)
                   (system (string-append "racket " run-script-path))
+                  (send-text-file "QA Team" "Regression Statistics" result-file-path (list "roy.racketscience@gmail.com"))
                   
                   
                                     ) ; end lambda
