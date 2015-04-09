@@ -107,7 +107,7 @@
 ;;  ex) (list "roy.racketscience@gmail.com" "racket.riot@gmail.com")
 ;;
 (define (send-text to subject a-string-to-send list-of-recipients)
-  (connect-and-send to subject a-string-to-send list-of-recipients 'html))
+  (connect-and-send to subject a-string-to-send list-of-recipients 'text))
 
 
 ;; Convenience proc for sending an html-formatted text file as the email-body.
