@@ -1,6 +1,7 @@
 #lang racket/gui
 
-(require "email-db.rkt"
+(require "email.rkt"
+         "email-db.rkt"
          "email-db-entry-edit-ui.rkt")
 
 ;; Usage
@@ -106,7 +107,7 @@
 
 ;; box enclosing the selected email-db name
 (define selected-email-db-title-box
-  (new pane%
+  (new horizontal-pane%
        (parent right-v-panel)
        (min-height 30)
        (stretchable-width #f)
@@ -116,11 +117,20 @@
 (define selected-email-db-title-label
   (new message%
        (parent selected-email-db-title-box)
-       (label (cond ((= 0 (send email-db-list-box get-number)) "There is no mailing list configured")
-                    ((null? (send email-db-list-box get-selections)) "Select an email-db")
-                    (else "Please select a mailing list")))
+       (label "")
        (auto-resize #t)))
 
+;; Button - send test email to selected email-db
+(new button%
+     (parent selected-email-db-title-box)
+     (label "Send Test Email")
+     (callback
+      (lambda (b e)
+        (define selected-db-index (send email-db-list-box get-selection))
+        (when (not (eq? selected-db-index #f))
+          (write selected-db-index)
+          (define db (send email-db-list-box get-data selected-db-index))
+          (connect-and-send (email-db-addresses db))))))
 
 
 ;; pane below the selected email-db title box
@@ -278,6 +288,10 @@
     (send bottom-buttons-pane change-children reverse))
   (set! return-list '())
   (set! return-db #f)
+  (send selected-email-db-title-label set-label
+        (cond ((= 0 (send email-db-list-box get-number)) "There is no mailing list configured")
+                    ((null? (send email-db-list-box get-selections)) "Select an email-db")
+                    (else "Please select a mailing list")))
   (send manage-mailing-list-dialog show #t)
   ;; Blocking until Cancel or Ok button is clicked.
   (cond ((eq? command 'return-addresses)
