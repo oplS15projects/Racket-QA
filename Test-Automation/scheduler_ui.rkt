@@ -57,18 +57,19 @@
         (lambda (list click-type)
           (populate-active-tests-list-box)))))
 
-;; Fills the email db list box (left pane)
+;; Fills the active autotest list box (left pane)
 (define (populate-active-tests-list-box)
-  (send active-tests-list-box clear)
+  (define active-test-list (map autotest-active? autotest-list))  
   (define (add-to-list-box test)
     (define name (test-name test))
-    (send active-tests-list-box append name test))
+    (send active-tests-list-box append name test))  
+  (send active-tests-list-box clear)
   (cond ((equal? (length active-test-list) 0)
          (send active-tests-list-box append "No active test"))
         (else (map add-to-list-box active-test-list))))
 
 
-;; List box for the list of INactive tests (left pane).
+;; List box for the list of inactive tests (left pane).
 (define inactive-tests-list-box
   (new list-box%
        (parent left-v-panel)
@@ -83,12 +84,13 @@
         (lambda (list click-type)
           (populate-active-tests-list-box)))))
 
-;; Fills the email db list box (left pane)
+;; Fills the inactive autotest list box (left pane)
 (define (populate-inactive-tests-list-box)
-  (send inactive-tests-list-box clear)
+  (define inactive-test-list (map (negate autotest-active?) autotest-list))
   (define (add-to-list-box test)
     (define name (test-name test))
     (send inactive-tests-list-box append name test))
+  (send inactive-tests-list-box clear)
   (cond ((equal? (length inactive-test-list) 0)
          (send inactive-tests-list-box append "No inactive test"))
         (else (map add-to-list-box inactive-test-list))))
@@ -97,11 +99,12 @@
   (new horizontal-pane%
        (parent right-v-panel)))
 
-;; box enclosing the selected email-db name (right pane)
+;; box enclosing the selected autotest name (right pane)
 (define selected-test-name-box
   (new pane%
        (parent top-right-h-pane)
        (min-height 20)
+       (min-width 300)
        (stretchable-width #f)
        (stretchable-height #f)
        (alignment '(left center))))
@@ -112,6 +115,14 @@
        (horiz-margin 12)
        (label "No auto-test is selected")
        (auto-resize #t)))
+
+(define new-autotest-name-text-field
+  (new text-field%
+       (parent selected-test-name-box)
+       (label "Autotest Name")
+       (min-width 280)
+       (stretchable-width #f)
+       (horiz-margin 12)))
 
 (define create-button-pane
   (new pane%
@@ -126,7 +137,7 @@
         (lambda (b e)
           (config-ui-create-mode)))))
 
-;; pane below the selected email-db title box
+;; pane below the selected autotest title box
 (define test-resource-panel
   (new group-box-panel%
        (parent right-v-panel)
@@ -371,8 +382,8 @@
      (label "Select mailing list...")
      (callback 
       (lambda (b e)
-        (define email-db (open-manage-mailing-list-dialog 'return-db))
-        (define db-name (email-db-name email-db))
+        (set! selected-email-db (open-manage-mailing-list-dialog 'return-db))
+        (define db-name (email-db-name selected-email-db))
         (send mailing-list-name-message set-label db-name))))
 
 (define mailing-list-name-message
@@ -418,7 +429,9 @@
        (parent activate-buttons-pane)
        (label "Create and Activate")
        (callback
-        (lambda (b e) (void)))))
+        (lambda (b e)
+          (define new-at (make-autotest-from-ui #t))
+          (add-to-autotest-list new-at)))))
 
 ;; 'Create as Inactive' Button
 ;; - Creates a new autotest schedule but does not activate it
@@ -427,7 +440,9 @@
        (parent activate-buttons-pane)
        (label "Create as Inactive")
        (callback
-        (lambda (b e) (void)))))
+        (lambda (b e)
+          (define new-at (make-autotest-from-ui #f))
+          (add-to-autotest-list new-at)))))
 
 ;; Cancel Button - Cancels creating a new autotest schedule
 (define cancel-button
@@ -437,9 +452,39 @@
        (callback
         (lambda (b e) (config-ui-normal-mode)))))
 
-(define (create-new-autotest)
-  (void))
-
+;; Creates a new autotest.
+(define (make-autotest-from-ui (activate? #t))
+  (define id (generate-autotest-id))
+  (define num-files (send file-list-box get-number))
+  (define files '())
+  (for ((i num-files))
+    (append files (send file-list-box get-string i)))
+  (define type (if (equal? (send one-time-periodic-radio-box get-selection) 0)
+                   'one-time
+                   'periodic))
+  (make-autotest id
+                 (send new-autotest-name-text-field get-value)
+                 (autotest-id-to-file-path id)
+                 activate?
+                 files
+                 type
+                 (string->number (send year-picker get-value))
+                 (string->number (send month-picker get-value))
+                 (string->number (send date-text-field get-value))
+                 (send check-all get-value)
+                 (send check-monday get-value)
+                 (send check-tuesday get-value)
+                 (send check-wednesday get-value)
+                 (send check-thursday get-value)
+                 (send check-friday get-value)
+                 (send check-saturday get-value)
+                 (send check-sunday get-value)
+                 (if (not selected-email-db)
+                     #f
+                     (send check-notify get-value))
+                 selected-email-db))
+                 
+;; UI setting for normal browsing
 (define (config-ui-normal-mode)
   (cond ((and (equal? 0 (send active-tests-list-box get-number))
               (equal? 0 (send inactive-tests-list-box get-number)))
@@ -450,6 +495,7 @@
          (send selected-test-name-label set-label "No autotest selected"))
         (else
          (enable-all-children left-v-panel)
+         (send selected-test-name-box change-children name-field-normal-mode)
          (send file-list-box enable #t)
          (enable-all-children right-buttons-pane)
          (send one-time-periodic-radio-box enable #t)
@@ -457,9 +503,10 @@
          (send activate-buttons-pane change-children buttons-normal-mode)
          (enable-all-children activate-buttons-pane))))
 
-;; UI setting for when no autotest schedule exists
+;; UI setting when no autotest schedule exists
 (define (config-ui-empty-mode)
   (disable-all-children left-v-panel)
+  (send selected-test-name-box change-children name-field-normal-mode)
   (send file-list-box enable #f)
   (disable-all-children right-buttons-pane)
   (send one-time-periodic-radio-box enable #f)
@@ -473,9 +520,10 @@
   (disable-all-children activate-buttons-pane)  
   (send selected-test-name-label set-label "No autotest scheduled"))
 
-;; UI setting for creating a new autotest schedule
+;; UI setting when creating a new autotest schedule
 (define (config-ui-create-mode)
   (disable-all-children left-v-panel)
+  (send selected-test-name-box change-children name-field-create-mode)
   (send file-list-box enable #t)
   (enable-all-children right-buttons-pane)
   (send one-time-periodic-radio-box enable #t)
@@ -485,6 +533,12 @@
   (enable-all-children time-of-day-pane)
   (enable-all-children email-h-pane)
   (send activate-buttons-pane change-children buttons-create-mode))
+
+;; helpers for change-children method for selected-test-name-box
+(define (name-field-create-mode arg-not-used)
+  (list new-autotest-name-text-field))
+(define (name-field-normal-mode arg-not-used)
+  (list selected-test-name-label))
 
 ;; helpers for change-children method for activate-buttons-pane
 (define (buttons-create-mode arg-not-used)
@@ -539,6 +593,7 @@
 
 ;; entry point
 ;; Opens the autotest scheduler UI
+(define selected-email-db #f)
 (define (open-manage-schedule)
   (send year-picker append (number->string (current-year)))
   (send year-picker append (number->string (+ 1 (current-year))))

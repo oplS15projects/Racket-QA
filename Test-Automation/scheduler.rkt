@@ -9,10 +9,11 @@
 
 (define test-queue '())
 
+
 ;; Queues a test suite.
 (define (add-to-queue queue-entry)
   (set! test-queue (append test-queue (list queue-entry)))
-  (set! test-queue (sort test-queue a-smaller?)))
+  (set! test-queue (sort test-queue (lambda (a b) (< a b)))))
 
 (define (make-test tid name path)
   (define (change-name new-name)
