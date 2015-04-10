@@ -1,111 +1,106 @@
 #lang racket
 (require racket/date
+         "../QA-Email/email-db.rkt"
          "../Common/user-settings-directory.rkt")
 
-(provide (except-out (all-defined-out)
-                     SYSTEM-TYPE))
+(provide (all-defined-out))
 
-(define SYSTEM-TYPE (system-type))
-(define AUTOTEST-DIRNAME (cond ((eq? SYSTEM-TYPE 'windows) "Autotest DB")
-                                  ((eq? SYSTEM-TYPE 'unix) "Autotest_DB")
-                                  ((eq? SYSTEM-TYPE 'macosx) "Autotest DB")
-                                  (else #f)))
+(define AUTOTEST-DIRNAME (cond ((eq? (system-type) 'windows) "Autotest DB")
+                               ((eq? (system-type) 'unix) "Autotest_DB")
+                               ((eq? (system-type) 'macosx) "Autotest DB")
+                               (else "autotest_db")))
 (define AUTOTEST-DIRPATH (full-path-in-settings-directory AUTOTEST-DIRNAME))
 (define AUTOTEST-LIST-FILE-NAME "atlist")
 (define AUTOTEST-LIST-FILE (cleanse-path-string 
                             (string-append AUTOTEST-DIRPATH "/" AUTOTEST-LIST-FILE-NAME)))
 (define AUTOTEST-FILE-PREFIX "at")
 
-
 (define autotest-list '())
 (define existing-autotest-ids '())
 
-
-
 ;; Creates necessary files and initializes global variables
 ;; to get the autotest database functioning.
-;; Populates autotest-list global variables.
 (define (init-autotest)
   (when (not (directory-exists? AUTOTEST-DIRPATH))    
     (create-autotest-directory))
   (cond ((not (file-exists? AUTOTEST-LIST-FILE))
-         (create-autotest-list-files)
-         (write-autotest-lists))
+         (create-autotest-list-file)
+         (write-autotest-list))
         (else 
-         (read-autotest-lists)
+         (read-autotest-list)
          (set! existing-autotest-ids
-               (ids-in-autotest-lists)))))
+               (ids-in-autotest-list)))))
 
 ;; Creates the autotest directory in the application settings directory.
 ;; This directory will store all the autotest information.
-;; This procedure needs to be called only once on the first run.
+;; This procedure needs to be called only once on the first run per user/machine.
 (define (create-autotest-directory)
   (when (not (directory-exists? AUTOTEST-DIRPATH))
     (write "Creating autotest database directory")
     (make-directory* AUTOTEST-DIRPATH)))
 
 ;; Creates the list file that will contain the list of
-;; all autotests and their id's and paths to their files.
-(define (create-autotest-list-files)
-  (when (not (file-exists? AUTOTEST-LIST-FILE-NAME))
-    (call-with-output-file AUTOTEST-LIST-FILE-NAME 
+;; all autotests and their ids and paths to their files.
+(define (create-autotest-list-file)
+  (when (not (file-exists? AUTOTEST-LIST-FILE))
+    (call-with-output-file AUTOTEST-LIST-FILE 
       (lambda (out) (void))
       #:mode 'binary 
       #:exists 'truncate/replace)))
 
-;; Writes an email-db structure to a file.
+;; Writes an autotest object to a file.
 (define (write-autotest at)
   (define path (autotest-at-file-path at))
   (call-with-output-file path
-    (lambda (out) (write (email-db-to-list db) out))
+    (lambda (out) (write (autotest-to-list at) out))
     #:mode 'binary 
     #:exists 'truncate/replace))
 
-;; Reads an email-db structure from a file and returns it.
-(define (read-email-db db-id)
-  (define db-file-path (db-id-to-file-path db-id))
-  (call-with-input-file db-file-path
+;; Reads an autotest object from a file and returns it.
+(define (read-autotest at-id)
+  (define at-file-path (autotest-id-to-file-path at-id))
+  (call-with-input-file at-file-path
     (lambda (in)
-      (define (email-db? something)
+      (define (autotest? something)
         #t)
       (define contents (read in))
-      (if (email-db? contents)
-          (list-to-email-db contents)
+      (if (autotest? contents)
+          (list-to-autotest contents)
           '()))
     #:mode 'binary))
 
 
-;; Checks if there is an existing email-db with the given id.
-(define (email-db-id-exists? id)
-  (accumulate existing-email-db-ids
+;; Checks if an id exists already.
+(define (autotest-id-exists? id)
+  (accumulate existing-autotest-ids
               #f 
               (lambda (a b) (or a b))
               (lambda (entry)
                 (equal? id entry))))
-   
-;; Generates a number value unique from all existing email-db ids.
-(define generate-email-db-id
+
+;; Generates a new autotest id.
+(define generate-autotest-id
   (let ((try-this-id 0))
     (lambda ()
-      (cond ((not (email-db-id-exists? try-this-id)) 
-             (set! existing-email-db-ids (append existing-email-db-ids (list try-this-id)))
+      (cond ((not (autotest-id-exists? try-this-id)) 
+             (set! existing-autotest-ids (append existing-autotest-ids (list try-this-id)))
              try-this-id)
             (else (set! try-this-id (+ 1 try-this-id))
-                  (generate-email-db-id))))))
+                  (generate-autotest-id))))))
 
-;; Converts to a number to email-db file name.
-;; ex) 12 -> "edb00012"
-(define (db-id-to-file-name id-number)
-  (string-append EMAIL-DB-FILE-PREFIX 
+;; Converts an id to autotest file name.
+;; ex) 12 -> "at00012"
+(define (autotest-id-to-file-name id-number)
+  (string-append AUTOTEST-FILE-PREFIX
                  (~a id-number #:min-width 5 #:align 'right #:pad-string "0")))
 
-(define (db-id-to-file-path id-number)
-  (cleanse-path-string (string-append EMAIL-DB-DIRPATH "/" (db-id-to-file-name id-number))))
+(define (autotest-id-to-file-path id-number)
+  (cleanse-path-string (string-append AUTOTEST-DIRPATH "/" (autotest-id-to-file-name id-number))))
 
-;; Converts an email-db file name to its id.
-;; ex) "edb00012" -> 12
-(define (file-name-to-db-id db-file-name)
-  (string->number (cadr (regexp-match "edb([0-9]*)" db-file-name))))
+;; Converts an autotest file name to its id.
+;; ex) "at00012" -> 12
+(define (file-name-to-autotest-id autotest-file-name)
+  (string->number (cadr (regexp-match (string-append AUTOTEST-FILE-PREFIX "([0-9]*)") autotest-file-name))))
 
 
 
@@ -131,9 +126,9 @@
 ;; This is usually called when an autotest schedule is deleted.
 (define (remove-from-autotest-list at-id)
   (set! autotest-list
-    (remove* (list at-id)
-             autotest-list
-             (lambda (id entry) (equal? at-id (autotest-id entry)))))
+        (remove* (list at-id)
+                 autotest-list
+                 (lambda (id entry) (equal? at-id (autotest-id entry)))))
   (write-autotest-list)
   (when (file-exists? (autotest-id-to-file-path at-id))
     (delete-file (autotest-id-to-file-path at-id))))
@@ -141,8 +136,8 @@
 ;; Returns an existing autotest with the specified id.
 (define (find-autotest-by-id id)
   (define result (filter (lambda (at)
-            (equal? id (autotest-id at)))
-          autotest-list))
+                           (equal? id (autotest-id at)))
+                         autotest-list))
   (if (null? result)
       #f
       (car result)))
@@ -235,7 +230,7 @@ an-hour-later
                        notify?
                        email-db)
   
-  ;; next-due-in-seconds
+  ;; next-due-in-seconds?
   
   (define (dispatch m a)
     (cond ((eq? m 'id) id)
@@ -303,7 +298,7 @@ an-hour-later
 (define (autotest-notify? at) (at 'notify? #f))
 (define (autotest-email-db at) (at 'email-db #f))
 
-;; mutators for autotest obj
+;; mutators for autotest object
 (define (autotest-set-name at new-name) (at 'set-name new-name))
 (define (autotest-set-at-file-path at file-path) (at 'set-at-file-path file-path))
 (define (autotest-set-active? at active?) (at 'set-active? active?))
@@ -325,7 +320,37 @@ an-hour-later
 (define (autotest-set-notify? at notify?) (at 'set-notify? notify?))
 (define (autotest-set-email-db at email-db) (at 'set-email-db email-db))
 
+;; Converts an autotest object to a list.
+(define (autotest-to-list at)
+  (list (autotest-id at) (autotest-name at) (autotest-at-file-path at) (autotest-active? at)
+        (autotest-files at) (autotest-type at) (autotest-year at) (autotest-month at)
+        (autotest-date at) (autotest-daily? at) (autotest-mon? at) (autotest-tue? at)
+        (autotest-wed? at) (autotest-thu? at) (autotest-fri? at) (autotest-sat? at)
+        (autotest-sun? at) (autotest-notify? at) (email-db-to-list (autotest-email-db at))))
 
+;; Converts a list to an autotest object.
+(define (list-to-autotest at-list)
+  (cond ((< (length at-list) 19) "list-to-autotest: list too short")
+        (else
+         (make-autotest (list-ref at-list 0)
+                        (list-ref at-list 1)
+                        (list-ref at-list 2)
+                        (list-ref at-list 3)
+                        (list-ref at-list 4)
+                        (list-ref at-list 5)
+                        (list-ref at-list 6)
+                        (list-ref at-list 7)
+                        (list-ref at-list 8)
+                        (list-ref at-list 9)
+                        (list-ref at-list 10)
+                        (list-ref at-list 11)
+                        (list-ref at-list 12)
+                        (list-ref at-list 13)
+                        (list-ref at-list 14)
+                        (list-ref at-list 15)
+                        (list-ref at-list 16)
+                        (list-ref at-list 17)
+                        (list-to-email-db (list-ref at-list 18))))))
 
 
 
@@ -345,7 +370,7 @@ an-hour-later
 
 
 
-          
+
 ;; Automatic-test-runner module operation
 
 ;; Has no GUI

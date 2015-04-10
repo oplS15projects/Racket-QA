@@ -245,7 +245,7 @@
 ;; Converts an email-db file name to its id.
 ;; ex) "edb00012" -> 12
 (define (file-name-to-db-id db-file-name)
-  (string->number (cadr (regexp-match "edb([0-9]*)" db-file-name))))
+  (string->number (cadr (regexp-match (string-append EMAIL-DB-FILE-PREFIX "([0-9]*)") db-file-name))))
 
 
 
