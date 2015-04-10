@@ -5,8 +5,14 @@
 
 (provide (all-defined-out))
 
-(define active-test-list '())
-(define inactive-test-list '())
+(define SECONDS-IN-A-DAY 86400)
+
+(define test-queue '())
+
+;; Queues a test suite.
+(define (add-to-queue queue-entry)
+  (set! test-queue (append test-queue (list queue-entry)))
+  (set! test-queue (sort test-queue a-smaller?)))
 
 (define (make-test tid name path)
   (define (change-name new-name)
@@ -51,13 +57,12 @@
 (define (current-month) (date-month (seconds->date (current-seconds))))
 (define (current-year) (date-year (seconds->date (current-seconds))))
 
-(define (leap-year?)
-  (define year (current-year))
+(define (leap-year? year)
   (or (and (equal? 0 (modulo year 4))
            (not (equal? 0 (modulo year 100))))
       (equal? 0 (modulo year 400))))
 
-(define (days-in-month month)
+(define (days-in-month month year)
   (cond ((or (equal? month 1)
              (equal? month 3)
              (equal? month 5)
@@ -72,7 +77,7 @@
              (equal? month 11))
          30)
         ((equal? month 2)
-         (if (leap-year?)
+         (if (leap-year? year)
              29
              28))
         (else #f)))

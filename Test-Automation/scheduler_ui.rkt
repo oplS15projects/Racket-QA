@@ -1,8 +1,8 @@
 #lang racket/gui
 
 (require racket/flonum
-         "scheduler.rkt"
-         "../Common/user-settings-directory.rkt"
+         "autotest.rkt"
+         "scheduler.rkt"         
          "../QA-Email/email-db.rkt"
          "../QA-Email/email-db-ui.rkt")
 
@@ -178,6 +178,17 @@
        (spacing 5)
        (alignment '(left top))))
 
+;; Some UIs need to be disabled depending on whether one-time or periodic
+;; radio button is selected.
+(define (toggle-onetime-periodic)
+  (define selection-index (send one-time-periodic-radio-box get-selection)) 
+  (if (eq? selection-index 0)  ; one-time
+      (begin (disable-all-children days-of-week-pane)
+             (enable-all-children date-picker-pane))
+      (begin (send date-text-field set-field-background (make-object color% "White"))
+             (disable-all-children date-picker-pane)
+             (enable-all-children days-of-week-pane))))
+
 (define one-time-periodic-radio-box
   (new radio-box%
        (parent schedule-panel)
@@ -188,14 +199,6 @@
        (callback
         (lambda (r e)
           (toggle-onetime-periodic)))))
-
-(define (toggle-onetime-periodic)
-  (define selection-index (send one-time-periodic-radio-box get-selection)) 
-  (if (eq? selection-index 0)  ; one-time
-      (begin (disable-all-children days-of-week-pane)
-             (enable-all-children date-picker-pane))
-      (begin (disable-all-children date-picker-pane)  ; periodic
-             (enable-all-children days-of-week-pane))))
 
 (define date-picker-pane
   (new horizontal-pane%
@@ -217,19 +220,17 @@
        (label "Month ")
        (stretchable-width #f)
        (choices (list "1" "2" "3" "4" "5" "6" "7" "8" "9" "10" "11" "12"))
-       (init-value "")))
+       (init-value "")))                     
 
-(define date-picker
-  (new combo-field%
+(define date-text-field
+  (new text-field%
        (parent date-picker-pane)
        (label "Date ")
        (stretchable-width #f)
-       (choices (list "1" "2" "3" "4" "5" "6" "7" "8" "9" "10"
-                      "11" "12" "13" "14" "15" "16" "17" "18" "19" "20"
-                      "21" "22" "23" "24" "25" "26" "27" "28"))
-       (init-value "")))
+       (callback
+        (lambda (t e)
+          (set-date-text-field-background)))))
 
-       
 (define days-of-week-pane
   (new horizontal-pane%
        (parent schedule-panel)
@@ -321,7 +322,10 @@
        (label "Minute")
        (init-value "00")
        (min-width 85)
-       (stretchable-width #f)))
+       (stretchable-width #f)
+       (callback
+        (lambda (t e)
+          (set-minute-text-field-background)))))
 (define ampm-combo-field
   (new combo-field%
        (parent time-of-day-pane)
@@ -407,7 +411,8 @@
        (callback 
         (lambda (b e) (void)))))
 
-;; Button - Creates a new test and activates it at the same time
+;; 'Create and Activate' Button 
+;; - Creates a new test and activates it at the same time
 (define create-active-button
   (new button%
        (parent activate-buttons-pane)
@@ -415,6 +420,8 @@
        (callback
         (lambda (b e) (void)))))
 
+;; 'Create as Inactive' Button
+;; - Creates a new autotest schedule but does not activate it
 (define create-inactive-button
   (new button%
        (parent activate-buttons-pane)
@@ -422,7 +429,7 @@
        (callback
         (lambda (b e) (void)))))
 
-;; Cancel Button - Cancels creating a new test
+;; Cancel Button - Cancels creating a new autotest schedule
 (define cancel-button
   (new button%
        (parent activate-buttons-pane)
@@ -430,26 +437,8 @@
        (callback
         (lambda (b e) (config-ui-normal-mode)))))
 
-
-;; file info - one file
-(define (make-file-info id name path)
-  (define (change-id new-id)
-    (set! id new-id))
-  (define (change-path new-file-path)
-    (set! path new-file-path)
-    (set! name (get-filename-from-filepath new-file-path)))
-  (define (dispatch m a)
-    (cond ((eq? m 'id) id)
-          ((eq? m 'name) name)
-          ((eq? m 'path) path)
-          ((eq? m 'set-id) (change-id a))
-          ((eq? m 'set-path) (change-path a))))
-  dispatch)
-  
-
-(define (make-files-list file-infos)
-  1)
-
+(define (create-new-autotest)
+  (void))
 
 (define (config-ui-normal-mode)
   (cond ((and (equal? 0 (send active-tests-list-box get-number))
@@ -458,7 +447,7 @@
         ((and (equal? #f (send active-tests-list-box get-selection))
               (equal? #f (send inactive-tests-list-box get-selection)))
          (config-ui-empty-mode)
-         (send selected-test-name-label set-label "No autotest is selected"))
+         (send selected-test-name-label set-label "No autotest selected"))
         (else
          (enable-all-children left-v-panel)
          (send file-list-box enable #t)
@@ -466,41 +455,43 @@
          (send one-time-periodic-radio-box enable #t)
          (toggle-onetime-periodic)
          (send activate-buttons-pane change-children buttons-normal-mode)
-         (enable-all-children activate-buttons-pane)  
-         (send selected-test-name-label set-label "There is no autotest scheduled"))))
+         (enable-all-children activate-buttons-pane))))
 
+;; UI setting for when no autotest schedule exists
 (define (config-ui-empty-mode)
   (disable-all-children left-v-panel)
   (send file-list-box enable #f)
   (disable-all-children right-buttons-pane)
   (send one-time-periodic-radio-box enable #f)
-  (disable-all-children date-picker-pane)
+  (send date-text-field set-field-background (make-object color% "White"))
+  (disable-all-children date-picker-pane)  
   (disable-all-children days-of-week-pane)
-  (disable-all-children time-of-day-pane)
+  (send minute-text-field set-field-background (make-object color% "White"))
+  (disable-all-children time-of-day-pane)  
   (disable-all-children email-h-pane)
   (send activate-buttons-pane change-children buttons-empty-mode)
   (disable-all-children activate-buttons-pane)  
-  (send selected-test-name-label set-label "There is no autotest scheduled"))
+  (send selected-test-name-label set-label "No autotest scheduled"))
 
+;; UI setting for creating a new autotest schedule
 (define (config-ui-create-mode)
   (disable-all-children left-v-panel)
   (send file-list-box enable #t)
   (enable-all-children right-buttons-pane)
   (send one-time-periodic-radio-box enable #t)
+  (set-date-text-field-background)
+  (set-minute-text-field-background)
   (toggle-onetime-periodic)
   (enable-all-children time-of-day-pane)
   (enable-all-children email-h-pane)
   (send activate-buttons-pane change-children buttons-create-mode))
 
+;; helpers for change-children method for activate-buttons-pane
 (define (buttons-create-mode arg-not-used)
   (list create-active-button create-inactive-button cancel-button))
 (define (buttons-normal-mode arg-not-used)
   (list activate-button deactivate-button delete-test-button))
 (define buttons-empty-mode buttons-normal-mode)
-(define (send-enable control)
-  (send control enable #t))
-(define (send-disable control)
-  (send control enable #f))
 
 (define (disable-all-children area-container)
   (map send-disable (send area-container get-children)))
@@ -513,23 +504,47 @@
     (send area-container delete-child child))
   (map send-delete-child (send area-container get-children)))
 
+;; helpers for enable-all-children and disable-all-children
+(define (send-enable control) (send control enable #t))
+(define (send-disable control) (send control enable #f))
+
+;; Shows red background when invalid date is entered.
+(define (set-date-text-field-background)
+  (define month (string->number (send month-picker get-value)))
+  (define year (string->number (send year-picker get-value)))
+  (if (valid-date-string? (send date-text-field get-value) month year)
+      (send date-text-field set-field-background (make-object color% "White"))
+      (send date-text-field set-field-background (make-object color% "Red"))))
+
+;; Shows red background when invalid minute (!0-60) is typed.
+(define (set-minute-text-field-background)
+  (if (valid-minute-string? (send minute-text-field get-value))
+      (send minute-text-field set-field-background (make-object color% "White"))
+      (send minute-text-field set-field-background (make-object color% "Red"))))
+
+(define (valid-date-string? a-string month year)
+  (define max-days (days-in-month month year))
+  (not (or (not (string? a-string))
+           (> (string-length a-string) 2)
+           (equal? #f (string->number a-string))
+           (< (string->number a-string) 1)
+           (> (string->number a-string) max-days))))
+
+(define (valid-minute-string? a-string)
+  (not (or (not (string? a-string))
+           (> (string-length a-string) 2)
+           (equal? #f (string->number a-string))
+           (< (string->number a-string) 0)
+           (> (string->number a-string) 60))))
+
+;; entry point
+;; Opens the autotest scheduler UI
 (define (open-manage-schedule)
   (send year-picker append (number->string (current-year)))
   (send year-picker append (number->string (+ 1 (current-year))))
   (send year-picker set-value (number->string (current-year)))
-  (cond ((equal? (days-in-month (current-month)) 29)
-         (send date-picker append "29"))
-        ((equal? (days-in-month (current-month)) 30)
-         (send date-picker append "29")
-         (send date-picker append "30"))
-        ((equal? (days-in-month (current-month)) 31)
-         (send date-picker append "29")
-         (send date-picker append "30")
-         (send date-picker append "31"))
-        (else
-         (void)))
   (send month-picker set-value (number->string (current-month)))
-  (send date-picker set-value (number->string (current-date)))
+  (send date-text-field set-value (number->string (current-date)))
   (send one-time-periodic-radio-box set-selection 0)
   (disable-all-children days-of-week-pane)
   (enable-all-children date-picker-pane)

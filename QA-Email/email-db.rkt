@@ -193,13 +193,6 @@
                  (cadr a-list)  ; db-name
                  (map list-to-email-db-entry (caddr a-list))))  ; db-entries
 
-
-;; Replaces an entry in email-db
-;; TODO: Finish this.
-(define (replace-email-db-entry db-id old-entry new-entry)
-  (void))
-  
-
 ;; Writes an email-db structure to a file.
 (define (write-email-db db)
   (define path (email-db-file-path db))

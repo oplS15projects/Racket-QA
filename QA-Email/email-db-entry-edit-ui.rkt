@@ -1,6 +1,7 @@
 #lang racket/gui
 
-(require "email-db.rkt")
+(require "email.rkt"
+         "email-db.rkt")
 
 (provide open-email-db-entry-edit)
 
@@ -58,18 +59,15 @@
                    (define name (send name-text-field get-value))
                    (define address (send address-text-field get-value))
                    (define name-good? (validate-name name))
-                   (define address-good? (validate-address address))
                    (cond ((not (equal? name-good? #t))
                           (send warning-message set-label name-good?))
-                         ((not (equal? address-good? #t))
-                          (send warning-message set-label address-good?))
+                         ((not (valid-address? address))
+                          (send warning-message set-label "Email address is invalid"))
                          (else
-                         ;; return new entry
                           (set! name (string-trim name))
-                          (set! address (string-trim address))
                           (set! new-entry (make-email-db-entry name address))
                           (send email-db-entry-edit-dialog show #f)))))))
-                         
+
 (when (system-position-ok-before-cancel?)
   (send button-pane change-children reverse))
 
@@ -85,12 +83,6 @@
          "Name is too short")
         ((not (equal? (regexp-match #rx"[^a-zA-Z. ]" name) #f))
          "Name contains an invalid character.")
-        (else #t)))
-
-;; Returns #t if email-address is valid or an error message if it is not.
-(define (validate-address address)
-  (cond ((equal? (regexp-match #rx"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9.-]+$" address) #f)
-         "Email has incorrect format")
         (else #t)))
 
 (define (open-email-db-entry-edit button event (old-entry #f))

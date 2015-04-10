@@ -1,5 +1,5 @@
 ;; **********************************************************************
-;; * Last Updated: 8:10 AM 04/01/2015
+;; * Last Updated: 2:30 PM 04/08/2015
 ;; *
 ;; * The set of APIs defined in this file defines the location of the user-
 ;; * specific settings directory for the Racket QA application and provides

@@ -6,10 +6,15 @@
          racket/file  
          racket/gui/base             
          racket/system
+         2htdp/batch-io
          "email-db.rkt"
          "../Common/user-settings-directory.rkt")
 
-(provide connect-and-send)
+(provide send-text
+         send-html-file
+         send-text-file
+         valid-address?
+         open-smtp-config)
 
 ;; SMTP log-in credentials will only be hard-coded for demo purpose.
 ;; For production copy(?), they will be obtained from the user at first 
@@ -19,7 +24,8 @@
 (define SMTP-USER "test.racketscience")
 (define SMTP-PASSWORD "12#$zxCV")
 
-(define (construct-header from to subject)
+;; Needs error checking
+(define (construct-header from to subject mime-type)
   (define CRLF "\r\n")
   (define datetime (parameterize ((date-display-format 'rfc2822))
                  (date->string (seconds->date (current-seconds)) #t)))
@@ -28,31 +34,131 @@
                  "Subject: " subject CRLF
                  "Date: " datetime CRLF
                  "Mime-Version: 1.0" CRLF
-                 "Content-Type: text/html; charset=UTF-8" CRLF
+                 (cond ((eq? mime-type 'html)
+                        "Content-Type: text/html; charset=UTF-8")
+                       ((eq? mime-type 'text)
+                        "Content-Type: text; charset=UTF-8")
+                       (else
+                        (raise-argument-error 'construct-header "'html or 'text" mime-type)))
+                 CRLF
                  CRLF))
 
-(define (connect-and-send list-of-addresses)
-  ;; Some of these should come in as parameters.
-  (define from "Unit Test")
-  (define to "QA Team")
-  (define subject "Regression Statistics")
-  (define to-addresses list-of-addresses)
-  (define body '("<p>Test 1 - ok<br />Test 2 - ok<br />Test 3 - ok<br />Test 4 - fail</p>"))
-  
-  (define header
-    (construct-header from to subject))
-  
-  (smtp-send-message SMTP-SERVER-ADDR
-                     from
-                     to-addresses
-                     header
-                     body
-                     #:port-no SMTP-PORT
-                     #:auth-user SMTP-USER
-                     #:auth-passwd SMTP-PASSWORD
-                     #:tcp-connect ssl-connect))
+
+;; Returns #t if the argument is a valid email-address string
+;; or an error message if it is not.
+(define (valid-address? something)
+  (cond ((not (string? something)) #f)
+        ((equal? (regexp-match #rx"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9.-]+$" something) #f) #f)
+        (else #t)))        
+
+;; Sends an email with given parameters.
+;;
+;; Parameters:
+;;
+;; to -> string?
+;;  ex) "Aristotle Project Dev Team A"
+;;
+;; subject -> string?
+;;  ex) "Autotest Result 4/9/2015"
+;;
+;; body -> string?
+;;  ex) "Test 1 - Pass </ br>Test 2 - Fail</ br>"
+;;
+;; list-of-recipients -> listof string?
+;;  ex) (list "roy.racketscience@gmail.com" "racket.riot@gmail.com")
+;;
+(define (connect-and-send to subject body list-of-recipients text-type)
+  (define (valid-recipients? some-list)
+    (foldr (lambda (a b) (and a b)) #t (map valid-address? list-of-recipients)))
+  (cond ((not (string? to)) 
+         (raise-argument-error 'connect-and-send "string?" to))
+        ((not (string? subject)) 
+         (raise-argument-error 'connect-and-send "string?" subject))
+        ((not (string? body)) 
+         (raise-argument-error 'connect-and-send "string?" body))
+        ((not (pair? list-of-recipients)) 
+         (raise-argument-error 'connect-and-send "list" list-of-recipients))
+        ((not (valid-recipients? list-of-recipients)) 
+         (raise-argument-error 'connect-and-send "email-address-string?" "invalid-email-address"))
+        (else
+         (define from "Racket QA")
+         (smtp-send-message SMTP-SERVER-ADDR
+                            from
+                            list-of-recipients
+                            (construct-header from to subject text-type)
+                            (list body)
+                            #:port-no SMTP-PORT
+                            #:auth-user SMTP-USER
+                            #:auth-passwd SMTP-PASSWORD
+                            #:tcp-connect ssl-connect))))
 
 
+;; Sends a string in email.
+;;
+;; to -> string?
+;;  ex) "Aristotle Project Dev Team A"
+;;
+;; subject -> string?
+;;  ex) "Lower your mortgage rate"
+;;
+;; a-string-to-send -> string?
+;;  ex) "Become an insider! Here are 5 quick tips for lowering your mortgage rate ..."
+;;
+;; list-of-recipients -> listof string?
+;;  ex) (list "roy.racketscience@gmail.com" "racket.riot@gmail.com")
+;;
+(define (send-text to subject a-string-to-send list-of-recipients)
+  (connect-and-send to subject a-string-to-send list-of-recipients 'text))
+
+
+;; Convenience proc for sending an html-formatted text file as the email-body.
+;;
+;; to -> string?
+;;  ex) "Aristotle Project Dev Team A"
+;;
+;; subject -> string?
+;;  ex) "Autotest Result 4/9/2015"
+;;
+;; html-file-path -> string?
+;;  ex) "D:\\Data\\online\\Development\\Git Clone\\FPX\\a-html-file.html"
+;;
+;; list-of-recipients -> listof string?
+;;  ex) (list "roy.racketscience@gmail.com" "racket.riot@gmail.com")
+;;
+(define (send-html-file to subject html-file-path list-of-recipients)
+  (define body (read-file html-file-path))
+  (connect-and-send to subject body list-of-recipients 'html))
+
+
+;; Convenience proc for sending the entire contents of a text file.
+;;
+;; to -> string?
+;;  ex) "Aristotle Project Dev Team A"
+;;
+;; subject -> string?
+;;  ex) "Autotest Result 4/9/2015"
+;;
+;; text-file-path -> string?
+;;  ex) "D:\\Data\\online\\Development\\Git Clone\\FPX\\a-text-file.txt"
+;;
+;; list-of-recipients -> listof string?
+;;  ex) (list "roy.racketscience@gmail.com" "racket.riot@gmail.com")
+;;
+(define (send-text-file to subject text-file-path list-of-recipients)
+  (define body (read-file text-file-path))
+  (connect-and-send to subject body list-of-recipients 'text))
+
+
+
+
+;; Converting plain text to html-tagged text
+;(define file-lines (file->lines results-filepath))
+;(define body-with-br (map (lambda (x) (string-append x "<br />")) file-lines))
+;(define body-into-one-string (accumulate-for-email string-append "" body-with-br))
+;(define body-with-p (string-append "<p>" body-into-one-string "</p>"))
+;(define body (list body-with-p))
+
+  
 ;; **********************************************************************
 ;; * This section involves managing the SMTP log-in information.
 ;; * The SMPT log-in information need to be supplied by the user once 
@@ -60,24 +166,17 @@
 ;; * has not yet been provided, (email-available?) will return #f.
 ;; * Once the user enters the information, it will be stored in the
 ;; * machine's hard drive and used in the subsequent executions. 
-;; * On Windows, the information is saved in %APPDATA%\"Racket Unit Test"
-;; * folder. On Linux, it is saved in $HOME/.Racket_Unit_Test directory.
-;; * The specific data saved are the SMTP server address, log-in username, 
-;; * and the password.
 ;; **********************************************************************
 (define smtp-profile-filename "smtp_profile.dat")
 
 (define smtp-profile-filepath (full-path-in-settings-directory smtp-profile-filename))
 
 (define (email-function-available?) 
-  #f)
-
-(define (send-email recipients body)
-  #f)
+  #t)
 
 
 ;; **********************************************************************
-;; * This section contains GUI that interacts with the user to
+;; * This section contains UI that interacts with the user to
 ;; * acquire and store the SMTP log-in information.
 ;; **********************************************************************
 (define main-dialog
@@ -142,6 +241,7 @@
 (when (system-position-ok-before-cancel?)
   (send button-pane change-children reverse))     
 
+;; TODO: filepath shouldn't be an argument
 (define (save-profile server username password filepath)
   ;; TODO: check if directory exists
   (define out (open-output-file filepath #:mode 'binary #:exists 'truncate/replace))
@@ -158,7 +258,6 @@
          (define password (cadddr (regexp-match #rx"^(.*)\t(.*)\t(.*)$" raw-filedata)))
          (send server-text-field set-value server)
          (send username-text-field set-value username)
-         ; (send password-text-field set-value password)
          (send main-dialog show #t))
         (else
          (send main-dialog show #t))))

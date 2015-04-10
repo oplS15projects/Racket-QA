@@ -130,7 +130,7 @@
         (when (not (eq? selected-db-index #f))
           (write selected-db-index)
           (define db (send email-db-list-box get-data selected-db-index))
-          (connect-and-send (email-db-addresses db))))))
+          (send-text "Team Racket Science" "Test Email" "This is a test email sent from Manage-Email-DB UI" (email-db-addresses db))))))
 
 
 ;; pane below the selected email-db title box
