@@ -591,8 +591,6 @@
            (< (string->number a-string) 0)
            (> (string->number a-string) 60))))
 
-;; entry point
-;; Opens the autotest scheduler UI
 (define selected-email-db #f)
 (define (open-manage-schedule)
   (send year-picker append (number->string (current-year)))
@@ -608,5 +606,3 @@
          (config-ui-empty-mode))
         (else (config-ui-normal-mode)))
   (send manage-scheduler-frame show #t))
-
-(open-manage-schedule)

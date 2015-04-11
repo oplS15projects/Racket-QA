@@ -318,8 +318,6 @@
 (define (validate-and-correct-email-db-list-file)
   (void))
 
-
-
 ;; good-o accumulate helper
 (define (accumulate sequence init op term)
   (cond ((null? sequence) init)
