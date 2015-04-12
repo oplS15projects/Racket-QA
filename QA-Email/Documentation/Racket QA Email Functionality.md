@@ -77,6 +77,14 @@ Example 1:
                 recipient-addresses)
 ```
 
+Below example script shows how to retrieve certain attributes of a mailing list selected from the UI - name, id, and database file path.
+
+The application can associate these information with the user's unit test suite and store them together.
+
+When it needs to retrieve the email addresses for a specific mailing list in the future for the purpose of mailing a test result, it can call the `db-id-to-addresses` procedure which will return the email addresses associated with a specific mailing list id.
+
+Note that procedures to retrieve email addresses by other attributes of a mailing list will not be implemented because ID is the only attribute that is guaranteed to be unique per each mailing list. For example, the user can create multiple mailing list with the same name, so it is not a good practice
+to identify mailing lists by their names. File path is not the best choice either because file names or paths may change as internal implementation of the email database changes. The ID is the only thing guaranteed not to change for a specific mailint list, and therefore, should be used to identify each mailing list.
 ```
 Example 2:
 
@@ -97,24 +105,6 @@ mailing-list-name
 > "Team Racket Science"
 mailing-list-addresses
 > '("yong_cho@student.uml.edu" "yongjec@gmail.com" "racket.riot@gmail.com")
-
-;; The application can associate these information with the user's unit test
-;; suite and store them together.
-
-;; When it needs to retrieve the email addresses for a specific mailing list
-;; in the future for the purpose of sending a test result, it can call the
-;; `db-id-to-addresses` procedure below which will return the email addresses
-;; associated with a specific mailing list id.
-
-;; Note that procedures to retrieve email addresses by other attributes of a
-;; mailing list will not be implemented because ID is the only attribute that is
-;; guaranteed to be unique per each mailing list. For example, the user can
-;; create multiple mailing list with the same name, so it is not a good practice
-;; to identify mailing lists by their name. File paths are not the best choice
-;; either because files names may change as internal implementation of the email
-;; database changes. The ID is the only thing guaranteed not to change for a
-;; specific mailint list, and therefore, should be used to identify each mailing
-;; list.
 
 (define recipients (db-id-to-addresses mailing-list-id))
 
