@@ -54,9 +54,9 @@ User interface for managing mailing list is implemented in `email-db-ui.rkt` fil
 
 ![Mailing List UI](https://raw.githubusercontent.com/YongCho/FPX/master/QA-Email/Documentation/images/db-ui.png)
 
-The list box on the left side of the dialog contains the names of the existing mailing lists. When the user first launches this dialog, it will be empty. The user can create a new mailing list by using the drop down control below the list box and selecting 'Add mailing list...'. The list box on the right side shows all the entries that are in the currently selected mailing list. A mailing list entry consists of a name and an email address. The user can use the 3 buttons (Edit, Add, Delete) on the right to configure each entry.
+The list box on the left side of the dialog contains the names of the existing mailing lists. When the user first launches this dialog, it will be empty. The user can create a new mailing list by using the drop down control below the list box and selecting 'Add mailing list...'. The list box on the right side shows all the entries that are in the currently selected mailing list. A mailing list entry consists of a name and an email address. The user can use the 3 buttons (Edit, Add, Delete) on the right side to configure each entry.
 
-`open-manage-mailing-list-dialog-box` has optional argument `command` which allows returning the list of email addresses in the selected mailing list. This may be used to ask the user to select a mailing list for the purpose of sending a mass email. Here is the signature and usage example of `open-manage-mailing-list-dialog-box` procedure.
+`open-manage-mailing-list-dialog-box` has optional argument `command` which allows returning the list of email addresses in the selected mailing list when the dialog is closed. This may be used to ask the user to select a mailing list for the purpose of sending a mass email. Here is the signature and usage example of `open-manage-mailing-list-dialog-box` procedure.
 
 ```
 Signature:
