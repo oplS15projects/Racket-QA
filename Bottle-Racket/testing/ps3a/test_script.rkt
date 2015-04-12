@@ -169,7 +169,7 @@
 ;; **********************************************************************
 
 ;; This line will run the tests
-(require "ps1_area.rkt")
+(require "ps3a_area.rkt")
 
 ;; Read in the lines from the test results file
 (define file-lines (file->lines "test_results.txt"))

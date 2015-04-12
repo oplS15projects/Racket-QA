@@ -3,8 +3,9 @@
 ;; Load in definitions from test-area-runner for procedures that create strings to write out to a file
 (require "bn-to-racket.rkt") ; Windows/Unix filepath utilities
 (require "../Common/user-settings-directory.rkt") ; For writing out test results
-(require "../QA-Email/email.rkt")
-(require "../QA-Email/email-db-ui.rkt") ; For mailing list dialog
+(require "../QA-Email/email.rkt"
+         "../QA-Email/email-db.rkt"
+         "../QA-Email/email-db-ui.rkt") ; For mailing test results
 
 ; We want to write a new file with the definitions of test-area-runner
 ; and has a require statement with the ps1_area.rkt file. This way that
@@ -14,6 +15,17 @@
 ; location of the test area file, then get the directory from there
 ; to create a new script that can run that area and generate the test
 ; results (and later on, to send an email).
+
+;; **********************************************************************
+;; * Information storing mailing information for the test script,
+;; * initialized to nothing but changed when script is running.
+;; **********************************************************************
+
+(define original-script-dir (path->string (current-directory)))
+(define mailing-list '())
+(define mailing-list-id 0)
+(define mailing-list-name "")
+(define mailing-list-addresses '())
 
 ;; **********************************************************************
 ;; * Procedures for writing a new file
@@ -97,7 +109,7 @@
                          (label "To:")
                          (min-width 600)))
 
-(send to-description set-value "QA Team")
+(send to-description set-value "< Specified by Mailing List >")
 
 ; The "Subject" Text Field and Butsubjectn.
 (define subject-panel (new horizontal-panel%
@@ -137,7 +149,8 @@
                   (define run-script-path (get-full-path output-dir "test" "_script.rkt"))
                   
                   ;; Run script lines to add with test-area-runner
-                  (define test-area-runner-lines (file->lines "test-area-runner.rkt"))
+                  (define source-test-area-runner (get-full-path original-script-dir "test-area-runner" ".rkt"))
+                  (define test-area-runner-lines (file->lines source-test-area-runner))
                   (define run-script-lines (create-run-script-lines output-dir area-file result-file-path))
                   (define all-run-script-lines (append test-area-runner-lines run-script-lines))
                   
@@ -153,9 +166,36 @@
       ] ; end callback
 ) ;; end button
 
-; Create the button which opens an email managing dialog, and then runs the script when that's closed
+; Create the button which opens an email managing dialog
 ; Add click button to the horizontal panel
-(new button% [parent dialog] [label "Configure Emails and Run"]
+(new button% [parent dialog] [label "Configure Emails"]
+      [callback (lambda (button event)
+                  
+                  ;; Local variables to save what mailing list the test results will go to
+                  (define local-mail-list (open-manage-mailing-list-dialog 'return-db))
+                  (define local-mail-list-id (email-db-id local-mail-list))
+                  (define local-mail-list-name (email-db-name local-mail-list))
+                  (define local-mail-list-addrs (email-db-addresses local-mail-list))
+                  
+                  ;; Now change the global variables that will be used in the test script run
+                  (set! mailing-list local-mail-list)
+                  (set! mailing-list-id local-mail-list-id)
+                  (set! mailing-list-name local-mail-list-name)
+                  (set! mailing-list-addresses local-mail-list-addrs)
+                  
+                  ;; Also update the text field on the test-capture GUI
+                  (send to-description set-value mailing-list-name)
+                  
+                  ;; Indicate to the user that the script was successfully created
+                  (send user-prompt set-label (string-append "Results configured to send to '"
+                                                             mailing-list-name "'."))
+                  
+                                    ) ; end lambda
+      ] ; end callback
+) ;; end button
+
+; Create the button which runs the script
+(new button% [parent dialog] [label "Run Script"]
       [callback (lambda (button event)
                   
                   ;; Determine where the test results will go.
@@ -173,10 +213,10 @@
                   (define area-file (string-append (get-assn-from-filepath (send suite-filepath get-value)) ".rkt"))
                   (define run-script-path (get-full-path output-dir "test" "_script.rkt"))
                   
-                  ;; Variables specifying list of recipients, subject, and to fields
-                  (define to-field (send to-description get-value))
+                  ;; Local variables specifying list of recipients, subject, and to fields
+                  (define to-field mailing-list-name)
                   (define subject-field (send subject-description get-value))
-                  (define recipients (open-manage-mailing-list-dialog 'return-addresses))
+                  (define recipients mailing-list-addresses)
                   
                   ;; Run the generated test running script. Change working directory to that script's directory.
                   (current-directory output-dir)
@@ -190,6 +230,7 @@
                                     ) ; end lambda
       ] ; end callback
 ) ;; end button
+
                   
 
 ; Show the dialog
