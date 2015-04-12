@@ -174,5 +174,5 @@
 ;; Read in the lines from the test results file
 (define file-lines (file->lines "test_results.txt"))
 (define failed-case-lines-to-write (create-failed-cases-lines file-lines num-failed num-tests suite-name))
-(remake-file "C:\\Users\\Dossar\\AppData\\Roaming\\Racket QA\\QA Test Result\\test-result-email.txt")
-(display-lines-to-file failed-case-lines-to-write "C:\\Users\\Dossar\\AppData\\Roaming\\Racket QA\\QA Test Result\\test-result-email.txt" #:separator"\n")
+(remake-file "C:\\Users\\Dossar\\AppData\\Roaming\\Racket QA\\Results\\test-result-email.txt")
+(display-lines-to-file failed-case-lines-to-write "C:\\Users\\Dossar\\AppData\\Roaming\\Racket QA\\Results\\test-result-email.txt" #:separator"\n")
