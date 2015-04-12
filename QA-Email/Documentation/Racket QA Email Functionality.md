@@ -15,7 +15,8 @@ Among the above files, `email.rkt` and `email-db-ui.rkt` are intended to be 'req
 
 There are 3 interface procedures that are provided in `email.rkt` that can be used to send an email. In order to use them, an application component needs to include `email.rkt` file in their source code. All procedures in `email.rkt` file other than these 3 procedures are subject to change ay any time, so it is recommended that applications use only these 3 procedures. Here are the signatures and usage examples of the procedures.
 
-1. send-text `(send-text to subject a-string-to-send list-of-recipients)`
+* send-text
+`(send-text to subject a-string-to-send list-of-recipients)`
 : sends a plain text string as the body of an email.
 ```
 (send-text "Project Dev Team A"
@@ -24,7 +25,8 @@ There are 3 interface procedures that are provided in `email.rkt` that can be us
            (list "test.racketscience@gmail.com" "test2.racketscience@gmail.com"))
 ```
 
-2. send-text-file `(send-text-file to subject a-text-file-to-send list-of-recipients)`
+* send-text-file
+`(send-text-file to subject a-text-file-to-send list-of-recipients)`
 : sends the entire contents of a text file as the body of an email.
 ```
 (send-text-file "Project Dev Team B"
@@ -33,7 +35,8 @@ There are 3 interface procedures that are provided in `email.rkt` that can be us
 			    (list "test.racketscience@gmail.com" "test2.racketscience@gmail.com"))
 ```
 
-3. send-html-file `(send-html-file to subject a-html-file-to-send list-of-recipients)`
+* send-html-file
+`(send-html-file to subject a-html-file-to-send list-of-recipients)`
 : sends the entire contents of an html file as the body of an email.
 ```
 (send-html-file "Project Dev Team C"
