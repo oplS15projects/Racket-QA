@@ -1,7 +1,7 @@
 # FPX
 
 ##### Documentation
-* [**Racket QA Email Component**][QA-Email-Documentation]
+* [**Racket QA Email Component**][QA-Email Documentation]
 
 
 
