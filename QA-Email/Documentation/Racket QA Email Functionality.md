@@ -16,9 +16,10 @@ Among the above files, `email.rkt` and `email-db-ui.rkt` are intended to be 'req
 There are 3 interface procedures that are provided in `email.rkt` that can be used to send an email. In order to use them, an application component needs to include `email.rkt` file in their source code. All procedures in `email.rkt` file other than these 3 procedures are subject to change ay any time, so it is recommended that applications use only these 3 procedures. Here are the signatures and usage examples of the procedures.
 
 * send-text
-`(send-text to subject a-string-to-send list-of-recipients)`
 : sends a plain text string as the body of an email.
 ```
+(send-text to subject a-string-to-send list-of-recipients)
+
 (send-text "Project Dev Team A"
            "Regression Statistics 4/11"
            "Everything passed guys!"
@@ -26,9 +27,10 @@ There are 3 interface procedures that are provided in `email.rkt` that can be us
 ```
 
 * send-text-file
-`(send-text-file to subject a-text-file-to-send list-of-recipients)`
 : sends the entire contents of a text file as the body of an email.
 ```
+(send-text-file to subject a-text-file-to-send list-of-recipients)
+
 (send-text-file "Project Dev Team B"
 			    "Autotest Result 4/12"
 			    "D:\\Data\\Racket QA\\Autotest\\test-result.txt"
@@ -36,11 +38,40 @@ There are 3 interface procedures that are provided in `email.rkt` that can be us
 ```
 
 * send-html-file
-`(send-html-file to subject a-html-file-to-send list-of-recipients)`
 : sends the entire contents of an html file as the body of an email.
 ```
+(send-html-file to subject a-html-file-to-send list-of-recipients)
+
 (send-html-file "Project Dev Team C"
 				"Autotest Result 5/2"
 				"D:\\Data\\Racket QA\\Autotest\\test-result.html"
 				(list "test.racketscience@gmail.com" "test2.racketscience@gmail.com"))
+```
 
+### Mailing List UI
+
+User interface for managing mailing list is implemented in `email-db-ui.rkt` file. In order to launch the UI, an application needs to 'require' `email-db-ui.rkt` file and call `open-manage-mailing-list-dialog` procedure. Calling this procedure will launch a dialog box as shown below.
+
+![Mailing List UI](https://raw.githubusercontent.com/YongCho/FPX/master/QA-Email/Documentation/images/db-ui.png)
+
+The list box on the left side of the dialog contains the names of the existing mailing lists. When the user first launches this dialog, it will be empty. The user can create a new mailing list by using the drop down control below the list box and selecting 'Add mailing list...'. The list box on the right side shows all the entries that are in the currently selected mailing list. A mailing list entry consists of a name and an email address. The user can use the 3 buttons (Edit, Add, Delete) on the right to configure each entry.
+
+`open-manage-mailing-list-dialog-box` has optional argument `command` which allows returning the list of email addresses in the selected mailing list. This may be used to ask the user to select a mailing list for the purpose of sending a mass email. Here is the signature and usage example of `open-manage-mailing-list-dialog-box` procedure.
+
+```
+Signature:
+
+(open-manage-mailing-list-dialog (command #f))
+
+
+Example:
+
+(require "../Common/email.rkt"
+         "../Common/email-db-ui.rkt")
+
+(define recipient-addresses (open-manage-mailing-list-dialog 'return-addresses))
+(send-text-file "Project Dev Team A"
+				"Test Result 4/9"
+				"D:\\Data\\Racket QA\\Autotest\\test-result.txt"
+				recipient-addresses)
+```
