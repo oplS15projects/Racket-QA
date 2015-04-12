@@ -3,11 +3,8 @@
 (require net/smtp
          openssl/mzssl
          racket/date
-         racket/file  
          racket/gui/base             
-         racket/system
          2htdp/batch-io
-         "email-db.rkt"
          "../Common/user-settings-directory.rkt")
 
 (provide send-text

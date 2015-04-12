@@ -252,15 +252,6 @@
        (spacing 10)
        (alignment '(center top))))
 
-;; Cancel button
-(define cancel-button
-  (new button% 
-       (parent bottom-buttons-pane) 
-       (label "Cancel")
-       (min-width 75)
-       (callback (λ (button event)
-                   (send manage-mailing-list-dialog show #f)))))
-
 ;; Ok button - returns a list of the email addresses for the selected email-db.
 (define ok-button
   (new button% 
@@ -274,6 +265,15 @@
                      (define db (send email-db-list-box get-data db-selection))
                      (set! return-db db)
                      (set! return-list (map email-db-entry-email-address (email-db-entries db))))
+                   (send manage-mailing-list-dialog show #f)))))
+
+;; Cancel button
+(define cancel-button
+  (new button% 
+       (parent bottom-buttons-pane) 
+       (label "Cancel")
+       (min-width 75)
+       (callback (λ (button event)
                    (send manage-mailing-list-dialog show #f)))))
 
 ;; Opens the main dialog.

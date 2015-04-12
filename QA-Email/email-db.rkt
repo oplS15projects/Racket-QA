@@ -1,27 +1,28 @@
 #lang racket
 
 (require racket/file
-         racket/gui/base
          "../Common/user-settings-directory.rkt")
 
 
 ;; Exporting all definitions only so they can be tested by a test code
 ;; during development.
-(provide (except-out (all-defined-out)
-                     SYSTEM-TYPE))
+(provide (all-defined-out))
 
-(define SYSTEM-TYPE (system-type))
-(define EMAIL-DB-DIRNAME (cond ((eq? SYSTEM-TYPE 'windows) "Email DB")
-                               ((eq? SYSTEM-TYPE 'unix) "Email_DB")
-                               ((eq? SYSTEM-TYPE 'macosx) "Email DB")
+(define EMAIL-DB-DIRNAME (cond ((eq? (system-type) 'windows) "Email DB")
+                               ((eq? (system-type) 'unix) "Email_DB")
+                               ((eq? (system-type) 'macosx) "Email DB")
                                (else #f)))
 (define EMAIL-DB-DIRPATH (full-path-in-settings-directory EMAIL-DB-DIRNAME))
 (define EMAIL-DB-LIST-FILE-NAME "edblist")
 (define EMAIL-DB-LIST-FILE (cleanse-path-string 
-                                 (string-append EMAIL-DB-DIRPATH "/" EMAIL-DB-LIST-FILE-NAME)))
+                            (string-append EMAIL-DB-DIRPATH "/" EMAIL-DB-LIST-FILE-NAME)))
+(define EMAIL-DB-ID-FILE-NAME "minid")
+(define EMAIL-DB-ID-FILE (cleanse-path-string
+                          (string-append EMAIL-DB-DIRPATH "/" EMAIL-DB-ID-FILE-NAME)))
 (define EMAIL-DB-FILE-PREFIX "edb")
 (define email-db-list '())
 (define existing-email-db-ids '())
+(define min-id 0)
 
 
 ;; Creates necessary files and initializes global variables
@@ -30,14 +31,19 @@
 (define (init-email-db)
   (when (not (directory-exists? EMAIL-DB-DIRPATH))    
     (create-email-db-directory))
-  (cond ((not (file-exists? EMAIL-DB-LIST-FILE))
-         (create-email-db-list-file)
-         (write-email-db-list))
-        (else 
-         (validate-and-correct-email-db-list-file)
-         (read-email-db-list)
-         (set! existing-email-db-ids
-               (ids-in-email-db-list)))))
+  (when (not (file-exists? EMAIL-DB-LIST-FILE))
+    (create-email-db-list-file)
+    (write-email-db-list))
+  (when (not (file-exists? EMAIL-DB-ID-FILE))
+    (create-email-db-id-file)
+    (write-email-db-id-file))
+  (validate-and-correct-email-db-list-file)
+  (read-email-db-list)
+  (read-email-db-id-file)
+  (set! existing-email-db-ids (ids-in-email-db-list))
+  (when (<= min-id (argmax identity existing-email-db-ids))
+    (set! min-id (+ 1 (argmax identity existing-email-db-ids)))
+    (write-email-db-id-file)))
 
 ;; Creates the email db directory in the application settings directory.
 ;; This directory will store all the email dbs.
@@ -56,7 +62,26 @@
       #:mode 'binary 
       #:exists 'truncate/replace)))
 
+(define (create-email-db-id-file)
+  (when (not (file-exists? EMAIL-DB-ID-FILE))
+    (call-with-output-file EMAIL-DB-ID-FILE
+      (lambda (out) (void))
+      #:mode 'binary
+      #:exists 'truncate/replace)))
 
+(define (write-email-db-id-file)
+  (call-with-output-file EMAIL-DB-ID-FILE
+    (lambda (out)
+      (write min-id out))
+    #:mode 'binary
+    #:exists 'truncate/replace))
+
+(define (read-email-db-id-file)
+  (call-with-input-file EMAIL-DB-ID-FILE
+    (lambda (in)
+      (set! min-id (read in))
+      min-id)
+    #:mode 'binary))
 
 
 ;; *******************************************************
@@ -214,6 +239,9 @@
           '()))
     #:mode 'binary))
 
+(define (db-id-to-addresses db-id)
+  (email-db-addresses (read-email-db db-id)))
+
 
 ;; Checks if there is an existing email-db with the given id.
 (define (email-db-id-exists? id)
@@ -225,13 +253,16 @@
    
 ;; Generates a number value unique from all existing email-db ids.
 (define generate-email-db-id
-  (let ((try-this-id 0))
-    (lambda ()
-      (cond ((not (email-db-id-exists? try-this-id)) 
-             (set! existing-email-db-ids (append existing-email-db-ids (list try-this-id)))
-             try-this-id)
-            (else (set! try-this-id (+ 1 try-this-id))
-                  (generate-email-db-id))))))
+  (lambda ()
+    (define try-this-id min-id)
+    (cond ((or (null? existing-email-db-ids)
+               (< (argmax identity existing-email-db-ids) try-this-id))
+           (set! existing-email-db-ids (append existing-email-db-ids (list try-this-id)))
+           (set! min-id (+ 1 try-this-id))
+           (write-email-db-id-file)
+           try-this-id)
+          (else (set! min-id (+ 1 min-id))
+                (generate-email-db-id)))))
 
 ;; Converts to a number to email-db file name.
 ;; ex) 12 -> "edb00012"

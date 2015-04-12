@@ -32,9 +32,9 @@ There are 3 interface procedures that are provided in `email.rkt` that can be us
 (send-text-file to subject a-text-file-to-send list-of-recipients)
 
 (send-text-file "Project Dev Team B"
-			    "Autotest Result 4/12"
-			    "D:\\Data\\Racket QA\\Autotest\\test-result.txt"
-			    (list "test.racketscience@gmail.com" "test2.racketscience@gmail.com"))
+                "Autotest Result 4/12"
+                "D:\\Data\\Racket QA\\Autotest\\test-result.txt"
+                (list "test.racketscience@gmail.com" "test2.racketscience@gmail.com"))
 ```
 
 * send-html-file
@@ -43,9 +43,9 @@ There are 3 interface procedures that are provided in `email.rkt` that can be us
 (send-html-file to subject a-html-file-to-send list-of-recipients)
 
 (send-html-file "Project Dev Team C"
-				"Autotest Result 5/2"
-				"D:\\Data\\Racket QA\\Autotest\\test-result.html"
-				(list "test.racketscience@gmail.com" "test2.racketscience@gmail.com"))
+                "Autotest Result 5/2"
+                "D:\\Data\\Racket QA\\Autotest\\test-result.html"
+                (list "test.racketscience@gmail.com" "test2.racketscience@gmail.com"))
 ```
 
 ### Mailing List UI
@@ -62,16 +62,62 @@ The list box on the left side of the dialog contains the names of the existing m
 Signature:
 
 (open-manage-mailing-list-dialog (command #f))
+```
 
-
-Example:
+```
+Example 1:
 
 (require "../QA-Email/email.rkt"
          "../QA-Email/email-db-ui.rkt")
 
 (define recipient-addresses (open-manage-mailing-list-dialog 'return-addresses))
 (send-text-file "Project Dev Team A"
-				"Test Result 4/9"
-				"D:\\Data\\Racket QA\\Autotest\\test-result.txt"
-				recipient-addresses)
+                "Test Result 4/9"
+                "D:\\Data\\Racket QA\\Autotest\\test-result.txt"
+                recipient-addresses)
+```
+
+```
+Example 2:
+
+#lang racket
+
+(require "../QA-Email/email.rkt"
+         "../QA-Email/email-db.rkt"
+         "../QA-Email/email-db-ui.rkt")
+
+(define mailing-list (open-manage-mailing-list-dialog 'return-db))
+(define mailing-list-id (email-db-id mailing-list))
+(define mailing-list-name (email-db-name mailing-list))
+(define mailing-list-addresses (email-db-addresses mailing-list))
+
+mailing-list-id
+> 1
+mailing-list-name
+> "Team Racket Science"
+mailing-list-addresses
+> '("yong_cho@student.uml.edu" "yongjec@gmail.com" "racket.riot@gmail.com")
+
+;; The application can associate these information with the user's unit test
+;; suite and store them together.
+
+;; When it needs to retrieve the email addresses for a specific mailing list
+;; in the future for the purpose of sending a test result, it can call the
+;; `db-id-to-addresses` procedure below which will return the email addresses
+;; associated with a specific mailing list id.
+;; Note that procedures to retrieve email addresses by other attributes of a
+;; mailing list will not be implemented because ID is the only attribute that is
+;; guaranteed to be unique per each mailing list. For example, the user can
+;; create multiple mailing list with the same name, so it is not a good practice
+;; to distinguish mailing lists by their name.
+(define recipients (db-id-to-addresses 1))
+
+recipients
+> '("yong_cho@student.uml.edu" "yongjec@gmail.com" "racket.riot@gmail.com")
+
+(send-text-file "Project Dev Team A"
+                "Test Result 4/9"
+                "D:\\Data\\Racket QA\\Autotest\\test-result.txt"
+                recipients)
+
 ```
