@@ -4,6 +4,7 @@
 (require "bn-to-racket.rkt") ; Windows/Unix filepath utilities
 (require "../Common/user-settings-directory.rkt") ; For writing out test results
 (require "../QA-Email/email.rkt")
+(require "../QA-Email/email-db-ui.rkt") ; For mailing list dialog
 
 ; We want to write a new file with the definitions of test-area-runner
 ; and has a require statement with the ps1_area.rkt file. This way that
@@ -49,13 +50,13 @@
                          (label "Test-Capture")))
 
 ; Display simple message prompting user to enter input
-(define description (string-append "Awaiting area file to generate a run script for."))
+(define description (string-append "Select a Test Area File and specify email fields."))
 
 (define user-prompt (new message% [parent dialog]
                          [auto-resize #t]
                           [label description]))
 
-; Assignment Source File Text Field and Button.
+; Test Suite Text Field and Button.
 (define suite-panel (new horizontal-panel%
                      (parent dialog)
                      (alignment '(left top))))
@@ -67,8 +68,6 @@
 
 (send suite-filepath set-value "Click Browse and locate the test area file.")
 
-
-
 (new button%
      (parent suite-panel)
      (label "Browse...")
@@ -76,24 +75,17 @@
                  (define filepath (get-file))
                  (send suite-filepath set-value (path->string filepath)))))
 
-; Email File Text Field and Button.
-(define email-file-panel (new horizontal-panel%
+; Button for Results Directory.
+(define test-out-dir-panel (new horizontal-panel%
                      (parent dialog)
                      (alignment '(left top))))
 
-(define email-file-filepath (new text-field%
-                         (parent email-file-panel)
-                         (label "Email File:")
+(define test-out-dir-description (new text-field%
+                         (parent test-out-dir-panel)
+                         (label "Test Result Output Directory:")
                          (min-width 600)))
 
-(send email-file-filepath set-value "Click Browse and locate file with QA Team emails.")
-
-(new button%
-     (parent email-file-panel)
-     (label "Browse...")
-     (callback (lambda (button event)
-                 (define filepath (get-file))
-                 (send email-file-filepath set-value (path->string filepath)))))
+(send test-out-dir-description set-value "QA Test Result")
 
 ; The "To" Text Field and Button.
 (define to-panel (new horizontal-panel%
@@ -105,7 +97,7 @@
                          (label "To:")
                          (min-width 600)))
 
-(send to-description set-value "e.g. QA Team")
+(send to-description set-value "QA Team")
 
 ; The "Subject" Text Field and Butsubjectn.
 (define subject-panel (new horizontal-panel%
@@ -117,35 +109,32 @@
                          (label "Subject:")
                          (min-width 600)))
 
-(send subject-description set-value "e.g. Regression Statistics")
+(send subject-description set-value "Regression Statistics")
 
 ;; **********************************************************************
 ;; * FILE CREATION AND RUNNING BUTTON
 ;; **********************************************************************
 
-; Create the convert button
+
+; Create the button for generating the test running script, but DOESN'T run it.
 ; Add click button to the horizontal panel
-(new button% [parent dialog] [label "Make Run Script"]
+(new button% [parent dialog] [label "Make Test Running Script"]
       [callback (lambda (button event)
                   
                   ;; Determine where the test results will go.
+                  (define test-output-dir (send test-out-dir-description get-value))
                   (when (not (settings-directory-exists?))
                     (create-settings-directory))
-                  (when (not (directory-exists-in-settings-directory? "QA Test Result"))
-                    (make-directory-in-settings-directory "QA Test Result"))
+                  (when (not (directory-exists-in-settings-directory? test-output-dir))
+                    (make-directory-in-settings-directory test-output-dir))
                   (define result-file-path
                     (double-backslash (full-path-in-settings-directory
-                     (cleanse-path-string "QA Test Result/test-result-email.txt"))))
+                     (cleanse-path-string (string-append test-output-dir "/test-result-email.txt")))))
 
                   ;; Variables specifying test data                 
                   (define output-dir (get-dir-from-filepath (send suite-filepath get-value)))
                   (define area-file (string-append (get-assn-from-filepath (send suite-filepath get-value)) ".rkt"))
                   (define run-script-path (get-full-path output-dir "test" "_script.rkt"))
-                  
-                  ;; Variables specifying list of recipients, subject, and to fields
-                  (define to-field (send to-description get-value))
-                  (define subject-field (send subject-description get-value))
-                  (define recipients (file->lines (send email-file-filepath get-value)))
                   
                   ;; Run script lines to add with test-area-runner
                   (define test-area-runner-lines (file->lines "test-area-runner.rkt"))
@@ -160,12 +149,43 @@
                   (send user-prompt set-label (string-append "Created 'test_script.rkt' for "
                                                              "test area file '" area-file "'."))
                   
+                                    ) ; end lambda
+      ] ; end callback
+) ;; end button
+
+; Create the button which opens an email managing dialog, and then runs the script when that's closed
+; Add click button to the horizontal panel
+(new button% [parent dialog] [label "Configure Emails and Run"]
+      [callback (lambda (button event)
+                  
+                  ;; Determine where the test results will go.
+                  (define test-output-dir (send test-out-dir-description get-value))
+                  (when (not (settings-directory-exists?))
+                    (create-settings-directory))
+                  (when (not (directory-exists-in-settings-directory? test-output-dir))
+                    (make-directory-in-settings-directory test-output-dir))
+                  (define result-file-path
+                    (double-backslash (full-path-in-settings-directory
+                     (cleanse-path-string (string-append test-output-dir "/test-result-email.txt")))))
+
+                  ;; Variables specifying test data                 
+                  (define output-dir (get-dir-from-filepath (send suite-filepath get-value)))
+                  (define area-file (string-append (get-assn-from-filepath (send suite-filepath get-value)) ".rkt"))
+                  (define run-script-path (get-full-path output-dir "test" "_script.rkt"))
+                  
+                  ;; Variables specifying list of recipients, subject, and to fields
+                  (define to-field (send to-description get-value))
+                  (define subject-field (send subject-description get-value))
+                  (define recipients (open-manage-mailing-list-dialog 'return-addresses))
+                  
                   ;; Run the generated test running script. Change working directory to that script's directory.
                   (current-directory output-dir)
                   (system (string-append "racket " run-script-path))
-                  ;(send-text-file "QA Team" "Regression Statistics" result-file-path (list "roy.racketscience@gmail.com"))
                   (send-text-file to-field subject-field result-file-path recipients)
                   
+                  ;; Indicate to the user that the script was successfully created
+                  (send user-prompt set-label (string-append "Successfully ran 'test_script.rkt' for "
+                                                             "test area file '" area-file "'."))
                   
                                     ) ; end lambda
       ] ; end callback

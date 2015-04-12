@@ -1,2 +1,0 @@
-racket.riot@gmail.com
-roy.racketscience@gmail.com
