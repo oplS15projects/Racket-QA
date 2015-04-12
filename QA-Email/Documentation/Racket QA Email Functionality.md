@@ -105,12 +105,18 @@ mailing-list-addresses
 ;; in the future for the purpose of sending a test result, it can call the
 ;; `db-id-to-addresses` procedure below which will return the email addresses
 ;; associated with a specific mailing list id.
+
 ;; Note that procedures to retrieve email addresses by other attributes of a
 ;; mailing list will not be implemented because ID is the only attribute that is
 ;; guaranteed to be unique per each mailing list. For example, the user can
 ;; create multiple mailing list with the same name, so it is not a good practice
-;; to distinguish mailing lists by their name.
-(define recipients (db-id-to-addresses 1))
+;; to identify mailing lists by their name. File paths are not the best choice
+;; either because files names may change as internal implementation of the email
+;; database changes. The ID is the only thing guaranteed not to change for a
+;; specific mailint list, and therefore, should be used to identify each mailing
+;; list.
+
+(define recipients (db-id-to-addresses mailing-list-id))
 
 recipients
 > '("yong_cho@student.uml.edu" "yongjec@gmail.com" "racket.riot@gmail.com")
