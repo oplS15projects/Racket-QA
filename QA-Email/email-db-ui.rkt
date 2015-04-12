@@ -110,7 +110,6 @@
   (new horizontal-pane%
        (parent right-v-panel)
        (min-height 30)
-       (stretchable-width #f)
        (stretchable-height #f)
        (alignment '(left center))))
 
@@ -118,11 +117,17 @@
   (new message%
        (parent selected-email-db-title-box)
        (label "")
+       (min-width 200)
        (auto-resize #t)))
+
+(define test-email-button-pane
+  (new horizontal-pane%
+       (parent selected-email-db-title-box)
+       (alignment '(right center))))
 
 ;; Button - send test email to selected email-db
 (new button%
-     (parent selected-email-db-title-box)
+     (parent test-email-button-pane)
      (label "Send Test Email")
      (callback
       (lambda (b e)
@@ -290,7 +295,7 @@
   (set! return-db #f)
   (send selected-email-db-title-label set-label
         (cond ((= 0 (send email-db-list-box get-number)) "There is no mailing list configured")
-                    ((null? (send email-db-list-box get-selections)) "Select an email-db")
+                    ((null? (send email-db-list-box get-selections)) "Select an email-db ")
                     (else "Please select a mailing list")))
   (send manage-mailing-list-dialog show #t)
   ;; Blocking until Cancel or Ok button is clicked.
