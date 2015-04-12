@@ -76,6 +76,49 @@
                  (define filepath (get-file))
                  (send suite-filepath set-value (path->string filepath)))))
 
+; Email File Text Field and Button.
+(define email-file-panel (new horizontal-panel%
+                     (parent dialog)
+                     (alignment '(left top))))
+
+(define email-file-filepath (new text-field%
+                         (parent email-file-panel)
+                         (label "Email File:")
+                         (min-width 600)))
+
+(send email-file-filepath set-value "Click Browse and locate file with QA Team emails.")
+
+(new button%
+     (parent email-file-panel)
+     (label "Browse...")
+     (callback (lambda (button event)
+                 (define filepath (get-file))
+                 (send email-file-filepath set-value (path->string filepath)))))
+
+; The "To" Text Field and Button.
+(define to-panel (new horizontal-panel%
+                     (parent dialog)
+                     (alignment '(left top))))
+
+(define to-description (new text-field%
+                         (parent to-panel)
+                         (label "To:")
+                         (min-width 600)))
+
+(send to-description set-value "e.g. QA Team")
+
+; The "Subject" Text Field and Butsubjectn.
+(define subject-panel (new horizontal-panel%
+                     (parent dialog)
+                     (alignment '(left top))))
+
+(define subject-description (new text-field%
+                         (parent subject-panel)
+                         (label "Subject:")
+                         (min-width 600)))
+
+(send subject-description set-value "e.g. Regression Statistics")
+
 ;; **********************************************************************
 ;; * FILE CREATION AND RUNNING BUTTON
 ;; **********************************************************************
@@ -99,6 +142,11 @@
                   (define area-file (string-append (get-assn-from-filepath (send suite-filepath get-value)) ".rkt"))
                   (define run-script-path (get-full-path output-dir "test" "_script.rkt"))
                   
+                  ;; Variables specifying list of recipients, subject, and to fields
+                  (define to-field (send to-description get-value))
+                  (define subject-field (send subject-description get-value))
+                  (define recipients (file->lines (send email-file-filepath get-value)))
+                  
                   ;; Run script lines to add with test-area-runner
                   (define test-area-runner-lines (file->lines "test-area-runner.rkt"))
                   (define run-script-lines (create-run-script-lines output-dir area-file result-file-path))
@@ -115,7 +163,8 @@
                   ;; Run the generated test running script. Change working directory to that script's directory.
                   (current-directory output-dir)
                   (system (string-append "racket " run-script-path))
-                  (send-text-file "QA Team" "Regression Statistics" result-file-path (list "roy.racketscience@gmail.com"))
+                  ;(send-text-file "QA Team" "Regression Statistics" result-file-path (list "roy.racketscience@gmail.com"))
+                  (send-text-file to-field subject-field result-file-path recipients)
                   
                   
                                     ) ; end lambda
