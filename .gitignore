@@ -3,3 +3,7 @@
 *.dep
 *.1
 *.2
+compiled/*
+QA-Email/compiled/*
+Test-Automation/compiled/*
+._*.rkt
