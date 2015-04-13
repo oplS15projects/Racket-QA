@@ -52,7 +52,7 @@ There are 3 interface procedures that are provided in `email.rkt` that can be us
 
 User interface for managing mailing list is implemented in `email-db-ui.rkt` file. In order to launch the UI, an application needs to 'require' `email-db-ui.rkt` file and call `open-manage-mailing-list-dialog` procedure. Calling this procedure will launch a dialog box shown below.
 
-![Mailing List UI](https://raw.githubusercontent.com/YongCho/FPX/master/QA-Email/Documentation/images/db-ui.png)
+![Mailing List UI](https://raw.githubusercontent.com/YongCho/FPX/master/QA-Email/images/db-ui.png)
 
 The list box on the left side of the dialog contains the names of the existing mailing lists. It will be empty when the user first launches this dialog. The user can create a new mailing list by using the drop down control below the list box and selecting 'Add mailing list...'. The list box on the right side shows all the entries that are in the currently selected mailing list. A mailing list entry consists of a name and an email address. The user can use the 3 buttons (Edit, Add, Delete) on the right side to configure each entry.
 
