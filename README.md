@@ -8,10 +8,10 @@
 
 
 ##### Documentation
-* [**Racket QA Email Component**][QA-Email Document]
-
+* [**Racket QA Email**][QA-Email Document]
+* [**Racket-Doc**][Racket-Doc Document]
 
 
 <!-- Links -->
 [QA-Email Document]: https://github.com/oplS15projects/Racket-QA/blob/master/QA-Email/readme.md
-
+[Racket-Doc Document]: https://github.com/oplS15projects/Racket-QA/blob/master/Racket-Doc/README.md
