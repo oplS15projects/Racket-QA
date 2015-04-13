@@ -7,3 +7,5 @@ compiled/*
 QA-Email/compiled/*
 Test-Automation/compiled/*
 ._*.rkt
+
+*.rkt~

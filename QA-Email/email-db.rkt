@@ -41,7 +41,8 @@
   (read-email-db-list)
   (read-email-db-id-file)
   (set! existing-email-db-ids (ids-in-email-db-list))
-  (when (<= min-id (argmax identity existing-email-db-ids))
+  (when (and (not (null? existing-email-db-ids)) 
+             (<= min-id (argmax identity existing-email-db-ids)))
     (set! min-id (+ 1 (argmax identity existing-email-db-ids)))
     (write-email-db-id-file)))
 
