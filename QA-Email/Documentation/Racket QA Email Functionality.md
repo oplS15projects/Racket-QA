@@ -56,6 +56,8 @@ User interface for managing mailing list is implemented in `email-db-ui.rkt` fil
 
 The list box on the left side of the dialog contains the names of the existing mailing lists. It will be empty when the user first launches this dialog. The user can create a new mailing list by using the drop down control below the list box and selecting 'Add mailing list...'. The list box on the right side shows all the entries that are in the currently selected mailing list. A mailing list entry consists of a name and an email address. The user can use the 3 buttons (Edit, Add, Delete) on the right side to configure each entry.
 
+This UI is designed to completely separate the user experience in managing mailing lists from the internal implementations of how mailing lists are actually stored in the user's storage. The user will never have to "load a mailing list file" or "save the current addresses to a file" in order to manage mailing lists. All are done automatically by the UI when the user creates or deletes a mailing list, or adds or removes an entry in a mailing list.
+
 `open-manage-mailing-list-dialog-box` has optional argument `command` which allows returning the list of email addresses in the selected mailing list when the dialog is closed. This may be used to ask the user to select a mailing list for the purpose of sending a mass email. Here is the signature and usage example of `open-manage-mailing-list-dialog-box` procedure.
 
 ```
@@ -77,14 +79,12 @@ Example 1:
                 recipient-addresses)
 ```
 
-Below example script shows how to retrieve certain attributes of a mailing list selected from the UI - name, id, and database file path.
-
-The application can associate these information with the user's unit test suite and store them together.
+Below example script shows how to retrieve certain attributes of a mailing list selected from the UI - name, id, and database file path. The application can associate these information with the user's unit test suite and store them together.
 
 When it needs to retrieve the email addresses for a specific mailing list in the future for the purpose of mailing a test result, it can call the `db-id-to-addresses` procedure which will return the email addresses associated with a specific mailing list id.
 
 Note that procedures to retrieve email addresses by other attributes of a mailing list will not be implemented because ID is the only attribute that is guaranteed to be unique per each mailing list. For example, the user can create multiple mailing list with the same name, so it is not a good practice
-to identify mailing lists by their names. File path is not the best choice either because file names or paths may change as internal implementation of the email database changes. The ID is the only thing guaranteed not to change for a specific mailint list, and therefore, should be used to identify each mailing list.
+to identify mailing lists by their names. File path is not the best choice either because file names or paths may change as internal implementation of the email database changes. The ID is the only thing guaranteed not to change for a specific mailing list, and therefore, should be used to identify each mailing list.
 ```
 Example 2:
 
