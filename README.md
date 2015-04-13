@@ -13,5 +13,5 @@
 
 
 <!-- Links -->
-[QA-Email Document]: https://github.com/YongCho/FPX/blob/master/QA-Email/readme.md
+[QA-Email Document]: https://github.com/oplS15projects/Racket-QA/blob/master/QA-Email/readme.md
 
