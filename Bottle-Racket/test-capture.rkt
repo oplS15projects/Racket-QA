@@ -170,25 +170,24 @@
 ; Add click button to the horizontal panel
 (new button% [parent dialog] [label "Configure Emails"]
       [callback (lambda (button event)
-                  
-                  ;; Local variables to save what mailing list the test results will go to
+                                   
                   (define local-mail-list (open-manage-mailing-list-dialog 'return-db))
-                  (define local-mail-list-id (email-db-id local-mail-list))
-                  (define local-mail-list-name (email-db-name local-mail-list))
-                  (define local-mail-list-addrs (email-db-addresses local-mail-list))
-                  
-                  ;; Now change the global variables that will be used in the test script run
-                  (set! mailing-list local-mail-list)
-                  (set! mailing-list-id local-mail-list-id)
-                  (set! mailing-list-name local-mail-list-name)
-                  (set! mailing-list-addresses local-mail-list-addrs)
-                  
-                  ;; Also update the text field on the test-capture GUI
-                  (send to-description set-value mailing-list-name)
-                  
-                  ;; Indicate to the user that the script was successfully created
-                  (send user-prompt set-label (string-append "Results configured to send to '"
-                                                             mailing-list-name "'."))
+                  (cond ((not (equal? #f local-mail-list))
+                         ;; Local variables to save what mailing list the test results will go to
+                         (define local-mail-list-id (email-db-id local-mail-list))
+                         (define local-mail-list-name (email-db-name local-mail-list))
+                         (define local-mail-list-addrs (email-db-addresses local-mail-list))
+                         ;; Now change the global variables that will be used in the test script run
+                         (set! mailing-list local-mail-list)
+                         (set! mailing-list-id local-mail-list-id)
+                         (set! mailing-list-name local-mail-list-name)
+                         (set! mailing-list-addresses local-mail-list-addrs)
+                         ;; Also update the text field on the test-capture GUI
+                         (send to-description set-value mailing-list-name)
+                         ;; Indicate to the user that the script was successfully created
+                         (send user-prompt set-label (string-append "Results configured to send to '"
+                                                                    mailing-list-name "'.")))
+                        (else "An email list was not selected."))
                   
                                     ) ; end lambda
       ] ; end callback
