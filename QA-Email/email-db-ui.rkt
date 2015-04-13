@@ -171,8 +171,8 @@
 
 ;; fills the list box on the right pane with names and email addresses
 (define (populate-email-address-list-box)
+  (send email-address-list-box clear)
   (when (not (null? (send email-db-list-box get-selections)))
-    (send email-address-list-box clear)
     (define selection (car (send email-db-list-box get-selections)))
     (define db (send email-db-list-box get-data selection))
     (when (not (equal? db #f))
@@ -279,6 +279,7 @@
 ;; Opens the main dialog.
 (define (open-manage-mailing-list-dialog (command #f))
   (populate-email-db-list-box)
+  (populate-email-address-list-box)
   (if (or (eq? command 'return-addresses)
           (eq? command 'return-db))
       (begin
