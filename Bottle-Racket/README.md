@@ -4,10 +4,17 @@ This portion of Racket-QA deals with two components:
 * `Bottle-Racket` is just a converter. It converts a Bottlenose Perl test file from the OPL course into Racket test cases. This is intended to be used on Problem Sets 1, 2, 3, and 5 which are provided in the testing directory. For our purposes this is all we need for test suites.
 * `Test-Capture` generates scripts to run test suites, configure an email list to send the results to, and run these generated scripts.
 
+I've split up this README into three parts:
+* Video Demonstration of using both components
+* Text and Picture Demonstration of using `Bottle-Racket`
+* Text and Picture Demonstration of using `Test-Capture`
+
+
 ### Video Demonstration
 
 The following YouTube video link demonstrates how to use `Bottle-Racket` to convert Bottlenose test files into Racket files, and then use `Test-Capture` to create scripts that run them and send results to an email list.
 [**Video Demonstration**][Bottle-Video]
+
 
 ### Bottle-Racket GUI
 
@@ -19,11 +26,12 @@ This is the window you will start with when you run the script.
 * The `Test Mode` section determines whether or not you want to make a test area file which runs the generated test cases in RackUnit's GUI or textual interface. For our purposes, the textual interface is what allows us to capture test results, so choose `run-tests` for this option.
 * When the `Convert` button is clicked, the bottom three text fields will be populated.
 
-[pic1]
+![bottle1.png](https://raw.githubusercontent.com/oplS15projects/Racket-QA/master/Bottle-Racket/documentation/bottle-racket/v2/bottle1.png)
 
 This is what the window will look like when you click the `Convert` button after specifying the source assignment file and the test file associated with it, along with `run-tests` as the mode. You now have a test area and test suite file for that assignment, so we're ready to move on to `Test-Capture`.
 
-[pic2]
+![bottle2.png](https://raw.githubusercontent.com/oplS15projects/Racket-QA/master/Bottle-Racket/documentation/bottle-racket/v2/bottle2.png)
+
 
 ### Test-Capture GUI
 
@@ -36,15 +44,31 @@ This is the window you will start with when you run the script.
 * The `To` field is populated when the email list is configured. Do not manually populate this field.
 * The `Subject` field is the subject of the email that will be sent when the test script is run.
 
-[cap1]
+![testcapture1.png](https://raw.githubusercontent.com/oplS15projects/Racket-QA/master/Bottle-Racket/documentation/test-capture/v2/testcapture1.png)
 
 First, we need to generate the script file for running the test area file. Click `Make Test Running Script` after you've specified the Test Area File.
 
-[cap2]
+![testcapture2.png](https://raw.githubusercontent.com/oplS15projects/Racket-QA/master/Bottle-Racket/documentation/test-capture/v2/testcapture2.png)
 
 Second, we need to configure the email list to send the test results out to. Click `Configure Emails` to get a new dialog window. Initially this window might be empty, so I'm dealing with that case here. Email lists are stored in a database on the local computer, so next time you won't have to configure this email list.
 
+![testcapture3.png](https://raw.githubusercontent.com/oplS15projects/Racket-QA/master/Bottle-Racket/documentation/test-capture/v2/testcapture3.png)
 
+On the bottom left in the drop down menu, select `Add Mailing List...` to enter in a new mailing list with a name. Then select this name and on the right there should be a list of names, initially empty. Click the `Add` button on the right to put entries into this mailing list. If you feel like you are done with the mailing list, select that mailing list and click `Ok` to return to the main `Test-Capture` window.
+
+![testcapture4.png](https://raw.githubusercontent.com/oplS15projects/Racket-QA/master/Bottle-Racket/documentation/test-capture/v2/testcapture4.png)
+
+Now you should see the `To` field changed.
+
+![testcapture5.png](https://raw.githubusercontent.com/oplS15projects/Racket-QA/master/Bottle-Racket/documentation/test-capture/v2/testcapture5.png)
+
+Now that we have the mailing list to send results to and we created the test running script, it's time to run it. Click the `Run Script` button at the bottom to run the tests. This may take a little while to run, so be patient. When the test script is done running, an email will be sent out to the mailing list that was specified.
+
+![testcapture6.png](https://raw.githubusercontent.com/oplS15projects/Racket-QA/master/Bottle-Racket/documentation/test-capture/v2/testcapture6.png)
+
+Here is the resulting email of one of the accounts specified in the mailing list.
+
+![testcapture7.png](https://raw.githubusercontent.com/oplS15projects/Racket-QA/master/Bottle-Racket/documentation/test-capture/v2/testcapture7.png)
 
 <!-- Links -->
 [Bottle-Video]: https://www.youtube.com/watch?v=PwUrjR4FEVA
