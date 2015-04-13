@@ -1,7 +1,7 @@
 # Final Project Assignment 2: Explore One More! (FP2) 
 DUE March 30, 2015 Monday (2015-03-30)
 
-### My Library: Racket Graphical Interface Toolkit
+### My Library: Racket Graphical Interface Toolkit (GUI)
 
 For the second exploration solo project I used the GUI Toolkit that comes with Racket. This is an expansion to my FP1 which looked through a bottlenose perl test file and converted the tests to Racket test cases in a new suite file, along with creating an area file for running that suite. The motivation behind using this library was to create a simple user-friendly window for a person to use if they wanted to run this converter and generate test suite and area files for their assignment implementations.
 
