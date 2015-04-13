@@ -12,8 +12,10 @@
 #lang racket
 
 (require racket/file)
+(require "NotificationGui.rkt")
 
 (provide toFile)
+
 
 (define input (open-input-file "./../tests/Test.rkt"))
 (define output (open-output-file "./../output/OutputDoc.rkt"
@@ -43,6 +45,7 @@
         ))
   (write-string "documentation blocks---------------------" output)
   (loopout (car (cdr (cdr (cdr (cdr listOfLists))))))
+  (close-output-port output)
 )
       
 

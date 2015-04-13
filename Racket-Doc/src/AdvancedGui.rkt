@@ -15,10 +15,12 @@
 
 (provide advFrame)
 (provide reqs?)
+(provide incls?)
 (provide provs?)
 (provide procs?)
 
 (define reqs? #t)
+(define incls? #t)
 (define provs? #t)
 (define procs? #t)
 
@@ -43,6 +45,11 @@
   (set! reqs? (flip-bool reqs?))
   (display reqs?))
 
+(define (inclCbCallback cb event)
+  (display "\n\"Include\" cb clicked\n")
+  (set! incls? (flip-bool reqs?))
+  (display incls?))
+
 (define (provCbCallback cb event)
   (display "\"Provide\"cb clicked\n")
   (set! provs? (flip-bool provs?))
@@ -61,6 +68,7 @@
 (define (cancelBtnCallback button event)
   (display "cancel\n")
   (set! reqs? #t)
+  (set! incls? #t)
   (set! provs? #t)
   (set! procs? #t)
   (send advFrame show #f))
@@ -76,6 +84,11 @@
                               [parent optionPanel]
                               [value #t]
                               [callback reqCbCallback]))
+
+(define inclCb (new check-box% [label "\"Included\" Files"]
+                               [parent optionPanel]
+                               [value #t]
+                               [callback inclCbCallback]))
 
 (define provCb (new check-box% [label "\"Provided\" Procedures"]
                                [parent optionPanel]

@@ -12,6 +12,7 @@
 #lang racket
 
 (require racket/file)
+(require "NotificationGui.rkt")
 
 (provide toFile)
 
@@ -21,17 +22,17 @@
                                  #:mode 'text
                                  #:exists 'update))
 
-(define (toFile listOfLists reqsBool provsBool procsBool)
+(define (toFile listOfLists reqsBool inclsBool provsBool procsBool)
   (display "writing to file...")
   (cond ( (equal? reqsBool #t)
           (write-string "requires-------------------------------" output)
           ;(write-string (car (car listOfLists)) output)
           (loopout (car listOfLists))
         ))
-  ;;skipped includeLst as optional
-  (write-string "includes-------------------------------" output)
-  ;(write-string (car (cdr listOfLists)) output)
-  (loopout (car (cdr listOfLists)))
+  (cond ( (equal? inclsBool #t)
+          (write-string "includes-------------------------------" output)
+          ;(write-string (car (cdr listOfLists)) output)
+          (loopout (car (cdr listOfLists)))))
    (cond ( (equal? provsBool #t)
           (write-string "provides-------------------------------" output)
           ;(write-string (car (cdr (cdr listOfLists))) output)
@@ -45,6 +46,7 @@
   (write-string "documentation blocks---------------------" output)
   (loopout (car (cdr (cdr (cdr (cdr listOfLists))))))
   (close-output-port output)
+  (send dialog show #t)
 )
       
 
