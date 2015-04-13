@@ -8,8 +8,10 @@
 
 
 ##### Documentation
-* [**Racket QA Email Component**][QA-Email Documentation]
+* [**Racket QA Email Component**][QA-Email Document]
 
 
 
 <!-- Links -->
+[QA-Email Document]: https://github.com/YongCho/FPX/blob/master/QA-Email/Documentation/readme.md
+
