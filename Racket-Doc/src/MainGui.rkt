@@ -37,7 +37,7 @@
 
 (define (okBtnCallback button event)
   (display "\n\"Run\" button pressed\n")
-  (toFile (each-line "./../tests/Test.rkt" '() '() '() '() '()) reqs? provs? procs?))
+  (toFile (each-line "./../tests/Test.rkt" '() '() '() '() '()) reqs? incls? provs? procs?))
 
 (define (advancedBtnCallback button event)
   (display "\n\"Advanced\" button pressed\n")

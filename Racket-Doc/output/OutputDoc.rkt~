@@ -1,9 +1,3 @@
-requires-------------------------------
-(require "andThisTest.rkt")
-(require "testing.rkt")
-includes-------------------------------
-(include "secIncl.rkt")
-(include "firstIncl.rkt")
 documentation blocks---------------------
 #||
  | Created a variable named five.
