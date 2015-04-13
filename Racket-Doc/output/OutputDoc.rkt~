@@ -4,12 +4,6 @@ requires-------------------------------
 includes-------------------------------
 (include "secIncl.rkt")
 (include "firstIncl.rkt")
-provides-------------------------------
-(provide square)
-procedures & data-----------------------
-(define five 5)
-(define (addFour num1 num2 num3 num4)
-(define (square num)
 documentation blocks---------------------
 #||
  | Created a variable named five.

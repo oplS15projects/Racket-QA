@@ -12,6 +12,7 @@
 #lang racket
 
 (require racket/file)
+(require "NotificationGui.rkt")
 
 (provide toFile)
 
@@ -45,6 +46,7 @@
   (write-string "documentation blocks---------------------" output)
   (loopout (car (cdr (cdr (cdr (cdr listOfLists))))))
   (close-output-port output)
+  (send dialog show #t)
 )
       
 

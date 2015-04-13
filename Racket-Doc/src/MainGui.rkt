@@ -13,7 +13,7 @@
 
 (require racket/gui)
 
-(require "Decapitron.rkt")
+(require "Parser.rkt")
 (require "FileIO.rkt")
 (require "AdvancedGui.rkt")
 
