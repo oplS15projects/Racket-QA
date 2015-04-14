@@ -1,0 +1,45 @@
+Starting Test Suite 'first-suite'
+--------------------
+first-suite > (comb 3 2)
+(comb 3 2)
+FAILURE
+name:       check-equal?
+location:   test-suite.rkt:21:26
+actual:     1
+expected:   3
+test-suite.rkt:21:26: Check failure
+--------------------
+--------------------
+first-suite > (comb 4 2)
+(comb 4 2)
+FAILURE
+name:       check-equal?
+location:   test-suite.rkt:22:26
+actual:     1
+expected:   6
+test-suite.rkt:22:26: Check failure
+--------------------
+--------------------
+first-suite > (comb 10 2)
+(comb 10 2)
+FAILURE
+name:       check-equal?
+location:   test-suite.rkt:23:27
+actual:     1
+expected:   45
+test-suite.rkt:23:27: Check failure
+--------------------
+--------------------
+first-suite > (comb 93 37)
+(comb 93 37)
+FAILURE
+name:       check-equal?
+location:   test-suite.rkt:24:28
+actual:     1
+expected:   118206769052646517220135262
+test-suite.rkt:24:28: Check failure
+--------------------
+Finished Test Suite 'first-suite'
+26 success(es) 4 failure(s) 0 error(s) 30 test(s) run
+Starting Test Suite 'second-suite'
+Finished Test Suite 'second-suite'
