@@ -1,2 +1,0 @@
-Starting Test Suite 'ps2a'
-Finished Test Suite 'ps2a'
