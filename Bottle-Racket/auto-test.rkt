@@ -16,6 +16,10 @@
 (define (run-test-area full-test-area-path)
   (system (string-append "racket " full-test-area-path)))
 
+;; Basically run-test-area but accepts the absolute path to racket executable.
+(define (run-test-area-racket-path racket-path full-test-area-path)
+  (system (string-append racket-path " " full-test-area-path)))
+
 ;; Looks through a test result file and parses what failed and passed, and
 ;; creates the output-email file specified.
 #|
