@@ -1,5 +1,8 @@
 # Racket QA
 
+### First Milestone
+[**Racket-QA v0.1.0**][Milestone1]
+
 ##### Project Information
 * <a href="https://github.com/Dossar/FP4-proposal" target="_blank">**Racket QA Project Proposal**</a>
 * <a href="https://docs.google.com/spreadsheets/d/1FT8ZNomihkExBPH3syUVGtOUYCphharifb_k9nDoNv0/edit#gid=0" target="_blank">**Project Calendar**</a>
@@ -14,6 +17,7 @@
 
 
 <!-- Links -->
+[Milestone1]: https://github.com/oplS15projects/Racket-QA/releases/tag/v0.1.0
 [QA-Email Document]: https://github.com/oplS15projects/Racket-QA/blob/master/QA-Email/readme.md
 [Racket-Doc Document]: https://github.com/oplS15projects/Racket-QA/blob/master/Racket-Doc/README.md
 [Bottle-Racket Document]: https://github.com/oplS15projects/Racket-QA/blob/master/Bottle-Racket/README.md
