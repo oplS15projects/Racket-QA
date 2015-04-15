@@ -1,35 +1,58 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;                                                              ;;
-;; File: WebMaster.rkt                                          ;;
+;; File: PageGenerator.rkt                                      ;;
 ;; Author: James Kuczynski                                      ;;
 ;; Email: jkuczyns@cs.uml.edu                                   ;;
 ;; File Description: This file generates executable .rkt files  ;;
 ;;                   which launch the web server.               ;;
-;;Created 04/03/2015                                            ;;
+;;Created 04/14/2015                                            ;;
 ;;                                                              ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 #lang racket
 
 (require racket/file)
+(require racket/date)
 
-#|(define (clean)
-  (cond ( (equal? (file-exists? "./../output/WebPage.rkt") #t)
-          (delete-file "./../output/WebPage.rkt")
-        )
+(define currentDateStr "")
+
+(let ((date (seconds->date (current-seconds))))
+  (set! currentDateStr (string-append 
+                        (string-append
+                         (string-append
+                          (string-append
+                           (string-append currentDateStr (number->string (date-month date)))
+                           "/")
+                          (number->string (date-day date)))
+                         "/")
+                        (number->string (date-year date)))
   )
-  (copy-file "./../output/Template.rkt" "./../output/WebPage.rkt")
-)|#
+)
 
 (define output (open-output-file "./../output/WebPage.rkt"
                                  #:mode 'text
-                                 #:exists 'update))
+                                 #:exists 'replace))
 
 
+;generate documentation header
+(define (generateFileHeader)
+  (write-string ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;\n" output)
+  (write-string ";;  								;;\n" output)
+  (write-string ";; AUTO-GENERATED CODE.  To run, either open in Dr. Racket and  ;;\n" output)
+  (write-string ";; select the \"Run\" button, or open a terminal, go to the 	;;\n" output)
+  (write-string ";; directory containing this file, and run			;;\n" output)
+  (write-string ";; \"racket [file_name].rkt\".					;;\n" output)
+  (write-string ";;                                                              ;;\n" output)
+  (write-string ";; Date Generated On: " output)
+  (write-string currentDateStr output)
+  (write-string "                                 ;;\n" output)
+  (write-string ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;\n" output)
+  (write-string "\n\n\n" output)
+)
 
 ;generate (unchanging) main page
 (define (generateMainPage fileList reqList inclList provList procList procBodyList docList)
-  (write-string "#lang racket\n" output)
+  (write-string "#lang racket\n\n" output)
   (write-string "(require web-server/servlet web-server/servlet-env)\n" output)
   (write-string "(require racket/gui)\n" output)
   (write-string "\n" output)
@@ -69,7 +92,7 @@
   (write-string "  (local ((define (response-generator embed/url)\n" output)
   (write-string "            (response/xexpr\n" output)
   (write-string "             `(html (head (title \"Racket-Doc\"))\n" output)
-  (write-string "               (body (h1 \"Test.rkt\")\n" output)
+  (write-string "               (body (h1 \"*.rkt Files\")\n" output)
   (write-string "                     (center (a ((href ,(embed/url main-page))) \"Home\"))\n" output)
   (write-string "                     (br)(br)\n" output)
   (write-string "                     (p (b \"Files:\"))\n" output)
@@ -97,7 +120,7 @@
   (write-string "  (local ((define (response-generator embed/url)\n" output)
   (write-string "            (response/xexpr\n" output)
   (write-string "             `(html (head (title \"Racket-Doc\"))\n" output)
-  (write-string "               (body (h1 \"Test.rkt\")\n" output)
+  (write-string "               (body (h1 \"*.rkt Files\")\n" output)
   (write-string "                     (center\n" output)
   (write-string "                      (a ((href ,(embed/url main-page))) \"<--\")\n" output)
   (write-string "                      (html nbsp nbsp nbsp nbsp)\n" output)
@@ -305,6 +328,7 @@
 
 ;;exe-------------------
 ;(clean)
+(generateFileHeader)
 (generateMainPage '("file_1" "file_2" "file_3" "file_4" "file_5" "file_6" "file_7" "file_8")
                   '("req_1"  "req_2"  "req_3"  "req_4"  "req_5"  "req_6"  "req_7"  "req_8")
                   '("incl_1" "incl_2" "incl_3" "incl_4" "incl_5" "incl_6" "incl_7" "incl_8")

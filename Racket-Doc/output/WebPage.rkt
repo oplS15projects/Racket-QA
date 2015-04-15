@@ -1,4 +1,17 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;  								;;
+;; AUTO-GENERATED CODE.  To run, either open in Dr. Racket and  ;;
+;; select the "Run" button, or open a terminal, go to the 	;;
+;; directory containing this file, and run			;;
+;; "racket [file_name].rkt".					;;
+;;                                                              ;;
+;; Date Generated On: 4/15/2015                                 ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+
 #lang racket
+
 (require web-server/servlet web-server/servlet-env)
 (require racket/gui)
 
@@ -38,7 +51,7 @@
   (local ((define (response-generator embed/url)
             (response/xexpr
              `(html (head (title "Racket-Doc"))
-               (body (h1 "Test.rkt")
+               (body (h1 "*.rkt Files")
                      (center (a ((href ,(embed/url main-page))) "Home"))
                      (br)(br)
                      (p (b "Files:"))
@@ -59,7 +72,7 @@
   (local ((define (response-generator embed/url)
             (response/xexpr
              `(html (head (title "Racket-Doc"))
-               (body (h1 "Test.rkt")
+               (body (h1 "*.rkt Files")
                      (center
                       (a ((href ,(embed/url main-page))) "<--")
                       (html nbsp nbsp nbsp nbsp)
