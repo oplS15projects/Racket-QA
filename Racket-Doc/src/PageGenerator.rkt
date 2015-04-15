@@ -2,12 +2,20 @@
 
 (require racket/file)
 
+#|(define (clean)
+  (cond ( (equal? (file-exists? "./../output/WebPage.rkt") #t)
+          (delete-file "./../output/WebPage.rkt")
+        )
+  )
+  (copy-file "./../output/Template.rkt" "./../output/WebPage.rkt")
+)|#
+
 (define output (open-output-file "./../output/WebPage.rkt"
                                  #:mode 'text
                                  #:exists 'update))
 
 ;generate (unchanging) main page
-(define (generateMainPage fileList reqList inclList provList procList docLst)
+(define (generateMainPage fileList reqList inclList provList procList docList)
   (write-string "#lang racket\n" output)
   (write-string "(require web-server/servlet web-server/servlet-env)\n" output)
   (write-string "(require racket/gui)\n" output)
@@ -166,25 +174,30 @@
           )
     )
   )
-  (procLooper procList docLst)
+  (procLooper procList docList)
   (write-string "                         )))))\n" output)  
   (write-string "    (send/suspend/dispatch response-generator)))" output)
   (write-string "\n\n\n")
-  (write-string ";;page for displaying dependencies\n" output)
+  
+  (write-string ";;page for displaying dependencies\n" output);;begin----------
   (write-string "(define (required-page request)\n" output)
-  (write-string "  (local [(define (response-generator embed/url)\n" output)
+  (write-string "  (local ((define (response-generator embed/url)\n" output)
   (write-string "            (response/xexpr\n" output)
   (write-string "             `(html (head (title \"Racket-Doc\"))\n" output)
   (write-string "               (body (h1 \"Dependencies\")\n" output)
   (write-string "                     (center (a ((href ,(embed/url main-page))) \"Home\"))\n" output)
   (write-string "                     (br)(br)\n" output)
   (write-string "                     (b \"Required\")\n" output)                  
-  (write-string "                     (fieldset (code (list \"racket/gui\" (br) \"racket/filesystem\" (br))))\n" output)
-  (write-string "                     ))))]\n" output)
+  (write-string "                     (fieldset (code (list " output)
+  (reqLooper reqList)
+  (write-string ")))\n" output)
+  (write-string "                     )))))\n" output)
   (write-string "    (send/suspend/dispatch response-generator)))\n" output)
   (write-string "\n" output)
   (write-string "\n" output)
-  (write-string ";;page for displaying provideds\n" output)
+  (write-string "\n\n\n");;end-----------
+  
+  (write-string ";;page for displaying provideds\n" output);;begin---------
   (write-string "(define (provided-page request)\n" output)
   (write-string "  (local ((define (response-generator embed/url)\n" output)
   (write-string "            (response/xexpr\n" output)
@@ -192,31 +205,31 @@
   (write-string "               (body (h1 \"Provided\")\n" output)
   (write-string "                     (center (a ((href ,(embed/url main-page))) \"Home\"))\n" output)
   (write-string "                     (b \"Provided\")\n" output)
-  (write-string "                     (fieldset (code (list \"square\" (br) \"addTwo\")))\n" output)
+  (write-string "                     (fieldset (code (list " output)
+  (provLooper provList)
+  (write-string ")))\n" output)
   (write-string "                     )))))\n" output)
   (write-string "    (send/suspend/dispatch response-generator)))\n" output)
   (write-string "\n" output)
   (write-string "\n" output)
-  (write-string "\n" output)
-  (write-string ";;page for displaying procs and data of a single file\n" output)
+  (write-string "\n\n\n");;end-----------
+  
+  (write-string ";;page for displaying procs and data of a single file\n" output);;begin---------
   (write-string "(define (procAndData-page request)\n" output)
-  (write-string "  (local [(define (response-generator embed/url)\n" output)
+  (write-string "  (local ((define (response-generator embed/url)\n" output)
   (write-string "            (response/xexpr\n" output)
   (write-string "             `(html (head (title \"Racket-Doc\"))\n" output)
   (write-string "               (body (h1 \"Procedures & Data\")\n" output)
   (write-string "                     (center (a ((href ,(embed/url main-page))) \"Home\"))\n" output)
   (write-string "                     ;;add procs and data\n" output)
   (write-string "                     (br) (br)\n" output)
-  (write-string "                     (fieldset (code (list (b \"(square num)\") (br) (i \"doc...\" (br) \"here\"))))\n" output)
-  (write-string "                     (a ((href, (embed/url fileList-page))) \"Code\")\n" output)
-  (write-string "                     (br) (br) (br)\n" output)
-  (write-string "                     (fieldset (code (list (b \"(addTwo val1 val2)\") (br) (i \"doc...\" (br) \"here\"))))\n" output)
-  (write-string "                     (a ((href, (embed/url fileList-page))) \"Code\")\n" output)
-  (write-string "                     ))))]\n" output)
+  (procLooper procList docList)
+  (write-string "                     )))))\n" output)
   (write-string "    (send/suspend/dispatch response-generator)))\n" output)
   (write-string "\n" output)
-  (write-string "\n" output)
-  (write-string ";;page for displaying procs and data of a single file\n" output)
+  (write-string "\n" output);;end
+  
+  (write-string ";;help page\n" output);;begin---------
   (write-string "(define (help-page request)\n" output)
   (write-string "  (local ((define (response-generator embed/url)\n" output)
   (write-string "            (response/xexpr\n" output)
@@ -241,6 +254,7 @@
 )
 
 ;;exe-------------------
+;(clean)
 (generateMainPage '("file_1" "file_2" "file_3" "file_4" "file_5" "file_6" "file_7" "file_8")
                   '("req_1"  "req_2"  "req_3"  "req_4"  "req_5"  "req_6"  "req_7"  "req_8")
                   '("incl_1" "incl_2" "incl_3" "incl_4" "incl_5" "incl_6" "incl_7" "incl_8")
