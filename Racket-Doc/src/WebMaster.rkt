@@ -119,7 +119,7 @@
                                   (i "@param num: ") (html "Given value to be squared.") (br)
                                   (i "@return: the squared number.")
                                   )))
-                     (a ((href, (embed/url fileList-page))) "Code")
+                     (a ((href, (embed/url code1-page))) "Code")
                      (br) (br) (br)
                      (fieldset
                       (code (list (b "(addTwo val1 val2)") (br)
@@ -189,7 +189,20 @@
     (send/suspend/dispatch response-generator)))
 
 
-;;page for displaying procs and data of a single file
+;;page for displaying code block------------------------------------------------
+(define (code1-page request)
+  (local ((define (response-generator embed/url)
+            (response/xexpr
+             `(html (head (title "Racket-Doc"))
+               (body (h1 "Procedure Body")
+                     (center (a ((href ,(embed/url specifiedFile-page))) "<--Back"))
+                     (br)(br)
+                     (p "code block goes here...")
+                     )))))
+    (send/suspend/dispatch response-generator)))
+;;end----------------------------------------------------------------------------
+
+;;page for displaying help/information data
 (define (help-page request)
   (local ((define (response-generator embed/url)
             (response/xexpr
