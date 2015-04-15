@@ -16,6 +16,7 @@
 (require "Parser.rkt")
 (require "FileIO.rkt")
 (require "AdvancedGui.rkt")
+(require "ProcessingGui.rkt")
 
 (define background
   (read-bitmap "./../share/racket1.jpg"))
@@ -28,15 +29,38 @@
 (new message% [parent frame]
               [label background])
 
+;;create radio button callback
+(define (selectFileOrDirCallback radio event)
+  (display (send fileOrDirRBtn get-selection))
+  (display "\n"))
+
 ;;create button callbacks
 (define (selectInCallback button event)
-  (display "\n\"Select (in)\" button pressed\n"))
+  (display "\n\"Select (in)\" button pressed\n")
+    (cond ( (= (send fileOrDirRBtn get-selection) 0)
+            (define filepath (get-file))
+            (send inputTextField set-value (path->string filepath))
+          )
+          (else
+           (define dirpath (get-directory))
+           (send inputTextField set-value (path->string dirpath))
+          )))
 
 (define (selectOutCallback button event)
-  (display "\n\"Select (out)\" button pressed\n"))
+  (display "\n\"Select (out)\" button pressed\n")
+    (cond ( (= (send fileOrDirRBtn get-selection) 0)
+            (define filepath (get-file))
+            (send outputTextField set-value (path->string filepath))
+          )
+          (else
+           (define dirpath (get-directory))
+           (send outputTextField set-value (path->string dirpath))
+          )))
 
 (define (okBtnCallback button event)
   (display "\n\"Run\" button pressed\n")
+  (send frame show #f)
+  (send procFrame show #t)
   (toFile (each-line "./../tests/Test.rkt" '() '() '() '() '()) reqs? incls? provs? procs?))
 
 (define (advancedBtnCallback button event)
@@ -49,6 +73,10 @@
   (send frame show #f))
 
 ;create panels
+(define radioPanel (new horizontal-panel% [parent frame]
+                                          [alignment '(center center)]))
+
+
 (define inputPanel (new horizontal-panel% [parent frame]
                                           [alignment '(center center)]))
 (define outputPanel (new horizontal-panel% [parent frame]
@@ -59,29 +87,32 @@
 
 ;create input text fields
 (define inputTextField (new text-field% [parent inputPanel]
-                                        [label "Input File:"]
+                                        [label "Input Location:"]
                                         [min-width 150]))
 ;(send inputTextField set-value "/path/to/input/dir/or/.rkt/file")
 
 
 (define outputTextField (new text-field% [parent outputPanel]
-                                         [label "Output File:"]
+                                         [label "Output Location:"]
                                          [min-width 150]))
 ;(send outputTextField set-value "/path/to/output/dir")
 
 
+;create radio buttons
+(define fileOrDirRBtn (new radio-box% [parent radioPanel]
+                                      [label "Input Options"]
+                                      [choices '("File" "Directory")]
+                                      [callback selectFileOrDirCallback]))
+
 ;create buttons
 (define selectInBtn (new button% [parent inputPanel]
                                  [label "Select"]
-                                 [callback (λ (button event)
-                                             (define filepath (get-file))
-                                             (send inputTextField set-value (path->string filepath)))]))
+                                 [callback selectInCallback]))
 
 (define selectOutBtn (new button% [parent outputPanel]
                                   [label "Select"]
-                                  [callback (λ (button event)
-                                              (define filepath (get-file))
-                                              (send inputTextField set-value (path->string filepath)))]))
+                                  [callback selectOutCallback]))
+
 
 (define okBtn (new button% [parent btnPanel]
                            [label "Run"]

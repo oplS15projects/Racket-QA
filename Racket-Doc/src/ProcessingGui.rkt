@@ -13,19 +13,21 @@
 
 (require racket/gui)
 
-(define frame (new frame%
+(provide procFrame)
+
+(define procFrame (new frame%
                    (label "Racket-Doc")
                    (width 400)
                    (height 500)))
 
-(new message% [parent frame]
+(new message% [parent procFrame]
               [label "Processing Data"])
 
 ;create panels
-(define processingPanel (new vertical-panel% [parent frame]
+(define processingPanel (new vertical-panel% [parent procFrame]
                                              [alignment '(left center)]))
 
-(define btnPanel (new horizontal-panel% [parent frame]
+(define btnPanel (new horizontal-panel% [parent procFrame]
                                         [alignment '(right bottom)]))
 
 
@@ -38,7 +40,7 @@
 
 (define (exitBtnCallback button event)
   (display "Exit\n")
-  (send frame show #f))
+  (send procFrame show #f))
 
 
 ;create textfieldthingy
@@ -80,4 +82,4 @@
 
 
 
-(send frame show #t)
+(send procFrame show #f)
