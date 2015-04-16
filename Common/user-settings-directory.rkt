@@ -374,3 +374,11 @@
 (define (double-backslash windows-str)
   (when (eq? (system-type) 'windows)
     (string-replace windows-str "\\" "\\\\")))
+
+(define (valid-path-windows windows-str)
+  (when (eq? (system-type) 'windows)
+    (string-append "\"" windows-str "\"")))
+
+(define (valid-path-linux linux-str)
+  (when (eq? (system-type) 'unix)
+    (string-replace linux-str " " "\\ ")))
