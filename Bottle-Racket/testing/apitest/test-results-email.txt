@@ -1,0 +1,26 @@
+>>> Results for test area file 'test-area.rkt'
+
+-> Total: 34
+-> Passed: 29 (85%)
+-> Failed: 5 (15%)
+
+> FAILED: '(comb 3 2)' in 'test-suite.rkt:21:26'
+actual: 1
+expected: 3
+
+> FAILED: '(comb 4 2)' in 'test-suite.rkt:22:26'
+actual: 1
+expected: 6
+
+> FAILED: '(comb 10 2)' in 'test-suite.rkt:23:27'
+actual: 1
+expected: 45
+
+> FAILED: '(comb 93 37)' in 'test-suite.rkt:24:28'
+actual: 1
+expected: 118206769052646517220135262
+
+> FAILED: '(comb 5 2)' in 'test-suite.rkt:48:26'
+actual: 1
+expected: 10
+
