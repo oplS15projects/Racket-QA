@@ -6,25 +6,13 @@
 (require rackunit/text-ui)
 (require rackunit/gui)
 
-;; Suite file for this assignment
-(define suite-name "ps1")
+;; Suite file to run
 (require "ps1_suite.rkt")
-
-;; Function for recreating a file when running these tests
-(define (remake-file file-path)
-  (if (file-exists? file-path)
-      (delete-file file-path) 0))
-
-;; map is used here to allow each test suite to be run in the textual interface.
-(remake-file "test_results.txt")
-(define test-result-file (open-output-file "test_results.txt"))
-(current-error-port test-result-file) ; File containing failed cases
-(define num-tests 30)
-(define num-failed (car (map run-tests test-list))) ; run-tests returns list with number of failed cases
-(define num-passed (- num-tests num-failed)) ; How many passed
-(define failed (/ num-failed num-tests))
-(define successful (/ num-passed num-tests))
-(close-output-port test-result-file)
+(define test-result-raw-output (open-output-file "test-results.txt"))
+(current-error-port test-result-raw-output) ; File containing test information
+(current-output-port test-result-raw-output)
+(map run-tests test-list) ; The tests are run with this line
+(close-output-port test-result-raw-output)
 
 (provide (all-defined-out))
 

@@ -1,5 +1,6 @@
 #lang racket
 
+;; RackUnit and other project libraries
 (require "../Common/user-settings-directory.rkt") ; For writing out test results
 (require "../QA-Email/email.rkt"
          "../QA-Email/email-db.rkt"
@@ -9,6 +10,22 @@
 (require rackunit)
 (require rackunit/text-ui)
 (require rackunit/gui)
+
+;; For determining racket path
+(require setup/dirs)
+
+(define RACKET-PATH-UNFIXED
+   (string-append (path->string (find-console-bin-dir))
+                  (cond ((eq? (system-type) 'windows) "racket.exe")
+                        ((eq? (system-type) 'unix) "/racket")
+                        ((eq? (system-type) 'macosx) "/racket")
+                        (else (error "Platform not supported")))))
+
+(define RACKET-PATH
+   (cond ((eq? (system-type) 'windows) (valid-path-windows RACKET-PATH-UNFIXED))
+         ((eq? (system-type) 'unix) (valid-path-linux RACKET-PATH-UNFIXED))
+         ((eq? (system-type) 'macosx) (valid-path-linux RACKET-PATH-UNFIXED))
+         (else (error "Platform not supported"))))
 
 ;; Function for recreating a file when running these tests
 (define (remake-file file-path)
@@ -26,7 +43,8 @@
                                                 "test-results.txt"))
   (begin (remake-file output-email-file-path)
          (remake-file output-results-file-path)
-         (system (string-append "racket " full-test-area-path))
+         ;(system (string-append "racket " full-test-area-path))
+         (system (string-append RACKET-PATH " " full-test-area-path))
          (parse-test-results (get-filename-from-filepath full-test-area-path)
                              output-results-file-path
                              output-email-file-path))
@@ -52,7 +70,8 @@
                                                          "test-results.txt"))
          (begin (remake-file output-email-file-path)
                 (remake-file output-results-file-path)
-                (system (string-append "racket " full-test-area-path))
+                ;(system (string-append "racket " full-test-area-path))
+                (system (string-append RACKET-PATH " " full-test-area-path))
                 (parse-test-results (get-filename-from-filepath full-test-area-path)
                                     output-results-file-path
                                     output-email-file-path))

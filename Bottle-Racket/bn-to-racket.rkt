@@ -196,40 +196,31 @@
 ;; * Test Area File Creation Procedures
 ;; **********************************************************************
 
-(define (gui-or-text test-mode number-of-tests)
+(define (gui-or-text test-mode)
   (cond ((equal? test-mode "make-gui-runner")
          (list ";; map is used here to allow each test suite to appear in the same GUI window."
-               (string-append "(define num-tests " (number->string number-of-tests) ")")
                "(map (make-gui-runner) test-list)\n"))
         ((equal? test-mode "run-tests")
-         (list ";; map is used here to allow each test suite to be run in the textual interface."
-               "(remake-file \"test_results.txt\")"
-               "(define test-result-file (open-output-file \"test_results.txt\"))"
-               "(current-error-port test-result-file) ; File containing failed cases"
-               (string-append "(define num-tests " (number->string number-of-tests) ")")
-               "(define num-failed (car (map run-tests test-list))) ; run-tests returns list with number of failed cases"
-               "(define num-passed (- num-tests num-failed)) ; How many passed"
-               "(define failed (/ num-failed num-tests))"
-               "(define successful (/ num-passed num-tests))"
-               "(close-output-port test-result-file)"))
+         (list "(define test-result-raw-output (open-output-file \"test-results.txt\"))"
+               "(current-error-port test-result-raw-output) ; File containing test information"
+               "(current-output-port test-result-raw-output)"
+               "(map run-tests test-list) ; The tests are run with this line"
+               "(close-output-port test-result-raw-output)"))
         (else nil)) ;; end cond
 ) ;; end define
         
 
-(define (create-test-area-lines assignment-name test-mode number-of-tests)
+(define (create-test-area-lines assignment-name test-mode)
   (define rkt-header (list "#lang racket\n"
                            ";; Racket Unit Testing Libraries"
                            "(require racket/include)"
                            "(require rackunit)"
                            "(require rackunit/text-ui)"
                            "(require rackunit/gui)\n"
-                           ";; Suite file for this assignment"
-                           (string-append "(define suite-name \"" assignment-name "\")")
-                           (string-append "(require \"" assignment-name "_suite.rkt\")\n")
-                           ";; Function for recreating a file when running these tests"
-                           (string-append "(define (remake-file file-path)\n  (if (file-exists? file-path)"
-                                          "\n      (delete-file file-path) 0))\n")))
-  (define gui-or-text-lines (gui-or-text test-mode number-of-tests))
+                           ";; Suite file to run"
+                           (string-append "(require \"" assignment-name "_suite.rkt\")")
+                           ))
+  (define gui-or-text-lines (gui-or-text test-mode))
   (define test-area-lines (append rkt-header gui-or-text-lines (list "\n(provide (all-defined-out))\n")))
   test-area-lines
 )
@@ -264,6 +255,7 @@
         ((not (equal? assignment-forward #f)) (cadr assignment-forward))
         (else "undefined")))
 
+#|
 (define (get-dir-from-filepath absolute-dir)
   (define path-back (regexp-match #rx"\\\\" absolute-dir))
   (define path-forward (regexp-match #rx"/" absolute-dir))
@@ -273,6 +265,7 @@
          (string-join (butlast (string-split absolute-dir "/")) "/"))
         (else "undefined"))
 )
+|#
 
 (define (get-full-path absolute-dir assignment-name filetype)
   (define path-back (regexp-match #rx"\\\\" absolute-dir))
@@ -283,6 +276,7 @@
          (string-append "/" absolute-dir "/" assignment-name filetype))
         (else "undefined"))
 )
+
 
 (define (butlast lst)
   (define (helper current lst counter)
