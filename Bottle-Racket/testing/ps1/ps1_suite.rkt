@@ -1,12 +1,12 @@
 #lang racket
 
 (require rackunit)
-(require "source.rkt")
+(require "ps1.rkt")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(define-test-suite first-suite
-  #:before (lambda () (display "Starting Test Suite 'first-suite'\n"))
-  #:after (lambda () (display "Finished Test Suite 'first-suite'\n"))
+(define-test-suite ps1
+  #:before (lambda () (display "Starting Test Suite 'ps1'\n"))
+  #:after (lambda () (display "Finished Test Suite 'ps1'\n"))
   (test-case "(square 3)" (check-equal? (square 3) 9))
   (test-case "(square 1)" (check-equal? (square 1) 1))
   (test-case "(abs-using-if 0)" (check-equal? (abs-using-if 0) 0))
@@ -39,16 +39,10 @@
   (test-case "(smallest-tripled 30 20 10)" (check-equal? (smallest-tripled 30 20 10) 30))
 )
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(define-test-suite second-suite
-  #:before (lambda () (display "Starting Test Suite 'second-suite'\n"))
-  #:after (lambda () (display "Finished Test Suite 'second-suite'\n"))
-  (test-case "(fact 1)" (check-equal? (fact 1) 1))
-  (test-case "(fact 5)" (check-equal? (fact 5) 120))
-  (test-case "(fact 20)" (check-equal? (fact 20) 2432902008176640000))
-  (test-case "(comb 5 2)" (check-equal? (comb 5 2) 10))
-)
 
-(define test-list (list first-suite second-suite))
+(define test-list (list
+  ps1
+))
 
 (provide (all-defined-out))
 

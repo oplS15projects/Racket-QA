@@ -7,7 +7,7 @@
 (require rackunit/gui)
 
 ;; Suite file to run
-(require "test-suite.rkt")
+(require "ps1_suite.rkt")
 (define test-result-raw-output (open-output-file "test-results.txt"))
 (current-error-port test-result-raw-output) ; File containing test information
 (current-output-port test-result-raw-output)
