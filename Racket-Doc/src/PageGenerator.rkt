@@ -1,3 +1,14 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;                                                              ;;
+;; File: WebMaster.rkt                                          ;;
+;; Author: James Kuczynski                                      ;;
+;; Email: jkuczyns@cs.uml.edu                                   ;;
+;; File Description: This file generates executable .rkt files  ;;
+;;                   which launch the web server.               ;;
+;;Created 04/03/2015                                            ;;
+;;                                                              ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 #lang racket
 
 (require racket/file)
@@ -14,8 +25,10 @@
                                  #:mode 'text
                                  #:exists 'update))
 
+
+
 ;generate (unchanging) main page
-(define (generateMainPage fileList reqList inclList provList procList docList)
+(define (generateMainPage fileList reqList inclList provList procList procBodyList docList)
   (write-string "#lang racket\n" output)
   (write-string "(require web-server/servlet web-server/servlet-env)\n" output)
   (write-string "(require racket/gui)\n" output)
@@ -153,7 +166,7 @@
   (write-string "                     (br) (br) (br)\n" output);;end------------
   (write-string "                     ;;add procs and data\n" output);;begin-----------------
   (write-string "                     (b \"Procedures & Data\")\n" output)
-  (define (procLooper pLst dLst)
+  (define (procLooper pLst dLst count)
     (cond ( (null? pLst)
             (display "")
           )
@@ -168,13 +181,15 @@
            (write-string (car dLst) output)
            (write-string "\") (br)" output)
            (write-string ")))" output)
-           (write-string "\n                     (a ((href, (embed/url fileList-page))) \"Code\")\n" output)
+           (write-string "\n                     (a ((href, (embed/url codeblock" output)
+           (write-string (number->string count) output)
+           (write-string "-page))) \"Code\")\n" output)
            (write-string "                             (br) (br) (br)\n" output)
-           (procLooper (cdr pLst) (cdr dLst))
+           (procLooper (cdr pLst) (cdr dLst) (+ count 1))
           )
     )
   )
-  (procLooper procList docList)
+  (procLooper procList docList 0)
   (write-string "                         )))))\n" output)  
   (write-string "    (send/suspend/dispatch response-generator)))" output)
   (write-string "\n\n\n")
@@ -214,6 +229,7 @@
   (write-string "\n" output)
   (write-string "\n\n\n");;end-----------
   
+  ;;generate procs & data page
   (write-string ";;page for displaying procs and data of a single file\n" output);;begin---------
   (write-string "(define (procAndData-page request)\n" output)
   (write-string "  (local ((define (response-generator embed/url)\n" output)
@@ -223,13 +239,47 @@
   (write-string "                     (center (a ((href ,(embed/url main-page))) \"Home\"))\n" output)
   (write-string "                     ;;add procs and data\n" output)
   (write-string "                     (br) (br)\n" output)
-  (procLooper procList docList)
+  (procLooper procList docList 0)
   (write-string "                     )))))\n" output)
   (write-string "    (send/suspend/dispatch response-generator)))\n" output)
   (write-string "\n" output)
   (write-string "\n" output);;end
   
-  (write-string ";;help page\n" output);;begin---------
+  ;;generate proc body pages (each will be named "codeblock[number]-page")
+  (define (bodyLooper lst count)
+    (cond ( (null? lst)
+            (display "")
+          )
+          (else
+           (write-string ";;page for displaying a procedure body." output)
+           (write-string ";;help page\n" output)
+           (write-string "(define (codeblock" output)
+           (write-string (number->string count) output)
+           (write-string "-page" output)
+           (write-string " request)\n" output)
+           (write-string "  (local ((define (response-generator embed/url)\n" output)
+           (write-string "            (response/xexpr\n" output)
+           (write-string "             `(html (head (title \"Racket-Doc\"))\n" output)
+           (write-string "               (body (h1 \"" output)
+           (write-string (car lst) output)
+           (write-string "\")\n" output)
+           (write-string "                     (center (a ((href ,(embed/url specifiedFile-page))) \"<--Back\"))\n" output)
+           (write-string "                     (br)(br)\n" output)
+           (write-string "                     (p \"" output)
+           (write-string (car lst) output)
+           (write-string "\")\n" output)
+           (write-string "                     )))))\n" output)
+           (write-string "    (send/suspend/dispatch response-generator)))\n" output)
+           (write-string "\n" output)
+           (write-string "\n" output)
+           (bodyLooper (cdr lst) (+ count 1))
+          )
+     )
+  )
+  (bodyLooper procBodyList 0)         
+  
+  ;;generate help page
+  (write-string ";;help page\n" output)
   (write-string "(define (help-page request)\n" output)
   (write-string "  (local ((define (response-generator embed/url)\n" output)
   (write-string "            (response/xexpr\n" output)
@@ -260,4 +310,5 @@
                   '("incl_1" "incl_2" "incl_3" "incl_4" "incl_5" "incl_6" "incl_7" "incl_8")
                   '("prov_1" "prov_2" "prov_3" "prov_4" "prov_5" "prov_6" "prov_7" "prov_8")
                   '("proc_1" "proc_2" "proc_3" "proc_4" "proc_5")
+                  '("procBody_1" "procBody_2" "procBody_3" "procBody_4" "procBody_5")
                   '("blockComment_1" "blockComment_2" "blockComment_3" "blockComment_4" "blockComment_5"))
