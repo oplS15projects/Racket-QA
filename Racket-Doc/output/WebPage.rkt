@@ -1,4 +1,17 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;  								;;
+;; AUTO-GENERATED CODE.  To run, either open in Dr. Racket and  ;;
+;; select the "Run" button, or open a terminal, go to the 	;;
+;; directory containing this file, and run			;;
+;; "racket [file_name].rkt".					;;
+;;                                                              ;;
+;; Date Generated On: 4/16/2015                                 ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+
 #lang racket
+
 (require web-server/servlet web-server/servlet-env)
 (require racket/gui)
 
@@ -38,7 +51,7 @@
   (local ((define (response-generator embed/url)
             (response/xexpr
              `(html (head (title "Racket-Doc"))
-               (body (h1 "Test.rkt")
+               (body (h1 "*.rkt Files")
                      (center (a ((href ,(embed/url main-page))) "Home"))
                      (br)(br)
                      (p (b "Files:"))
@@ -54,18 +67,18 @@
     (send/suspend/dispatch response-generator)))
 
 
-;;page for displaying file list
+;;page for a specified file
 (define (specifiedFile-page request)
   (local ((define (response-generator embed/url)
             (response/xexpr
              `(html (head (title "Racket-Doc"))
-               (body (h1 "Test.rkt")
+               (body (h1 "*.rkt Files")
                      (center
-                      (a ((href ,(embed/url main-page))) "<--")
+                      (a ((href ,(embed/url specifiedFile-page))) "<--")
                       (html nbsp nbsp nbsp nbsp)
                       (a ((href ,(embed/url main-page))) "Home")
                       (html nbsp nbsp nbsp nbsp)
-                      (a ((href ,(embed/url main-page))) "-->")
+                      (a ((href ,(embed/url specifiedFile-page))) "-->")
                       )
                      (br)(br)
                      (p "Specified File page")
