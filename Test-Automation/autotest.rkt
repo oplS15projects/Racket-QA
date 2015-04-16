@@ -218,7 +218,7 @@
         (hour-in-24 0)
         (next-due 0)
         (due-week-days '())
-        (DEBUG #t))
+        (DEBUG #f))
     (define (week-days-to-list)
       (set! due-week-days '())
       (when sun? (set! due-week-days (append due-week-days (list 0))))
@@ -259,76 +259,75 @@
                                   12
                                   (+ 12 hour)))
                              (else #f))))
-      
+    
     (define (update-next-due)
-      (define cd (current-date))
-      (define current-minute (date-minute cd))
-      (define current-hour (date-hour cd))
-      (define current-day (date-day cd))
-      (define current-month (date-month cd))
-      (define current-year (date-year cd))
+      (let ((cd (current-date))
+            (current-minute (date-minute (current-date)))
+            (current-hour (date-hour (current-date)))
+            (current-day (date-day (current-date)))
+            (current-month (date-month (current-date)))
+            (current-year (date-year (current-date))))
 
-      (cond ((eq? type 'one-time)
-             ;; minute, hour, date, month, year
-             (define due-at
-               (date->seconds (make-date* 0 
-                                          minute
-                                          hour-in-24
-                                          date
-                                          month
-                                          year
-                                          (find-week-day date month year)
-                                          (find-year-day date month year)
-                                          (date-dst? cd)
-                                          (date-time-zone-offset cd)
-                                          (date*-nanosecond cd)
-                                          (date*-time-zone-name cd))))
-             (if (> due-at (current-seconds))
-                 (set! next-due due-at)
-                 (set! next-due 0)))
-            (else  ; recurring test
-             (week-days-to-list)
-             (cond ((null? due-week-days) (set! next-due 0) (printf "~a~n" due-week-days))
-                   (else
-                    (define due-date (find-next-due-date))
-                    (define due-month current-month)
-                    (define due-year current-year)                    
-                    (cond ((> due-date (days-in-month current-month current-year))
-                           (if (equal? due-month 12)
-                               (begin (set! due-month 1)
-                                      (set! due-year (+ 1 due-year))
-                                      (set! due-date (- due-date 31)))
-                               (begin (set! due-month (+ 1 due-month))
-                                      (set! due-date (- due-date (days-in-month current-month))))))
-                          (else (void)))
-                    
-                    (define due-at
-                      (date->seconds (make-date* 0
-                                                 minute
-                                                 hour-in-24
-                                                 due-date
-                                                 due-month
-                                                 due-year
-                                                 (find-week-day due-date due-month due-year)
-                                                 (find-year-day due-date due-month due-year)
-                                                 (date-dst? cd)
-                                                 (date-time-zone-offset cd)
-                                                 0
-                                                 (date*-time-zone-name cd))))
-                    (set! next-due due-at)))))
-      (when DEBUG
-        (printf "~n-- <DEBUG INFO> ----------~nnext due at ~a seconds~n" next-due)
-        (printf "next-due at ~a~n" (parameterize ((date-display-format 'rfc2822))
-                                     (date->string (seconds->date next-due) #t)))
-        
-        (define due-until (- next-due (current-seconds)))
-        (define due-until-minutes (exact->inexact (/ due-until 60)))
-        (define due-until-hours (exact->inexact (/ due-until-minutes 60)))
-        (printf "~a seconds = ~a minutes = ~a hours until due!~n-------------------------~n"                 
-                due-until
-                due-until-minutes
-                due-until-hours)))
-
+        (cond ((eq? type 'one-time)
+               (define due-at
+                 (date->seconds (make-date* 0 
+                                            minute
+                                            hour-in-24
+                                            date
+                                            month
+                                            year
+                                            (find-week-day date month year)
+                                            (find-year-day date month year)
+                                            (date-dst? cd)
+                                            (date-time-zone-offset cd)
+                                            (date*-nanosecond cd)
+                                            (date*-time-zone-name cd))))
+               (if (> due-at (current-seconds))
+                   (set! next-due due-at)
+                   (set! next-due 0)))
+              (else  ; recurring test
+               (week-days-to-list)
+               (cond ((null? due-week-days) (set! next-due 0) (printf "~a~n" due-week-days))
+                     (else
+                      (define due-date (find-next-due-date))
+                      (define due-month current-month)
+                      (define due-year current-year)                    
+                      (cond ((> due-date (days-in-month current-month current-year))
+                             (if (equal? due-month 12)
+                                 (begin (set! due-month 1)
+                                        (set! due-year (+ 1 due-year))
+                                        (set! due-date (- due-date 31)))
+                                 (begin (set! due-month (+ 1 due-month))
+                                        (set! due-date (- due-date (days-in-month current-month))))))
+                            (else (void)))
+                      
+                      (define due-at
+                        (date->seconds (make-date* 0
+                                                   minute
+                                                   hour-in-24
+                                                   due-date
+                                                   due-month
+                                                   due-year
+                                                   (find-week-day due-date due-month due-year)
+                                                   (find-year-day due-date due-month due-year)
+                                                   (date-dst? cd)
+                                                   (date-time-zone-offset cd)
+                                                   0
+                                                   (date*-time-zone-name cd))))
+                      (set! next-due due-at)))))
+        (when DEBUG
+          (printf "~n-- <DEBUG INFO> ----------~nnext due at ~a seconds~n" next-due)
+          (printf "next-due at ~a~n" (parameterize ((date-display-format 'rfc2822))
+                                       (date->string (seconds->date next-due) #t)))
+          
+          (define due-until (- next-due (current-seconds)))
+          (define due-until-minutes (exact->inexact (/ due-until 60)))
+          (define due-until-hours (exact->inexact (/ due-until-minutes 60)))
+          (printf "~a seconds = ~a minutes = ~a hours until due!~n-------------------------~n"                 
+                  due-until
+                  due-until-minutes
+                  due-until-hours))))
+    
     (define (dispatch m a)
       (cond ((eq? m 'id) id)
             ((eq? m 'name) name)
@@ -354,7 +353,7 @@
             ((eq? m 'notify?) notify?)
             ((eq? m 'email-db) email-db)
             ((eq? m 'next-due) (update-next-due) next-due)
-      
+            
             ((eq? m 'set-name) (set! name a))
             ((eq? m 'set-at-file-path) (set! at-file-path a))
             ((eq? m 'set-active?) (set! active? a))
@@ -363,8 +362,8 @@
             ((eq? m 'remove-file) 
              (set! files (filter (lambda (file) (not (equal? file a))) files)))
             ((eq? m 'set-type) (set! type a))
-            ((eq? m 'set-year) (set! year a) (update-next-due))
-            ((eq? m 'set-month) (set! month a) (update-next-due))
+            ((eq? m 'set-year) (set! year a))
+            ((eq? m 'set-month) (set! month a))
             ((eq? m 'set-date) (set! date a))
             ((eq? m 'set-daily?) (set! daily? a))
             ((eq? m 'set-mon?) (set! mon? a))
@@ -409,6 +408,8 @@
 (define (autotest-notify? at) (at 'notify? #f))
 (define (autotest-email-db at) (at 'email-db #f))
 (define (autotest-next-due at) (at 'next-due #f))
+(define (autotest-next-due-string at)
+  (date->string (seconds->date (autotest-next-due at)) #t))
 
 ;; mutators for autotest object
 (define (autotest-set-name at new-name) (at 'set-name new-name))
@@ -458,7 +459,7 @@
   (autotest-set-email-db to-at (autotest-email-db from-at))
   (write-autotest to-at))
 
-  
+
 ;; Converts an autotest object to a list.
 (define (autotest-to-list at)
   (list (autotest-id at) (autotest-name at) (autotest-active? at)

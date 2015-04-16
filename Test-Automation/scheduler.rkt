@@ -4,66 +4,44 @@
          "autotest.rkt"
          "calendar.rkt")
 
+(define NOTIFY-COMMAND 'Due!)
+
 ;; needs a way for the manager thread to find a thread by
 ;; some test information (test id? file path?)
 
 (provide (all-defined-out))
 
-(define SECONDS-IN-A-DAY 86400)
-(define test-queue '())
-
-;; Queues a test suite.
-(define (add-to-queue queue-entry)
-  (set! test-queue (append test-queue (list queue-entry)))
-  (set! test-queue (sort test-queue (lambda (a b) (< a b)))))
-
-(define an-hour-later (+ 3600 (current-seconds)))
-(define ten-minutes-later (+ 600 (current-seconds)))
-
-(define (make-queue-entry next-due data)
-  (define (dispatch m)
-    (cond ((eq? m 'when-due) next-due)
-          ((eq? m 'data) data)
-          (else "Unknown command")))
-  dispatch)
-
-(define (make-test tid name path)
-  (define (change-name new-name)
-    (set! name new-name))
-  (define (change-path new-path)
-    (set! path new-path))
-  (define (dispatch m a)
-    (cond ((eq? m 'name) name)
-          ((eq? m 'tid) tid)
-          ((eq? m 'path) path)
-          ((eq? m 'set-name) (change-name a))
-          ((eq? m 'set-path) (change-path a))))
-  dispatch)
-
-(define (test-name test)
-  (test 'name ""))
-
-(define (make-timer-thread notify-at data parent)
+(define (make-timer-thread runner)
   (thread
    (lambda ()
-     (let loop ((notify-at notify-at)
-                (data data)
-                (parent parent))
+     (let loop ((at-list autotest-list))
+       (define active-at (filter autotest-active? at-list))
        (define command #f)
-       (if (> (current-seconds) notify-at)
-           (begin
-             (thread-send parent (list 'Due! notify-at data))
-             (set! command (thread-receive)))
-           (set! command (thread-try-receive)))
+       (define sleep? #f)
+       (for-each 
+        (lambda (at)
+          (when (equal? (current-seconds) (autotest-next-due at))
+            (thread-send runner (list NOTIFY-COMMAND (autotest-next-due at) at))
+            (set! sleep? #t)))
+        active-at)
+       (when sleep?
+         (sleep 1.1)
+         (set! sleep? #f))
+       (set! command (thread-try-receive))
+
        (when (not (eq? command #f))
-         (cond ((and (pair? command) (eq? (car command) 'update))
-                (printf "Updating due time to ~a~n" (cadr command))
-                (set! notify-at (cadr command)))
-               ((eq? command 'print)
-                (printf "Due: ~a, Data: ~a~n" notify-at data))
+         (cond ((eq? command 'print)
+                (printf "Current-seconds = ~a~nActive autotests:~n" (current-seconds)) 
+                (for-each
+                 (lambda (at)
+                   (printf "~a due at ~a (~a)~n" 
+                           (autotest-name at) 
+                           (autotest-next-due at) 
+                           (- (autotest-next-due at) (current-seconds))))
+                 active-at))
                (else
                 (void))))
-       (loop notify-at data parent)))))
+       (loop autotest-list)))))
 
 
 

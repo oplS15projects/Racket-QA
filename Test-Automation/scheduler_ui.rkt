@@ -4,18 +4,21 @@
          racket/flonum
          "autotest.rkt"
          "calendar.rkt"
+         "input-validation.rkt"
          "scheduler.rkt"         
          "../QA-Email/email-db.rkt"
          "../QA-Email/email-db-ui.rkt")
 
+(provide open-manage-schedule)
+
+
 (define NO-ACTIVE-AUTOTEST-MESSAGE "No active autotest")
 (define NO-INACTIVE-AUTOTEST-MESSAGE "No inactive autotest")
-(define NO-AUTOTEST-SELECTED-MESSAGE "No autotest selected  ")
+(define NO-AUTOTEST-SELECTED-MESSAGE "** No autotest selected **  ")
 (define NO-MAILING-LIST-MESSAGE "No mailing list selected  ")
 (define VALID-BG-COLOR "White")
 (define INVALID-BG-COLOR "Red")
 
-(define test-file-list '())
 (define selected-email-db #f)
 (define APPROXIMATE-SIZE-X 700)
 (define APPROXIMATE-SIZE-Y 550)
@@ -80,7 +83,6 @@
   (cond ((equal? (length active-test-list) 0)
          (send active-tests-list-box append NO-ACTIVE-AUTOTEST-MESSAGE))
         (else (map add-to-list-box active-test-list))))
-
 
 ;; List box for inactive tests (left pane).
 (define inactive-tests-list-box
@@ -170,11 +172,11 @@
   (new horizontal-pane%
        (parent right-v-panel)))
 
-;; box enclosing the selected autotest name (right pane)
+;; box enclosing the selected autotest name (top right)
 (define selected-test-name-box
   (new pane%
        (parent top-right-h-pane)
-       (min-height 20)
+       (min-height 30)
        (min-width 300)
        (stretchable-width #f)
        (stretchable-height #f)
@@ -346,9 +348,6 @@
        (spacing 5)
        (alignment '(left top))))
 
-(define year-list
-  (list (number->string (current-year)) (number->string (+ 1 (current-year)))))
-
 (define year-combo-field
   (new combo-field%
        (parent date-picker-pane)
@@ -363,9 +362,6 @@
           (set-date-text-field-background)
           (set-month-combo-field-background)
           (set-year-combo-field-background)))))
-
-(define month-list
-  (list "1" "2" "3" "4" "5" "6" "7" "8" "9" "10" "11" "12"))
 
 (define month-combo-field
   (new combo-field%
@@ -447,7 +443,7 @@
 (new message%
      (parent days-of-week-pane)
      (label "")
-     (min-width 10))
+     (min-width 10)) 
 (define check-monday
   (new check-box%
        (parent days-of-week-pane)
@@ -560,15 +556,16 @@
        (alignment '(right center))))
 
 ;; Button - Select mailing list
-(new button%
-     (parent email-db-button-h-pane)
-     (label "Select mailing list...")
-     (callback 
-      (lambda (b e)
-        (let ((email-db (open-manage-mailing-list-dialog 'return-db)))
-          (when (not (equal? #f email-db))
-            (set! selected-email-db email-db)
-            (send mailing-list-name-message set-label (email-db-name selected-email-db)))))))
+(define select-email-db-button
+  (new button%
+       (parent email-db-button-h-pane)
+       (label "Select mailing list...")
+       (callback 
+        (lambda (b e)
+          (let ((email-db (open-manage-mailing-list-dialog 'return-db)))
+            (when (not (equal? #f email-db))
+              (set! selected-email-db email-db)
+              (send mailing-list-name-message set-label (email-db-name selected-email-db))))))))
 
 ;; Bottom buttons row
 (define activate-buttons-pane
@@ -739,8 +736,7 @@
   (send one-time-periodic-radio-box enable #t)
   (toggle-onetime-periodic)
   (enable-all-children time-of-day-pane)
-  (enable-all-children email-db-name-h-pane)
-  (enable-all-children email-db-button-h-pane)
+  (enable-email-db-controls)
   (send activate-buttons-pane change-children buttons-normal-mode)
   (enable-all-children activate-buttons-pane)
   (set! selected-email-db (autotest-email-db at))
@@ -765,8 +761,7 @@
   (disable-all-children days-of-week-pane)
   (send minute-text-field set-field-background (make-object color% VALID-BG-COLOR))
   (disable-all-children time-of-day-pane)  
-  (disable-all-children email-db-name-h-pane)
-  (disable-all-children email-db-button-h-pane)
+  (disable-email-db-controls)
   (send activate-buttons-pane change-children buttons-empty-mode)
   (disable-all-children activate-buttons-pane)
   (set! selected-email-db #f))
@@ -785,8 +780,7 @@
   (disable-all-children days-of-week-pane)
   (send minute-text-field set-field-background (make-object color% VALID-BG-COLOR))
   (disable-all-children time-of-day-pane)  
-  (disable-all-children email-db-name-h-pane)
-  (disable-all-children email-db-button-h-pane)
+  (disable-email-db-controls)
   (send activate-buttons-pane change-children buttons-empty-mode)
   (disable-all-children activate-buttons-pane)
   (set! selected-email-db #f))
@@ -812,8 +806,7 @@
   (set-minute-text-field-background)
   (toggle-onetime-periodic)
   (enable-all-children time-of-day-pane)
-  (enable-all-children email-db-name-h-pane)
-  (enable-all-children email-db-button-h-pane)
+  (enable-email-db-controls)
   (send activate-buttons-pane change-children buttons-create-mode)
   (set! selected-email-db #f))
 
@@ -836,6 +829,10 @@
         (else (config-ui-normal-mode))))
 
 
+;; **********************************************************************
+;; * Enable/disable UI controls
+;; **********************************************************************
+
 ;; helpers for change-children method for selected-test-name-box
 (define (name-field-create-mode arg-not-used)
   (list autotest-name-text-field))
@@ -854,96 +851,58 @@
 (define buttons-empty-mode buttons-normal-mode)
 
 (define (disable-all-children area-container)
-  (map send-disable (send area-container get-children)))
+  (for-each send-disable (send area-container get-children)))
 
 (define (enable-all-children area-container)
-  (map send-enable (send area-container get-children)))
+  (for-each send-enable (send area-container get-children)))
 
 (define (delete-all-children area-container)
   (define (send-delete-child child)
     (send area-container delete-child child))
-  (map send-delete-child (send area-container get-children)))
+  (for-each send-delete-child (send area-container get-children)))
+
+(define (enable-email-db-controls)
+  (send check-notify enable #t)
+  (send select-email-db-button enable #t))
+
+(define (disable-email-db-controls)
+  (send check-notify enable #f)
+  (send select-email-db-button enable #f))
 
 ;; helpers for enable-all-children and disable-all-children
 (define (send-enable control) (send control enable #t))
 (define (send-disable control) (send control enable #f))
 
-
-
-;; **********************************************************************
-;; * Input Validation
-;; **********************************************************************
-
-;; validate autotest name
-(define (valid-autotest-name-string? a-string)
-  (< 0 (string-length (string-trim a-string))))
-
+;; show different background color for invalid entries
 (define (set-autotest-name-text-field-background)
   (if (valid-autotest-name-string? (send autotest-name-text-field get-value))
       (send autotest-name-text-field set-field-background (make-object color% VALID-BG-COLOR))
       (send autotest-name-text-field set-field-background (make-object color% INVALID-BG-COLOR))))
-
-;; validate minute
-(define (valid-minute-string? a-string)
-  (not (or (not (string? a-string))
-           (> (string-length a-string) 2)
-           (equal? #f (string->number a-string))
-           (< (string->number a-string) 0)
-           (> (string->number a-string) 60))))
 
 (define (set-minute-text-field-background)
   (if (valid-minute-string? (send minute-text-field get-value))
       (send minute-text-field set-field-background (make-object color% VALID-BG-COLOR))
       (send minute-text-field set-field-background (make-object color% INVALID-BG-COLOR))))
 
-;; validate hour
-(define (valid-hour-string? a-string)
-  (let ((hour (string->number (send hour-combo-field get-value))))
-    (and (exact-nonnegative-integer? hour)
-         (< hour 13)
-         (> hour 0))))
-  
 (define (set-hour-combo-field-background)
   (if (valid-hour-string? (send hour-combo-field get-value))
       (send hour-combo-field set-field-background (make-object color% VALID-BG-COLOR))
       (send hour-combo-field set-field-background (make-object color% INVALID-BG-COLOR))))
-
-;; validate am/pm
-(define (valid-ampm-string? a-string)
-  (or (string=? "AM" a-string)
-      (string=? "PM" a-string)))
 
 (define (set-ampm-combo-field-background)
   (if (valid-ampm-string? (send ampm-combo-field get-value))
       (send ampm-combo-field set-field-background (make-object color% VALID-BG-COLOR))
       (send ampm-combo-field set-field-background (make-object color% INVALID-BG-COLOR))))
 
-;; validate year
-(define (valid-year-string? a-string)
-  (not (equal? #f (member a-string year-list))))
-  
 (define (set-year-combo-field-background)
   (if (valid-year-string? (send year-combo-field get-value))
       (send year-combo-field set-field-background (make-object color% VALID-BG-COLOR))
       (send year-combo-field set-field-background (make-object color% INVALID-BG-COLOR))))
 
-;; validate month
-(define (valid-month-string? a-string)
-  (not (equal? #f (member a-string month-list))))
-
 (define (set-month-combo-field-background)
   (if (valid-month-string? (send month-combo-field get-value))
       (send month-combo-field set-field-background (make-object color% VALID-BG-COLOR))
       (send month-combo-field set-field-background (make-object color% INVALID-BG-COLOR))))
-
-;; validate date
-(define (valid-date-string? a-string month year)
-  (let ((max-days (days-in-month month year)))
-    (not (or (not (string? a-string))
-             (> (string-length a-string) 2)
-             (equal? #f (string->number a-string))
-             (< (string->number a-string) 1)
-             (> (string->number a-string) max-days)))))
 
 (define (set-date-text-field-background)
   (define month (string->number (send month-combo-field get-value)))
@@ -952,7 +911,18 @@
       (send date-text-field set-field-background (make-object color% (make-object color% VALID-BG-COLOR)))
       (send date-text-field set-field-background (make-object color% (make-object color% INVALID-BG-COLOR)))))
 
-;; validate all entries
+;; At least one day of week must be checked for periodic test.
+(define (valid-one-time-periodic-entries?)
+  (not (and (equal? 1 (send one-time-periodic-radio-box get-selection))
+            (equal? #f (send check-monday get-value))
+            (equal? #f (send check-tuesday get-value))
+            (equal? #f (send check-wednesday get-value))
+            (equal? #f (send check-thursday get-value))
+            (equal? #f (send check-friday get-value))
+            (equal? #f (send check-saturday get-value))
+            (equal? #f (send check-sunday get-value)))))
+
+;; All user entries must be validated before creating an autotest.
 (define (entries-are-valid?)
   (and (valid-autotest-name-string? (send autotest-name-text-field get-value))
        (valid-hour-string? (send hour-combo-field get-value))
@@ -963,7 +933,9 @@
        (valid-date-string? (send date-text-field get-value)
                            (string->number (send month-combo-field get-value))
                            (string->number (send year-combo-field get-value)))
+       (valid-one-time-periodic-entries?)
        (not (equal? 0 (send files-list-box get-number)))))
+
 
 ;; entry point
 (define (open-manage-schedule)
