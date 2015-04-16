@@ -120,8 +120,7 @@
            (write-string"                     (a ((href, (embed/url specifiedFile-page))) \"" output)
            (write-string (car lst) output)
            (write-string "\")\n" output)
-           (write-string "(br)" output)
-           (write-string "(br)" output)
+           (write-string "                     (br)(br)\n" output)
            (fileLooper (cdr lst))
           )
     )
@@ -132,9 +131,9 @@
   (write-string "\n" output)
   (write-string "\n" output)
 )
-  
 
-;;
+
+;;***modify this***
 (define (generateSpecifiedFile reqList provList procList docList)
   (write-string ";;page for a specified file\n" output);;begin---------------
   (write-string "(define (specifiedFile-page request)\n" output)
@@ -155,7 +154,7 @@
   (write-string "                     (b \"Required\")\n" output)
   (write-string "                     (fieldset (code (list " output)
   (reqLooper reqList)
-  (write-string ")))" output)
+  (write-string ")))\n" output)
   (write-string "                     (br) (br) (br)\n" output)
   (write-string "                     ;add included\n" output)
   (write-string "                     (b \"Included\")\n" output)
@@ -174,13 +173,13 @@
     )
   )  
   (inclLooper provList)
-  (write-string ")))" output)
+  (write-string ")))\n" output)
   (write-string "                     (br) (br) (br)\n" output)
   (write-string "                     ;add provided\n" output);;sub-begin---------------------
   (write-string "                     (b \"Provided\")\n" output)
   (write-string "                     (fieldset (code (list " output)
   (provLooper provList)
-  (write-string ")))" output)
+  (write-string ")))\n" output)
   (write-string "                     (br) (br) (br)\n" output);;sub-end------------
   (write-string "                     ;;add procs and data\n" output);;sub-begin-----------------
   (write-string "                     (b \"Procedures & Data\")\n" output)
@@ -373,3 +372,57 @@
                   '("proc_1" "proc_2" "proc_3" "proc_4" "proc_5")
                   '("procBody_1" "procBody_2" "procBody_3" "procBody_4" "procBody_5")
                   '("blockComment_1" "blockComment_2" "blockComment_3" "blockComment_4" "blockComment_5"))
+
+;;- - - - - - - - -
+#|
+(define file1 (list "file_name_1"
+                    #t ;;has corrisponding documentation block?
+                    '("req_1" "req_3" "req_5" "req_7")
+                    '("incl_1" "incl_3" "incl_5" "incl_7")
+                    '("prov_1" "prov_3" "prov_5" "prov_7")
+                    '("proc_1" "proc_3" "proc_5" "proc_7")
+                    '("procBody_1" "procBody_3" "procBody_5" "procBody_7")
+                    '("blockComment_1" "blockComment_3" "blockComment_5" "procBody_7"))
+)
+
+(define file2 (list "file_name_2"
+                    #t ;;has corrisponding documentation block?
+                    '("req_2" "req_4" "req_6" "req_8")
+                    '("incl_2" "incl_4" "incl_6" "incl_8")
+                    '("prov_2" "prov_4" "prov_6" "prov_8")
+                    '("proc_2" "proc_4" "proc_6" "proc_8")
+                    '("procBody_2" "procBody_4" "procBody_6" "procBody_8")
+                    '("blockComment_2" "blockComment_4" "blockComment_6" "procBody_8")))
+  
+  
+(define file3 (list "file_name_3"
+                    #t ;;has corrisponding documentation block?
+                    '("req_11" "req_33" "req_55" "req_77")
+                    '("incl_11" "incl_33" "incl_55" "incl_77")
+                    '("prov_11" "prov_33" "prov_55" "prov_77")
+                    '("proc_11" "proc_33" "proc_55" "proc_77")
+                    '("procBody_11" "procBody_33" "procBody_55" "procBody_77")
+                    '("blockComment_11" "blockComment_33" "blockComment_55" "procBody_77")))
+  
+
+(define file4 (list "file_name_4" 
+                    #t ;;has corrisponding documentation block?
+                    '("req_22" "req_44" "req_66" "req_88")
+                    '("incl_22" "incl_44" "incl_66" "incl_88")
+                    '("prov_22" "prov_44" "prov_66" "prov_88")
+                    '("proc_22" "proc_44" "proc_66" "proc_88")
+                    '("procBody_22" "procBody_44" "procBody_66" "procBody_88")
+                    '("blockComment_22" "blockComment_44" "blockComment_66" "procBody_88")))
+
+(generationMaster '(file1 file2 file3 file4)
+                  '("file_1" "file_2" "file_3" "file_4")
+                  '("req_1"  "req_2"  "req_3"  "req_4"  "req_5"  "req_6"  "req_7"  "req_8")
+                  '("incl_1" "incl_2" "incl_3" "incl_4" "incl_5" "incl_6" "incl_7" "incl_8")
+                  '("prov_1" "prov_2" "prov_3" "prov_4" "prov_5" "prov_6" "prov_7" "prov_8")
+                  '("proc_1" "proc_2" "proc_3" "proc_4" "proc_5")
+                  '("procBody_1" "procBody_2" "procBody_3" "procBody_4" "procBody_5")
+                  '("blockComment_1" "blockComment_2" "blockComment_3" "blockComment_4" "blockComment_5"))
+                  
+|#
+
+
