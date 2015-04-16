@@ -5,7 +5,7 @@
 ;; directory containing this file, and run			;;
 ;; "racket [file_name].rkt".					;;
 ;;                                                              ;;
-;; Date Generated On: 4/15/2015                                 ;;
+;; Date Generated On: 4/16/2015                                 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
@@ -67,7 +67,7 @@
     (send/suspend/dispatch response-generator)))
 
 
-;;page for displaying file list
+;;page for a specified file
 (define (specifiedFile-page request)
   (local ((define (response-generator embed/url)
             (response/xexpr
