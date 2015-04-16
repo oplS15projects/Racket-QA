@@ -9,16 +9,17 @@
 
 (define (rkt-source? mypathList resultList)
   (cond ( (null? mypathList)
+          (display "\n\n")
           resultList
         )
         ( (equal? (filename-extension (car mypathList)) #"rkt" ) ;comparing byte-string
-          (display "adding file\n")
+          (display "\nAdding file")
+          (display (car mypathList))
           (rkt-source? (cdr mypathList) (cons (car mypathList) resultList))
         )
         (else
-         (display "not adding file: ")
-         (display (filename-extension (car mypathList)))
-         (display "\n")
+         (display "\nSkipping ")
+         (display (car mypathList))
          (rkt-source? (cdr mypathList) resultList)
         )
   )
