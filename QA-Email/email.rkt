@@ -1,3 +1,13 @@
+#||
+ | email.rkt
+ | author: Yong Cho (Yong_Cho@student.uml.edu)
+ | Created on: 4/3/2015
+ |
+ | This file implements procedures to send an email and a UI to
+ | configure smtp settings needed for sending an email.
+ |#
+
+
 #lang racket
 
 (require net/smtp
@@ -145,16 +155,6 @@
 (define (send-text-file to subject text-file-path list-of-recipients)
   (define body (read-file text-file-path))
   (connect-and-send to subject body list-of-recipients 'text))
-
-
-
-
-;; Converting plain text to html-tagged text
-;(define file-lines (file->lines results-filepath))
-;(define body-with-br (map (lambda (x) (string-append x "<br />")) file-lines))
-;(define body-into-one-string (accumulate-for-email string-append "" body-with-br))
-;(define body-with-p (string-append "<p>" body-into-one-string "</p>"))
-;(define body (list body-with-p))
 
   
 ;; **********************************************************************

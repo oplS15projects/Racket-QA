@@ -1,3 +1,13 @@
+#||
+ | autotest.rkt
+ | author: Yong Cho (Yong_Cho@student.uml.edu)
+ | Created on: 4/8/2015
+ |
+ | This file implements autotest object that stores all information
+ | needed to execute automatically a set of racket source files specified 
+ | by the user, as well as procedures to store and retrieve it.
+ |#
+
 #lang racket
 
 (require racket/date
@@ -501,40 +511,4 @@
                             #f
                             (list-to-email-db (list-ref at-list 20)))))))
 
-
-
-
-
-
-;; Automatic-test-runner module operation
-
-;; Has no GUI
-
-;; Starts in the background when the machine starts (if possible in all platforms).
-
-;; Or starts in the background when the user runs the main program UI
-;; if it is not already running (GUI can check this)
-
-
-;; Finds out the current time
-
-;; Scans Auto-Test directory for an active scheduled test
-;; (each scheduled test suite will have an active flag)
-
-;; Priority-Queues a list of due-date/testsuite pair
-
-;; (--Loop--)
-;; Continuously checks the current time(seconds)/day for matching the top-queue item
-;; once the top-queue is due, 
-;; put it back in the priority-queue as next-due-time(seconds)/testsuite
-;; check if the test is already running (test may run longer than the interval)
-;; , then execute the test in a separate thread
-;; (--End Loop--)
-
-
-
-
-
-
-
-
+(init-autotest)

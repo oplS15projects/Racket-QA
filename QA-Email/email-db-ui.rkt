@@ -1,17 +1,28 @@
+#||
+ | email-db-ui.rkt
+ | author: Yong Cho (Yong_Cho@student.uml.edu)
+ | Created on: 4/3/2015
+ |
+ | This file implements user interface to manage multiple mailing lists.
+ |#
+
 #lang racket/gui
 
 (require "email.rkt"
          "email-db.rkt"
          "email-db-entry-edit-ui.rkt")
 
+;; open-manage-mailing-list-dialog
+;; 
 ;; Usage
 ;; (open-manage-mailing-list-dialog 'return-addresses) 
-;; -> Returns a list of all email addresses in the selected db.
+;; -> Returns a list of all email address strings in the selected db.
 ;; (open-manage-mailing-list-dialog 'return-db)
 ;; -> Returns the selected email-db object.
 ;; (open-manage-mailing-list-dialog)
-;; -> Returns nothing.
+;; -> Returns nothing. Just for managing the mailing list.
 (provide open-manage-mailing-list-dialog)
+
 
 (init-email-db)
 

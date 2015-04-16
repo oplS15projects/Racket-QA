@@ -1,3 +1,12 @@
+#||
+ | input-validation.rkt
+ | author: Yong Cho (Yong_Cho@student.uml.edu)
+ | Created on: 4/15/2015
+ |
+ | This file implements procedures to validate user-input strings
+ | for time and date entry.
+ |#
+
 #lang racket
 
 (require "calendar.rkt")

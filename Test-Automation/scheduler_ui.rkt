@@ -1,3 +1,12 @@
+#||
+ | scheduler_ui.rkt
+ | author: Yong Cho (Yong_Cho@student.uml.edu)
+ | Created on: 4/8/2015
+ |
+ | This file implements user interface to schedule and manage automated
+ | tests.
+ |#
+
 #lang racket/gui
 
 (require racket/date
@@ -939,7 +948,6 @@
 
 ;; entry point
 (define (open-manage-schedule)
-  (init-autotest)
   (populate-active-tests-list-box)
   (populate-inactive-tests-list-box)
   (setup-ui)

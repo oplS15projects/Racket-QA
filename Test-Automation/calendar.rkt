@@ -1,3 +1,11 @@
+#||
+ | calendar.rkt
+ | author: Yong Cho (Yong_Cho@student.uml.edu)
+ | Created on: 4/10/2015
+ |
+ | This file implements procedures to retrieve date information.
+ |#
+
 #lang racket
 
 (require racket/date)
@@ -8,12 +16,14 @@
                                   (5 . 151) (6 . 181)  (7 . 212)  (8 . 243)
                                   (9 . 273) (10 . 304) (11 . 334)))
 
+;; Starts with 1 Jan as 0.
 (define (find-year-day day month year)
   (let ((days-pr (assoc (- month 1) cumulative-days)))
     (if (and (leap-year? year) (> month 2))
         (- (+ day (cdr days-pr) 1) 1)
         (- (+ day (cdr days-pr)) 1))))
 
+;; Sun(0), Sat(6)
 (define (find-week-day day month year)
   (let* ((a (quotient (- 14 month) 12))
          (y (- year a))

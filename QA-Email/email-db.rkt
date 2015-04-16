@@ -1,3 +1,12 @@
+#||
+ | email-db.rkt
+ | author: Yong Cho (Yong_Cho@student.uml.edu)
+ | Created on: 4/3/2015
+ |
+ | This file implements a mailing list object which contains a set of
+ | email addresses, and procedures to store and retrieve it.
+ |#
+
 #lang racket
 
 (require racket/file
