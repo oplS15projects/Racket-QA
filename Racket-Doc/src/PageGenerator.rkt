@@ -33,6 +33,8 @@
                                  #:mode 'text
                                  #:exists 'replace))
 
+(define (generateFileMaster  fileList reqList inclList provList procList procBodyList docList)
+  0)
 
 ;generate documentation header
 (define (generateFileHeader)
@@ -87,6 +89,8 @@
   (write-string "    (send/suspend/dispatch response-generator)))\n" output)
   (write-string "\n" output)
   (write-string "\n" output)
+  
+  ;;
   (write-string ";;page for displaying file list\n" output)
   (write-string "(define (fileList-page request)\n" output)
   (write-string "  (local ((define (response-generator embed/url)\n" output)
@@ -115,18 +119,27 @@
   (write-string "    (send/suspend/dispatch response-generator)))\n" output)
   (write-string "\n" output)
   (write-string "\n" output)
-  (write-string ";;page for displaying file list\n" output)
+  
+  ;;
+  #|(define (specLooper pageList)
+    (cond ( (null? pageList)
+            (display "")
+          )
+          (else
+           
+          )|#
+  (write-string ";;page for displaying file list\n" output);;begin---------------
   (write-string "(define (specifiedFile-page request)\n" output)
   (write-string "  (local ((define (response-generator embed/url)\n" output)
   (write-string "            (response/xexpr\n" output)
   (write-string "             `(html (head (title \"Racket-Doc\"))\n" output)
   (write-string "               (body (h1 \"*.rkt Files\")\n" output)
   (write-string "                     (center\n" output)
-  (write-string "                      (a ((href ,(embed/url main-page))) \"<--\")\n" output)
+  (write-string "                      (a ((href ,(embed/url specifiedFile-page))) \"<--\")\n" output)
   (write-string "                      (html nbsp nbsp nbsp nbsp)\n" output)
   (write-string "                      (a ((href ,(embed/url main-page))) \"Home\")\n" output)
   (write-string "                      (html nbsp nbsp nbsp nbsp)\n" output)
-  (write-string "                      (a ((href ,(embed/url main-page))) \"-->\")\n" output)
+  (write-string "                      (a ((href ,(embed/url specifiedFile-page))) \"-->\")\n" output)
   (write-string "                      )\n" output)
   (write-string "                     (br)(br)\n" output)
   (write-string "                     (p \"Specified File page\")\n" output)
@@ -168,7 +181,7 @@
   (inclLooper provList)
   (write-string ")))" output)
   (write-string "                     (br) (br) (br)\n" output)
-  (write-string "                     ;add provided\n" output);;begin---------------------
+  (write-string "                     ;add provided\n" output);;sub-begin---------------------
   (write-string "                     (b \"Provided\")\n" output)
   (write-string "                     (fieldset (code (list " output)
   (define (provLooper lst)
@@ -186,8 +199,8 @@
   )  
   (provLooper provList)
   (write-string ")))" output)
-  (write-string "                     (br) (br) (br)\n" output);;end------------
-  (write-string "                     ;;add procs and data\n" output);;begin-----------------
+  (write-string "                     (br) (br) (br)\n" output);;sub-end------------
+  (write-string "                     ;;add procs and data\n" output);;sub-begin-----------------
   (write-string "                     (b \"Procedures & Data\")\n" output)
   (define (procLooper pLst dLst count)
     (cond ( (null? pLst)
@@ -217,6 +230,9 @@
   (write-string "    (send/suspend/dispatch response-generator)))" output)
   (write-string "\n\n\n")
   
+  
+  
+;;  
   (write-string ";;page for displaying dependencies\n" output);;begin----------
   (write-string "(define (required-page request)\n" output)
   (write-string "  (local ((define (response-generator embed/url)\n" output)
@@ -235,6 +251,7 @@
   (write-string "\n" output)
   (write-string "\n\n\n");;end-----------
   
+;;  
   (write-string ";;page for displaying provideds\n" output);;begin---------
   (write-string "(define (provided-page request)\n" output)
   (write-string "  (local ((define (response-generator embed/url)\n" output)
@@ -252,7 +269,7 @@
   (write-string "\n" output)
   (write-string "\n\n\n");;end-----------
   
-  ;;generate procs & data page
+;;generate procs & data page
   (write-string ";;page for displaying procs and data of a single file\n" output);;begin---------
   (write-string "(define (procAndData-page request)\n" output)
   (write-string "  (local ((define (response-generator embed/url)\n" output)
@@ -268,7 +285,7 @@
   (write-string "\n" output)
   (write-string "\n" output);;end
   
-  ;;generate proc body pages (each will be named "codeblock[number]-page")
+;;generate proc body pages (each will be named "codeblock[number]-page")
   (define (bodyLooper lst count)
     (cond ( (null? lst)
             (display "")
@@ -301,7 +318,7 @@
   )
   (bodyLooper procBodyList 0)         
   
-  ;;generate help page
+;;generate help page
   (write-string ";;help page\n" output)
   (write-string "(define (help-page request)\n" output)
   (write-string "  (local ((define (response-generator embed/url)\n" output)

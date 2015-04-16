@@ -74,11 +74,11 @@
              `(html (head (title "Racket-Doc"))
                (body (h1 "*.rkt Files")
                      (center
-                      (a ((href ,(embed/url main-page))) "<--")
+                      (a ((href ,(embed/url specifiedFile-page))) "<--")
                       (html nbsp nbsp nbsp nbsp)
                       (a ((href ,(embed/url main-page))) "Home")
                       (html nbsp nbsp nbsp nbsp)
-                      (a ((href ,(embed/url main-page))) "-->")
+                      (a ((href ,(embed/url specifiedFile-page))) "-->")
                       )
                      (br)(br)
                      (p "Specified File page")
