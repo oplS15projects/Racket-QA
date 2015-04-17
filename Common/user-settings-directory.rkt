@@ -1,47 +1,24 @@
-;; **********************************************************************
-;; * Last Updated: 2:30 PM 04/08/2015
-;; *
-;; * The set of APIs defined in this file defines the location of the user-
-;; * specific settings directory for the Racket QA application and provides
-;; * uniform ways to obtain the path strings to the directory and the files 
-;; * in the directory to be used by other modules of the application.
-;; *
-;; * The APIs defined in this module use following directories as the
-;; * user-specific settings directory by the platform convention.
-;; *
-;; * %APPDATA%/Racket QA  (Windows)
-;; * $HOME/.Racket_QA     (Linux)
-;; *
-;; * Users of this API need not concern about distinguishing
-;; * the specific platform they are calling the procedures in. All
-;; * procedures in this API set will automatically find out the OS type at
-;; * runtime and use the correct directory.
-;; *
-;; * Moreover, users can use both / or \\ directory separators in the
-;; * arguments to the procedures in this API regardless of the platform
-;; * they are being called. The procedures will automatically use the
-;; * correct separator for the platform type.
-;; *
-;; * ex)
-;; * > (file-exists-in-settings-directory? "Addresses/master-address.dat")
-;; * #t
-;; * > (file-exists-in-settings-directory? "Addresses\\master-address.dat")
-;; * #t
-;; *
-;; * These APIs do not provide a means to directly write or modify data.
-;; * Instead, they provide path strings that can be used in conjunction
-;; * with the standard Racket file I/O APIs.
-;; *
-;; * ex)
-;; * > (define smtp-settings-file (full-path-in-settings-directory "smtp-settings.conf"))
-;; * > smtp-settings-file
-;; * "C:\\Users\\yongjec\\AppData\\Roaming\\Racket QA\\smtp-settings.conf"
-;; * > (define out (open-output-file smtp-settings-file #:mode 'binary))
-;; * > (fprintf out "~a\t~a\t~a~n" server username password)
-;; *
-;; * Include (require "user-settings-directory.rkt") to your source file
-;; * to use the procedures in this API set. (might need reload)
-;; **********************************************************************
+#||
+ | user-settings-directory.rkt
+ | author: Yong Cho (Yong_Cho@student.uml.edu)
+ | Created on: 4/1/2015
+ |
+ | The set of procedures defined in this file defines the location of the user-
+ | specific settings directory for the Racket-QA application and provides
+ | uniform ways to obtain the path strings to the directory and the files 
+ | in the directory to be used by other components of the application.
+ |
+ | The procedures defined in this module use following directories as the
+ | user-specific settings directory by the platform convention.
+ |
+ | %APPDATA%/Racket QA      (Windows)
+ | $HOME/.Racket_QA         (Linux)
+ | $HOME/Library/Racket QA  (Mac)
+ |
+ | Users of this API need not concern about the specific runtime platform.
+ | Procedures in this API set will automatically find out the OS type at
+ | runtime and use the correct directory.
+ |#
 
 #lang racket
 
@@ -132,7 +109,7 @@
 
 
 ;; Checks if the user-specific settings directory exists for the current user.
-;; This will usually return #f when the application is run for the first
+;; This will usually return #f when the Racket-QA application is run for the first
 ;; time for the machine/user.
 ;;
 (define (settings-directory-exists?)
@@ -269,7 +246,7 @@
 
 
 ;; For Windows, applies a 'hidden' attribute to a file or directory.
-;; For Linux, attaches a dot before the name of the file or directory.
+;; For Linux or Mac, attaches a dot before the name of the file or directory.
 ;; This can be used with both absolute and relative path.
 ;;
 ;; > (hide-file-or-directory "D:\\Data\\AVs")
@@ -348,7 +325,7 @@
 
 
 ;; For Windows, replaces all / to \\.
-;; For Linux, does the opposite.
+;; For Linux and Mac, does the opposite.
 ;;
 ;; > (cleanse-path-string "Addresses/master.db")
 ;; "Addresses\\master.db"                           ;(Windows)
@@ -370,7 +347,7 @@
            (string-replace str "\\" "/"))
           (else str)))
 
-;; For Windows
+;; Miscellaneous helpers (only for Windows)
 (define (double-backslash windows-str)
   (when (eq? (system-type) 'windows)
     (string-replace windows-str "\\" "\\\\")))
