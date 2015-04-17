@@ -141,7 +141,8 @@
   (write-string "\n" output)
   (write-string "\n" output)
 )
-  
+ 
+
 ;;
 (define (generatefileNameListPage fileNameList)
   (write-string ";;page for displaying file list\n" output)
@@ -292,7 +293,8 @@
   (write-string "\n\n\n");;end-----------
 )
   
-;;  
+
+;;Generate the joint "provides" list page
 (define (generateProvidesPage provList)
   (write-string ";;page for displaying provideds\n" output);;begin---------
   (write-string "(define (provided-page request)\n" output)
@@ -312,6 +314,7 @@
   (write-string "\n\n\n");;end-----------
 )
   
+
 ;;generate procs & data page
 (define (generateProcHeaderPage procList docList)
   (write-string ";;page for displaying procs and data of a single file\n" output);;begin---------
