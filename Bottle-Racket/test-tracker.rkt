@@ -33,6 +33,8 @@
 
 ;; Runs a specified test area file, absolute full directory.
 ;; (run-test-area testing-area-path)
+;; (run-test-area "C:\\OPL\\Racket-QA\\Racket-QA\\Bottle-Racket\\test ing\\ps1\\ps1_area.rkt")
+;; (run-test-area spaces-dir-testing)
 (define (run-test-area full-test-area-path)
   (current-directory (get-dirpath-from-filepath full-test-area-path))
   (define output-email-file-path (string-append (cleanse-path-string
@@ -41,10 +43,14 @@
   (define output-results-file-path (string-append (cleanse-path-string
                                      (string-append (get-dirpath-from-filepath full-test-area-path) "/"))
                                                 "test-results.txt"))
+  ;; This needs to be done for the system call to work properly for paths with spaces in them.
+  (define fixed-full-test-area-path (cond ((eq? (system-type) 'windows) (valid-path-windows full-test-area-path))
+                                          ((eq? (system-type) 'unix) (valid-path-linux full-test-area-path))
+                                          ((eq? (system-type) 'macosx) (valid-path-linux full-test-area-path))
+                                          (else (error "Platform not supported"))))
   (begin (remake-file output-email-file-path)
          (remake-file output-results-file-path)
-         ;(system (string-append "racket " full-test-area-path))
-         (system (string-append RACKET-PATH " " full-test-area-path))
+         (system (string-append RACKET-PATH " " fixed-full-test-area-path))
          (parse-test-results (get-filename-from-filepath full-test-area-path)
                              output-results-file-path
                              output-email-file-path))
@@ -54,6 +60,9 @@
 #|
 (run-test-area-email testing-area-path
                      (string-append "Regression Results: " testing-suite-name)
+                     (open-manage-mailing-list-dialog 'return-db))
+(run-test-area-email spaces-dir-testing
+                     (string-append "Regression Results: " "ps1 with spaces")
                      (open-manage-mailing-list-dialog 'return-db))
 |#
 (define (run-test-area-email full-test-area-path subject-field mailing-list)
@@ -68,10 +77,14 @@
          (define output-results-file-path (string-append (cleanse-path-string
                                                           (string-append (get-dirpath-from-filepath full-test-area-path) "/"))
                                                          "test-results.txt"))
+         ;; This needs to be done for the system call to work properly for paths with spaces in them.
+         (define fixed-full-test-area-path (cond ((eq? (system-type) 'windows) (valid-path-windows full-test-area-path))
+                                                 ((eq? (system-type) 'unix) (valid-path-linux full-test-area-path))
+                                                 ((eq? (system-type) 'macosx) (valid-path-linux full-test-area-path))
+                                                 (else (error "Platform not supported"))))
          (begin (remake-file output-email-file-path)
                 (remake-file output-results-file-path)
-                ;(system (string-append "racket " full-test-area-path))
-                (system (string-append RACKET-PATH " " full-test-area-path))
+                (system (string-append RACKET-PATH " " fixed-full-test-area-path))
                 (parse-test-results (get-filename-from-filepath full-test-area-path)
                                     output-results-file-path
                                     output-email-file-path))
@@ -153,15 +166,6 @@
         (cons (map car seq) (helper (map cdr seq)))))
   (helper seq)
 )
-
-#|
-;; This definition of accumulate was taken from the SICP reading.
-(define (accumulate op initial sequence)
- (if (null? sequence)
-     initial
-     (op (car sequence)
-         (accumulate op initial (cdr sequence)))))
-|#
 
 ;; This definition of map was taken from the SICP reading.
 (define (map proc items)
@@ -311,43 +315,13 @@
 ;; * TEST MAIN
 ;; **********************************************************************
 
+#|
 (define testing-area-path "C:\\OPL\\Racket-QA\\Racket-QA\\Bottle-Racket\\testing\\apitest\\test-area.rkt")
 (define testing-test-result-path "C:\\OPL\\Racket-QA\\Racket-QA\\Bottle-Racket\\testing\\apitest\\test-results.txt")
 (define testing-output-result-path "C:\\OPL\\Racket-QA\\Racket-QA\\Bottle-Racket\\testing\\apitest\\test-results-email.txt")
 (define testing-suite-name "api-test")
-
-#|
-;; map is used here to allow each test suite to be run in the textual interface.
-(remake-file test-result-path)
-(define test-result-raw-output (open-output-file test-result-path))
-(current-error-port test-result-raw-output) ; File containing test information if any cases failed
-(current-output-port test-result-raw-output) ; File containing test information if all cases successful
-(map run-tests test-list)
-
-;; Close the output ports after running the tests
-(close-output-port test-result-raw-output)
+(define spaces-dir-testing "C:\\OPL\\Racket-QA\\Racket-QA\\Bottle-Racket\\test ing\\ps1\\ps1_area.rkt")
 |#
-
-#|
-;; The location of the suite file starts with "location:". For instance
-;; (is-suite-location? "location:   ps1_suite.rkt:23:27")
-(define raw-test-lines (file->lines test-result-path))
-
-(define pass-fail-info (get-passed-failed-info raw-test-lines))
-(define successful-list (get-successful-tests pass-fail-info))
-(define failed-list (get-failed-tests pass-fail-info))
-(define total-list (get-total-tests pass-fail-info))
-
-;; Now for the raw statistics
-(define num-passed (add-list-of-string-nums successful-list))
-(define num-failed (add-list-of-string-nums failed-list))
-(define num-total (add-list-of-string-nums total-list))
-;(define percent-passed (round (* (/ num-passed num-total) 100)))
-;(define percent-failed (round (* (/ num-failed num-total) 100)))
-|#
-
-
-
 
 (provide (all-defined-out))
 
