@@ -51,4 +51,4 @@ When an auto-test is due and is active, the files associated with it will be exe
 
 ### Limitation
 * The periodic test functionality currently supports automatic execution of a same test as often as daily. It does not support running the same test more than once a day. However, users can easily work around this by creating more than one autotest items with same files and making each test run at different hours.
-* Sending an email after the test execution is not implemented yet. However, it is coming soon since APIs needed are in place.
+* The scheduled tests will run automatically only when scheduler_ui.rkt file stays loaded in the Dr.Racket framework. Once Dr.Racket closes, scheduler threads are terminated and the scheduled tests will not run anymore. The scheduler window can be closed as long as Dr.Racket stays open. Enabling the scheduler threads to stay active without the presence of Dr.Racket requires the scheduler component to be a standalone executable, and will be implemented some time in the future.

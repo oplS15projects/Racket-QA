@@ -62,6 +62,7 @@
 
 (define (make-runner)
   (define DEBUG #t)
+  (define VERBOSE #t)
   (thread
    (lambda ()
      (let loop ((timer #f))
@@ -74,20 +75,33 @@
                      (eq? RUN-COMMAND (car command)))
                 (when DEBUG
                   (printf "Test Runner: Received a run command~n"))
-                (let ((files (autotest-files (caddr command))))
-                  (for-each 
+                (let ((notify? (autotest-notify? (caddr command)))
+                      (test-name (autotest-name (caddr command)))
+                      (email-db (autotest-email-db (caddr command)))
+                      (files (autotest-files (caddr command))))
+                  (for-each
                    (lambda (file)
-                     (when DEBUG
+                     (when (or DEBUG VERBOSE)
                        (printf "Test Runner: Executing file ~a..." file))
-                     (with-handlers ((exn:fail? (lambda (e) 
-                                                  (printf "~n** Error in (run-test-area ~v)! **~n~a~n"
-                                                          file
-                                                          (exn-message e)))))
-                       (run-test-area file)
-                       (when DEBUG
-                         (printf "Complete~n"))))
+                     (cond ((and notify?
+                                 (not (equal? #f email-db)))
+                            (let ((subject (string-append "Autotest Result - " test-name)))
+                              (with-handlers ((exn:fail? (lambda (e) 
+                                                           (printf "~n** Error in (run-test-area-email ~v ~v email-db)! **~n~a~n"
+                                                                   file
+                                                                   subject
+                                                                   (exn-message e)))))
+                                (run-test-area-email file subject email-db))))
+                           (else
+                            (with-handlers ((exn:fail? (lambda (e) 
+                                                         (printf "~n** Error in (run-test-area ~v)! **~n~a~n"
+                                                                 file
+                                                                 (exn-message e)))))
+                              (run-test-area file))))
+                     (when (or DEBUG VERBOSE)
+                       (printf "Complete~n")))
                    files)))
-         ((eq? command 'print)
-          (thread-send timer 'print))))
-     (sleep 1.0)
-     (loop timer)))))
+               ((eq? command 'print)
+                (thread-send timer 'print))))
+       (sleep 1.0)
+       (loop timer)))))
