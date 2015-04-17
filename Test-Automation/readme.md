@@ -1,4 +1,4 @@
-### Racket-QA Automated Test Scheduler
+## Racket-QA Automated Test Scheduler
 
 Racket QA Test Scheduler provides functionality to schedule a one-time or recurring test run-up without user intervention. The scheduler relies on Bottle-Racket functionality to execute a test and generate the results.
 
@@ -11,7 +11,7 @@ There are 6 files that comprise the test scheduler.
 * `calendar.rkt` provides utility procedures for the autotest object to calculate the correct due time when requested by the scheduler threads.
 
 
-### How to use Test Scheduler
+### How to use Scheduler
 
 In order to start the scheduler, load (require) `scheduler_ui.rkt` and run `(launch-scheduler)` procedure. On the left side of the scheduler window are two list boxes containing active and inactive auto-test items. When there is no auto-test configured, these lists will be empty. The purpose of inactive auto-test is to allow the user to temporarily disable a periodic auto-test instead of having to delete it altogether.
 
@@ -35,6 +35,10 @@ The information filled out by the user can be reviewed after the test has been c
 
 ![UI_browse](https://github.com/oplS15projects/Racket-QA/blob/master/Test-Automation/images/documentation/ui_browse.png)
 
+Clicking "Select Mailing List..." button launches QA-Email UI which allows selecting a mailing list to associate it with the auto-test item.
+
+![UI_email](https://github.com/oplS15projects/Racket-QA/blob/master/Test-Automation/images/documentation/ui_email.png)
+
 "Autotest Actions" choice field below the test list boxes allows user to activate, deactivate, or delete an auto-test item.
 
 ![UI_actions](https://github.com/oplS15projects/Racket-QA/blob/master/Test-Automation/images/documentation/ui_actions.png)
@@ -42,3 +46,9 @@ The information filled out by the user can be reviewed after the test has been c
 When an auto-test is due and is active, the files associated with it will be executed by Bottle-Racket's APIs. The scheduler will also output to the Dr.Racket REPL console which files are currently being executed.
 
 ![UI_run_test](https://github.com/oplS15projects/Racket-QA/blob/master/Test-Automation/images/documentation/ui_run_test.png)
+
+
+
+### Limitation
+* The periodic test functionality currently supports automatic execution of a same test as often as daily. It does not support running the same test more than once a day. However, users can easily work around this by creating more than one autotest items with same files and making each test run at different hours.
+* Sending an email after the test execution is not implemented yet. However, it is coming soon since APIs needed are in place.

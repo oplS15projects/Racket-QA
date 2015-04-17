@@ -14,6 +14,7 @@
 * [**Racket QA Email**][QA-Email Document]
 * [**Racket-Doc**][Racket-Doc Document]
 * [**Bottle-Racket and Test-Capture**][Bottle-Racket Document]
+* [**Test Scheduler**][Test Scheduler Document]
 
 
 <!-- Links -->
@@ -21,3 +22,4 @@
 [QA-Email Document]: https://github.com/oplS15projects/Racket-QA/blob/master/QA-Email/readme.md
 [Racket-Doc Document]: https://github.com/oplS15projects/Racket-QA/blob/master/Racket-Doc/README.md
 [Bottle-Racket Document]: https://github.com/oplS15projects/Racket-QA/blob/master/Bottle-Racket/README.md
+[Test Scheduler Document]: https://github.com/oplS15projects/Racket-QA/blob/master/Test-Automation/readme.md
