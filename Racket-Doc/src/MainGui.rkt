@@ -50,7 +50,10 @@
   (display "\n\"Select (out)\" button pressed\n")
     (cond ( (= (send fileOrDirRBtn get-selection) 0)
             (define filepath (get-file))
-            (send outputTextField set-value (path->string filepath))
+            (if (equal? (path->string filepath) #f)
+                (display "Invalid path selected")
+                (send outputTextField set-value (path->string filepath))
+            )
           )
           (else
            (define dirpath (get-directory))
@@ -59,8 +62,8 @@
 
 (define (okBtnCallback button event)
   (display "\n\"Run\" button pressed\n")
-  (send frame show #f)
-  (send procFrame show #t)
+  ;(send frame show #f)
+  ;(send procFrame show #t)
   (toFile (each-line "./../tests/Test.rkt" '() '() '() '() '()) reqs? incls? provs? procs?))
 
 (define (advancedBtnCallback button event)
