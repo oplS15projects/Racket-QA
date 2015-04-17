@@ -12,13 +12,14 @@
 (require racket/date
          racket/flonum
          "autotest.rkt"
+         "bg-process.rkt"
          "calendar.rkt"
          "input-validation.rkt"
          "scheduler.rkt"         
          "../QA-Email/email-db.rkt"
          "../QA-Email/email-db-ui.rkt")
 
-(provide open-manage-schedule)
+(provide launch-scheduler)
 
 
 (define NO-ACTIVE-AUTOTEST-MESSAGE "No active autotest")
@@ -27,14 +28,22 @@
 (define NO-MAILING-LIST-MESSAGE "No mailing list selected  ")
 (define VALID-BG-COLOR "White")
 (define INVALID-BG-COLOR "Red")
+(define warning-icon (make-object bitmap% "images/warning-1.png" 'png))
 
 (define selected-email-db #f)
 (define APPROXIMATE-SIZE-X 700)
-(define APPROXIMATE-SIZE-Y 550)
+(define APPROXIMATE-SIZE-Y 600)
 
 (define-values (size-x size-y) (get-display-size))
 (define x-pos (fl->exact-integer (* (- size-x APPROXIMATE-SIZE-X) 0.5)))
 (define y-pos (fl->exact-integer (* (- size-y APPROXIMATE-SIZE-Y) 0.5)))
+
+;; (define my-frame%
+;;   (class frame%
+;;     (super-new)
+;;     (define/augment (on-close)
+;;       (kill-thread timer)
+;;       (kill-thread runner))))
 
 (define manage-scheduler-frame  
   (new frame%
@@ -163,7 +172,8 @@
                                  (not (equal? NO-ACTIVE-AUTOTEST-MESSAGE 
                                               (send active-tests-list-box get-string-selection))))
                             (let ((at (send active-tests-list-box get-data active-selection)))
-                              (remove-from-autotest-list (autotest-id at))))
+                              (remove-from-autotest-list (autotest-id at))
+                              (setup-ui)))
                            ((and (not (equal? #f inactive-selection))
                                  (not (equal? NO-INACTIVE-AUTOTEST-MESSAGE
                                               (send inactive-tests-list-box get-string-selection))))
@@ -175,6 +185,7 @@
             (populate-active-tests-list-box)
             (populate-inactive-tests-list-box)
             (send autotest-actions-choice set-selection 0)
+            (populate-autotest-info 'default)
             (setup-ui))))))
 
 (define top-right-h-pane
@@ -250,27 +261,42 @@
        (alignment '(left top))))
 
 ;; "Add file" button
-(new button%
-     (parent right-buttons-pane)
-     (label "Add...")
-     (callback 
-      (lambda (b e)
-        (let ((filepaths (get-file-list "Select test files" manage-scheduler-frame)))
-          (when (not (eq? filepaths #f))                   
-            (define (add-to-file-list-box path)
-              (send files-list-box append (path->string path)))
-            (map add-to-file-list-box filepaths))))))
+(define add-file-button
+  (new button%
+       (parent right-buttons-pane)
+       (label "Add...")
+       (callback 
+        (lambda (b e)
+          (let ((filepaths (get-file-list "Select test files" manage-scheduler-frame)))
+            (when (not (eq? filepaths #f))                   
+              (define (add-to-file-list-box path)
+                (send files-list-box append (path->string path)))
+              (map add-to-file-list-box filepaths))
+            (toggle-files-warning-icon))))))
 
 ;; Button to remove files
-(new button%
-     (parent right-buttons-pane)
-     (label "Remove")
-     (callback
-      (lambda (b e)
-        (let ((selected-indexes (sort (send files-list-box get-selections) >))
-              (delete-n (lambda (n) (send files-list-box delete n))))
-          (when (not (null? selected-indexes))
-            (for-each delete-n selected-indexes))))))
+(define remove-file-button
+  (new button%
+       (parent right-buttons-pane)
+       (label "Remove")
+       (callback
+        (lambda (b e)
+          (let ((selected-indexes (sort (send files-list-box get-selections) >))
+                (delete-n (lambda (n) (send files-list-box delete n))))
+            (when (not (null? selected-indexes))
+              (for-each delete-n selected-indexes))
+            (toggle-files-warning-icon))))))
+
+(define files-warning-pane
+  (new pane%
+       (parent right-buttons-pane)
+       (alignment '(left bottom))))
+
+;; warning sign when no file is specified 
+(define files-list-box-warning-label
+  (new message%
+       (parent files-warning-pane)
+       (label warning-icon)))
 
 ;; area below files list box - configures time schedule
 (define schedule-panel
@@ -448,7 +474,8 @@
         (lambda (c e)
           (if (send check-daily get-value)
               (check-all-days)
-              (uncheck-all-days))))))
+              (uncheck-all-days))
+          (toggle-periodic-warning-icon)))))
 (new message%
      (parent days-of-week-pane)
      (label "")
@@ -460,7 +487,8 @@
        (value #f)
        (callback
         (lambda (c e)
-          (toggle-check-daily c)))))
+          (toggle-check-daily c)
+          (toggle-periodic-warning-icon)))))
 (define check-tuesday
   (new check-box%
        (parent days-of-week-pane)
@@ -468,7 +496,8 @@
        (value #f)
        (callback
         (lambda (c e)
-          (toggle-check-daily c)))))
+          (toggle-check-daily c)
+          (toggle-periodic-warning-icon)))))
 (define check-wednesday
   (new check-box%
        (parent days-of-week-pane)
@@ -476,7 +505,8 @@
        (value #f)
        (callback
         (lambda (c e)
-          (toggle-check-daily c)))))
+          (toggle-check-daily c)
+          (toggle-periodic-warning-icon)))))
 (define check-thursday
   (new check-box%
        (parent days-of-week-pane)
@@ -484,7 +514,8 @@
        (value #f)
        (callback
         (lambda (c e)
-          (toggle-check-daily c)))))
+          (toggle-check-daily c)
+          (toggle-periodic-warning-icon)))))
 (define check-friday
   (new check-box%
        (parent days-of-week-pane)
@@ -492,7 +523,8 @@
        (value #f)
        (callback
         (lambda (c e)
-          (toggle-check-daily c)))))
+          (toggle-check-daily c)
+          (toggle-periodic-warning-icon)))))
 (define check-saturday
   (new check-box%
        (parent days-of-week-pane)
@@ -500,7 +532,8 @@
        (value #f)
        (callback
         (lambda (c e)
-          (toggle-check-daily c)))))
+          (toggle-check-daily c)
+          (toggle-periodic-warning-icon)))))
 (define check-sunday
   (new check-box%
        (parent days-of-week-pane)
@@ -508,8 +541,13 @@
        (value #f)
        (callback
         (lambda (c e)
-          (toggle-check-daily c)))))
+          (toggle-check-daily c)
+          (toggle-periodic-warning-icon)))))
 
+(define periodic-warning-label
+  (new message%
+       (parent days-of-week-pane)
+       (label warning-icon)))
 ;; UI for configuring email notification
 (define email-panel
   (new group-box-panel%
@@ -583,6 +621,13 @@
        (vert-margin 3)
        (alignment '(center top))))
 
+(define (show-saved-message)
+  (thread
+   (lambda ()
+     (send saved-changes-label show #t)
+     (sleep 1.0)
+     (send saved-changes-label show #f))))
+      
 (define save-changes-button
   (new button%
        (parent activate-buttons-pane)
@@ -591,19 +636,28 @@
         (lambda (b e)
           (let ((active-selection (send active-tests-list-box get-selection))
                 (inactive-selection (send inactive-tests-list-box get-selection)))
-            (cond ((and (not (equal? #f active-selection))
+            (cond ((not (entries-are-valid?))
+                   (toggle-warning-icons))
+                  ((and (not (equal? #f active-selection))
                         (not (equal? NO-ACTIVE-AUTOTEST-MESSAGE 
                                      (send active-tests-list-box get-string-selection))))
                    (let ((at (send active-tests-list-box get-data active-selection)))
-                     (when (entries-are-valid?)
-                       (copy-autotest! (make-autotest-from-ui (autotest-active? at)) at))))
+                     (copy-autotest! (make-autotest-from-ui (autotest-active? at)) at)
+                     (show-saved-message)
+                     (toggle-warning-icons #f)))
                   ((and (not (equal? #f inactive-selection))
                         (not (equal? NO-INACTIVE-AUTOTEST-MESSAGE
                                      (send inactive-tests-list-box get-string-selection))))
                    (let ((at (send inactive-tests-list-box get-data inactive-selection)))
-                     (when (entries-are-valid?)
-                       (copy-autotest! (make-autotest-from-ui (autotest-active? at)) at))))
+                     (copy-autotest! (make-autotest-from-ui (autotest-active? at)) at)
+                     (show-saved-message)
+                     (toggle-warning-icons #f)))
                   (else (void))))))))
+
+(define saved-changes-label
+  (new message%
+       (parent activate-buttons-pane)
+       (label "Saved changes")))
 
 ;; 'Create and Activate' Button 
 ;; - Creates a new test and activates it at the same time
@@ -613,10 +667,12 @@
        (label "Create and Activate")
        (callback
         (lambda (b e)
-          (when (entries-are-valid?)
-            (add-to-autotest-list (make-autotest-from-ui #t))
-            (populate-active-tests-list-box)
-            (setup-ui))))))
+          (if (entries-are-valid?)
+              (begin (add-to-autotest-list (make-autotest-from-ui #t))
+                     (populate-active-tests-list-box)
+                     (setup-ui)
+                     (toggle-warning-icons #f))
+              (toggle-warning-icons))))))
 
 ;; 'Create as Inactive' Button
 ;; - Creates a new autotest schedule but does not activate it
@@ -626,10 +682,12 @@
        (label "Create as Inactive")
        (callback
         (lambda (b e)
-          (when (entries-are-valid?)
-            (add-to-autotest-list (make-autotest-from-ui #f))
-            (populate-inactive-tests-list-box)
-            (setup-ui))))))
+          (if (entries-are-valid?)
+              (begin (add-to-autotest-list (make-autotest-from-ui #f))
+                     (populate-inactive-tests-list-box)
+                     (setup-ui)
+                     (toggle-warning-icons #f))
+              (toggle-warning-icons))))))
 
 ;; Cancel Button - Cancels creating a new autotest schedule
 (define cancel-button
@@ -637,7 +695,9 @@
        (parent activate-buttons-pane)
        (label "Cancel")
        (callback
-        (lambda (b e) (setup-ui)))))
+        (lambda (b e) 
+          (toggle-warning-icons #f)
+          (setup-ui)))))
 
 ;; Creates a new autotest.
 (define (make-autotest-from-ui (activate? #t))
@@ -741,7 +801,7 @@
   (enable-all-children left-v-panel)
   (send selected-test-name-box change-children name-field-normal-mode)
   (send files-list-box enable #t)
-  (enable-all-children right-buttons-pane)
+  (enable-file-buttons)
   (send one-time-periodic-radio-box enable #t)
   (toggle-onetime-periodic)
   (enable-all-children time-of-day-pane)
@@ -750,6 +810,7 @@
   (enable-all-children activate-buttons-pane)
   (set! selected-email-db (autotest-email-db at))
   (define selection-in-active (send active-tests-list-box get-selection))
+  (toggle-warning-icons #f)
   (cond ((not (equal? #f selection-in-active))
          (populate-autotest-info active-tests-list-box))
         (else
@@ -763,7 +824,7 @@
   (send selected-autotest-message set-label NO-AUTOTEST-SELECTED-MESSAGE)
   (send schedule-new-button enable #t)
   (send files-list-box enable #t)
-  (disable-all-children right-buttons-pane)
+  (disable-file-buttons)
   (send one-time-periodic-radio-box enable #f)
   (send date-text-field set-field-background (make-object color% VALID-BG-COLOR))
   (disable-all-children date-picker-pane)  
@@ -773,7 +834,8 @@
   (disable-email-db-controls)
   (send activate-buttons-pane change-children buttons-empty-mode)
   (disable-all-children activate-buttons-pane)
-  (set! selected-email-db #f))
+  (set! selected-email-db #f)
+  (toggle-warning-icons #f))
 
 ;; UI setting when no autotest schedule exists
 (define (config-ui-empty-mode)
@@ -782,7 +844,7 @@
   (send selected-autotest-message set-label "No autotest scheduled")
   (send schedule-new-button enable #t)
   (send files-list-box enable #f)
-  (disable-all-children right-buttons-pane)
+  (disable-file-buttons)
   (send one-time-periodic-radio-box enable #f)
   (send date-text-field set-field-background (make-object color% VALID-BG-COLOR))
   (disable-all-children date-picker-pane)  
@@ -792,7 +854,8 @@
   (disable-email-db-controls)
   (send activate-buttons-pane change-children buttons-empty-mode)
   (disable-all-children activate-buttons-pane)
-  (set! selected-email-db #f))
+  (set! selected-email-db #f)
+  (toggle-warning-icons #f))
 
 ;; UI setting when creating a new autotest schedule
 (define (config-ui-create-mode)
@@ -809,7 +872,7 @@
   (set-autotest-name-text-field-background)
   (send schedule-new-button enable #f)
   (send files-list-box enable #t)
-  (enable-all-children right-buttons-pane)
+  (enable-file-buttons)
   (send one-time-periodic-radio-box enable #t)
   (set-date-text-field-background)
   (set-minute-text-field-background)
@@ -835,7 +898,8 @@
              (and (equal? NO-INACTIVE-AUTOTEST-MESSAGE (send inactive-tests-list-box get-string-selection))
                   (equal? #f (send active-tests-list-box get-selection))))
          (config-ui-no-selection-mode))
-        (else (config-ui-normal-mode))))
+        (else (config-ui-normal-mode)))
+  (send saved-changes-label show #f))
 
 
 ;; **********************************************************************
@@ -856,7 +920,7 @@
 (define (buttons-create-mode arg-not-used)
   (list create-active-button create-inactive-button cancel-button))
 (define (buttons-normal-mode arg-not-used)
-  (list save-changes-button))
+  (list save-changes-button saved-changes-label))
 (define buttons-empty-mode buttons-normal-mode)
 
 (define (disable-all-children area-container)
@@ -869,6 +933,14 @@
   (define (send-delete-child child)
     (send area-container delete-child child))
   (for-each send-delete-child (send area-container get-children)))
+
+(define (enable-file-buttons)
+  (send add-file-button enable #t)
+  (send remove-file-button enable #t))
+
+(define (disable-file-buttons)
+  (send add-file-button enable #f)
+  (send remove-file-button enable #f))
 
 (define (enable-email-db-controls)
   (send check-notify enable #t)
@@ -920,6 +992,31 @@
       (send date-text-field set-field-background (make-object color% (make-object color% VALID-BG-COLOR)))
       (send date-text-field set-field-background (make-object color% (make-object color% INVALID-BG-COLOR)))))
 
+;; Shows a warning icon for entries that have no field background to signal invalid input.
+(define (toggle-files-warning-icon (enable? #t))
+  (cond (enable?
+         (if (< 0 (send files-list-box get-number))
+             (send files-list-box-warning-label show #f)
+             (send files-list-box-warning-label show #t)))
+        (else
+         (send files-list-box-warning-label show #f))))
+
+(define (toggle-periodic-warning-icon (enable? #t))
+  (cond (enable?
+         (if (valid-one-time-periodic-entries?)
+             (send periodic-warning-label show #f)
+             (send periodic-warning-label show #t)))
+        (else
+         (send periodic-warning-label show #f))))
+
+(define (toggle-warning-icons (enable? #t))
+  (cond (enable?
+         (toggle-files-warning-icon)
+         (toggle-periodic-warning-icon))
+        (else
+         (toggle-files-warning-icon #f)
+         (toggle-periodic-warning-icon #f))))
+
 ;; At least one day of week must be checked for periodic test.
 (define (valid-one-time-periodic-entries?)
   (not (and (equal? 1 (send one-time-periodic-radio-box get-selection))
@@ -947,10 +1044,8 @@
 
 
 ;; entry point
-(define (open-manage-schedule)
+(define (launch-scheduler)
   (populate-active-tests-list-box)
   (populate-inactive-tests-list-box)
   (setup-ui)
   (send manage-scheduler-frame show #t))
-
-(open-manage-schedule)

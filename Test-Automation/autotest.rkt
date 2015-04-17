@@ -164,7 +164,6 @@
 
 ;; Adds an entry to autotest-list.
 (define (add-to-autotest-list at)
-  (printf "at = ~a~n" at) 
   (cond ((not (equal? #f (member (autotest-id at) (ids-in-autotest-list))))
          (printf "add-to-autotest-list: duplicate id~n" (autotest-id at))
          #f)
@@ -248,8 +247,8 @@
         (printf "due-week-days = ~a~n" due-week-days))
       (cond ((null? due-week-days) #f)
             ((and (member current-week-day due-week-days)
-                  (< (+ (* (date-hour (current-date)) 60) (date-minute (current-date)))  ; is due today
-                     (+ (* hour-in-24 60) minute)))             
+                  (<= (+ (* (date-hour (current-date)) 60) (date-minute (current-date)))  ; is due today
+                      (+ (* hour-in-24 60) minute)))
              (date-day (current-date)))
             ((and (member current-week-day due-week-days)  ; was due today, now due a week later
                   (equal? (length due-week-days) 1))
@@ -277,7 +276,7 @@
             (current-day (date-day (current-date)))
             (current-month (date-month (current-date)))
             (current-year (date-year (current-date))))
-
+        (update-hour-in-24)
         (cond ((eq? type 'one-time)
                (define due-at
                  (date->seconds (make-date* 0 
@@ -292,7 +291,7 @@
                                             (date-time-zone-offset cd)
                                             (date*-nanosecond cd)
                                             (date*-time-zone-name cd))))
-               (if (> due-at (current-seconds))
+               (if (>= due-at (current-seconds))
                    (set! next-due due-at)
                    (set! next-due 0)))
               (else  ; recurring test

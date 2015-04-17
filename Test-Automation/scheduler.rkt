@@ -13,13 +13,15 @@
          "autotest.rkt"
          "../Bottle-Racket/test-tracker.rkt")
 
-(provide runner)
+(provide make-runner
+         make-timer
+         INIT-TIMER-COMMAND)
 
-
-
-(define NOTIFY-COMMAND 'Due!)
+(define RUN-COMMAND 'Run!)
+(define INIT-TIMER-COMMAND 'Set-timer)
 
 (define (make-timer runner)
+  (define DEBUG #f)
   (thread
    (lambda ()
      (let loop ((at-list autotest-list))
@@ -27,8 +29,12 @@
        (define cs (current-seconds))
        (for-each 
         (lambda (at)
+          (when DEBUG
+            (printf "cs = ~a, due = ~a~n" cs (autotest-next-due at)))
           (when (equal? cs (autotest-next-due at))
-            (thread-send runner (list NOTIFY-COMMAND (autotest-next-due at) at))))
+            (when DEBUG
+              (printf "Timer: Sending a run command for ~a~n" (autotest-name at)))
+            (thread-send runner (list RUN-COMMAND (autotest-next-due at) at))))
         active-at)
        (define command (thread-try-receive))
        (when (not (eq? #f command))
@@ -55,29 +61,33 @@
        (loop autotest-list)))))
 
 (define (make-runner)
+  (define DEBUG #t)
   (thread
    (lambda ()
-     (let loop ()
+     (let loop ((timer #f))
        (define command (thread-try-receive))
        (when (not (eq? #f command))
          (cond ((and (pair? command)
-                     (eq? NOTIFY-COMMAND (car command)))
+                     (eq? INIT-TIMER-COMMAND (car command)))
+                (set! timer (cadr command)))
+               ((and (pair? command)
+                     (eq? RUN-COMMAND (car command)))
+                (when DEBUG
+                  (printf "Test Runner: Received a run command~n"))
                 (let ((files (autotest-files (caddr command))))
                   (for-each 
                    (lambda (file)
-                     (printf "Test Runner: Executing file ~a..." file)
+                     (when DEBUG
+                       (printf "Test Runner: Executing file ~a..." file))
                      (with-handlers ((exn:fail? (lambda (e) 
                                                   (printf "~n** Error in (run-test-area ~v)! **~n~a~n"
                                                           file
                                                           (exn-message e)))))
                        (run-test-area file)
-                       (sleep 0.2))
-                     (printf "~n"))
+                       (when DEBUG
+                         (printf "Complete~n"))))
                    files)))
-               ((eq? command 'print)
-                (thread-send timer 'print))))
-       (sleep 1.0)
-       (loop)))))
-       
-(define runner (make-runner))
-(define timer (make-timer runner))
+         ((eq? command 'print)
+          (thread-send timer 'print))))
+     (sleep 1.0)
+     (loop timer)))))
