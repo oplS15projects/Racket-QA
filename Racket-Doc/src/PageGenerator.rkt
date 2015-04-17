@@ -103,7 +103,7 @@
 )
 
 
-;generate (unchanging) main page
+;generate static main page
 (define (generateMainPage)
   (write-string "#lang racket\n\n" output)
   (write-string "(require web-server/servlet web-server/servlet-env)\n" output)
