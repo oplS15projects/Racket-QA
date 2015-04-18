@@ -357,5 +357,5 @@
     (string-append "\"" windows-str "\"")))
 
 (define (valid-path-linux linux-str)
-  (when (eq? (system-type) 'unix)
+  (when (member (system-type) '(unix macosx))
     (string-replace linux-str " " "\\ ")))
