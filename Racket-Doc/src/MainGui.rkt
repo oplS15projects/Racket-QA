@@ -13,8 +13,9 @@
 
 (require racket/gui)
 
+(require "DirSearcher.rkt")
 (require "Parser.rkt")
-(require "FileIO.rkt")
+(require "PageGenerator.rkt")
 (require "AdvancedGui.rkt")
 (require "ProcessingGui.rkt")
 
@@ -49,19 +50,53 @@
 (define (selectOutCallback button event)
   (display "\n\"Select (out)\" button pressed\n")
     (cond ( (= (send fileOrDirRBtn get-selection) 0)
+            (display "selecting file")
             (define filepath (get-file))
-            (send outputTextField set-value (path->string filepath))
+            (if (equal? (path->string filepath) #f)
+                (display "Invalid path selected")
+                (send outputTextField set-value (path->string filepath))
+            )
           )
           (else
+           (display "selecting directory")
            (define dirpath (get-directory))
            (send outputTextField set-value (path->string dirpath))
           )))
 
+
 (define (okBtnCallback button event)
   (display "\n\"Run\" button pressed\n")
-  (send frame show #f)
-  (send procFrame show #t)
-  (toFile (each-line "./../tests/Test.rkt" '() '() '() '() '()) reqs? incls? provs? procs?))
+  ;(send frame show #f)
+  ;(send procFrame show #t)
+  ;;each-line will return a list of lists: a list containing the requires, includes, etc.
+  (cond ( (= (send fileOrDirRBtn get-selection) 0)
+          (let ([aFileStruct (each-line (open-input-file (send inputTextField get-value)) (file-name-from-path (send inputTextField get-value)) '() '() '() '() '())])
+            (display "\nHERE!\n")
+            (display "\n\n")
+            (generationMaster (list aFileStruct) ;;list of file structures (i.e. "objects")
+                              (list (car aFileStruct)) ;;list of file names
+                              (car (cdr (cdr aFileStruct))) ;;list of "requires"
+                              (car (cdr (cdr (cdr aFileStruct)))) ;;list of "includes"
+                              (car (cdr (cdr (cdr (cdr aFileStruct))))) ;;list of "provides"
+                              (car (cdr (cdr (cdr (cdr (cdr aFileStruct)))))) ;;list of proc "headers"
+                              '("NA" "NA" "NA" "NA" "NA" "NA" "NA" "NA" "NA" "NA" "NA" "NA" "NA" "NA" "NA" "NA") ;;list of code blocks
+                              (car (cdr (cdr (cdr (cdr (cdr (cdr aFileStruct)))))))) ;;list of proc doc blocks 
+           )
+         )
+        (else
+            (display "deal with dir of files here")
+            (search (path->string (send inputTextField get-value)))
+            ;;pass each file to each-line
+            ;;bundle
+            ;;pass to generationMaster
+        )
+   )
+)
+
+
+
+
+
 
 (define (advancedBtnCallback button event)
   (display "\n\"Advanced\" button pressed\n")

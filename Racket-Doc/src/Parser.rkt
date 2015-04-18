@@ -16,21 +16,27 @@
 (require racket/file)
 
 (provide each-line)
+(provide tmp)
 
 
 
-(define input (open-input-file "./../tests/Test.rkt"))
+;(define input (open-input-file "./../tests/Test.rkt"))
 
+#|
+(define fileName "File")
 (define requireLst '())
 (define includeLst '())
 (define provideLst '())
 (define procHeaderLst '())
-(define procDocLst '())
+(define procDocLst '())|#
 (define prevLine 'null)
 
+(define (tmp file fileNm requireLst includeLst provideLst procHeaderLst procDocLst)
+  0)
 
-(define (each-line file requireLst includeLst provideLst procHeaderLst procDocLst)
-  (let ([thisLine (read-line input)])
+(define (each-line file fileNm requireLst includeLst provideLst procHeaderLst procDocLst)
+  (let ([thisLine (read-line file)]
+       [fileName fileNm])
     ;(display thisLine)
     ;(display "\n")
     (cond ( (eof-object? thisLine)
@@ -45,37 +51,38 @@
           (display "\n- - - - - - - - - - - -\n")
           (display procDocLst)
           |#
-          (list requireLst includeLst provideLst procHeaderLst procDocLst)
+            (display "reached the end of file.")
+            (list (some-system-path->string fileName) #t requireLst includeLst provideLst procHeaderLst procDocLst)
         )
         (else
          (cond
               ( (equal? (req? thisLine) #t) ;;requires
                 (set! prevLine 'req)
-                (each-line file (cons thisLine requireLst) includeLst provideLst procHeaderLst procDocLst)
+                (each-line file fileNm (cons thisLine requireLst) includeLst provideLst procHeaderLst procDocLst)
               )
               ( (equal? (incl? thisLine) #t) ;;includes
                 (set! prevLine 'incl)
-                (each-line file requireLst (cons thisLine includeLst) provideLst procHeaderLst procDocLst)
+                (each-line file fileNm requireLst (cons thisLine includeLst) provideLst procHeaderLst procDocLst)
               )
               ( (equal? (prov? thisLine) #t) ;;provides
                 (set! prevLine 'prov)
-                (each-line file requireLst includeLst (cons thisLine provideLst) procHeaderLst procDocLst)
+                (each-line file fileNm requireLst includeLst (cons thisLine provideLst) procHeaderLst procDocLst)
               )
               ( (equal? (proc? thisLine) #t) ;; procedure and data first line (i.e. "header")
                 (set! prevLine 'proc)
-                (each-line file requireLst includeLst provideLst (cons thisLine procHeaderLst) procDocLst)
+                (each-line file fileNm requireLst includeLst provideLst (cons thisLine procHeaderLst) procDocLst)
               )
               ( (equal? (commentStatus thisLine) 'begin);;--------------------
                 (set! prevLine 'docu)
-                (each-line file requireLst includeLst provideLst procHeaderLst (cons thisLine procDocLst))
+                (each-line file fileNm requireLst includeLst provideLst procHeaderLst (cons thisLine procDocLst))
               )
               ( (equal? (commentStatus thisLine) 'middle)
                 (set! prevLine 'docu)
-                (each-line file requireLst includeLst provideLst procHeaderLst (cons (string-append (car procDocLst) "\n" thisLine) (cdr procDocLst)))
+                (each-line file fileNm requireLst includeLst provideLst procHeaderLst (cons (string-append (car procDocLst) "\n" thisLine) (cdr procDocLst)))
               )
               (else
                (set! prevLine 'proc)
-               (each-line file requireLst includeLst provideLst procHeaderLst procDocLst)
+               (each-line file fileNm requireLst includeLst provideLst procHeaderLst procDocLst)
               )
          )
         )
@@ -110,9 +117,11 @@
          #t
         )))
 
-
+;;determines if the line is a procedure "header".
 (define (proc? line)
-  (cond ( (equal? (regexp-match #rx"(?<=define).*" line) #f)
+  (cond ( (or (equal? (regexp-match #rx"(?<=define).*" line) #f)
+              (equal? (substring line 0 1) " ")
+          )
          #f
         )
         (else
@@ -148,5 +157,12 @@
 
 
 ;;exe------------------------------
-;(each-line input requireLst includeLst provideLst procHeaderLst procDocLst)
 
+#|(each-line (open-input-file "/home/james/OplFiles/Racket-QA/Racket-Doc/tests/Test.rkt")
+           "file_name.rkt"
+           '("req1" "req2")
+           '("incl1" "incl2")
+           '("prov1" "prov2")
+           '("procH1" "procH2")
+           '("procB1" "procB2"))
+|#

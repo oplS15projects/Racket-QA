@@ -14,7 +14,7 @@
 
 #lang racket
 
-;;compile a list of "required" packages.  The firstList can 
+;;compile a list of "required" packages, OR "included" packages, OR etc.  The firstList can 
 ;;double as the final list.
 (define (catWithoutDuplLst firstList . listOfOtherLists)
    (looper firstList (flatten listOfOtherLists))
