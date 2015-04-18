@@ -391,7 +391,7 @@
   (new combo-field%
        (parent time-of-day-pane)
        (label #f)
-       (min-width 45)
+       (min-width 55)
        (stretchable-width #f)
        (choices (list "AM" "PM"))
        (init-value "AM")
@@ -441,7 +441,7 @@
   (new combo-field%
        (parent date-picker-pane)
        (label "Year ")
-       (min-width 88)
+       (min-width 100)
        (stretchable-width #f)
        (horiz-margin 2)
        (choices year-list)
@@ -454,7 +454,7 @@
   (new combo-field%
        (parent date-picker-pane)
        (label "Month ")
-       (min-width 85)
+       (min-width 95)
        (stretchable-width #f)
        (choices month-list)
        (init-value (number->string (current-month)))
