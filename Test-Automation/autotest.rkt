@@ -243,7 +243,7 @@
       (when thu? (set! due-week-days (append due-week-days (list 4))))
       (when fri? (set! due-week-days (append due-week-days (list 5))))
       (when sat? (set! due-week-days (append due-week-days (list 6)))))    
-    (define (find-next-due-date)
+    (define (find-next-due-date)  ; for recurring test
       (when DEBUG
         (printf "Starting (find-next-due-date)~n"))
       (week-days-to-list)
@@ -253,12 +253,14 @@
         (printf "due-week-days = ~a~n" due-week-days))
       (cond ((null? due-week-days) #f)
             ((and (member current-week-day due-week-days)
-                  (<= (+ (* (date-hour (current-date)) 60) (date-minute (current-date)))  ; is due today
-                      (+ (* hour-in-24 60) minute)))
+                  (<= (+ (* (date-hour (current-date)) 3600) 
+                         (* 60 (date-minute (current-date))) 
+                         (date-second (current-date)))  
+                      (+ (* hour-in-24 3600) (* minute 60))))  ; is due today
              (date-day (current-date)))
-            ((and (member current-week-day due-week-days)  ; was due today, now due a week later
+            ((and (member current-week-day due-week-days)  
                   (equal? (length due-week-days) 1))
-             (+ 7 (date-day (current-date))))
+             (+ 7 (date-day (current-date))))  ; was due today, now due a week later
             ((eq? #f (findf (lambda (day) (> day current-week-day)) due-week-days))
              (+ (date-day (current-date))
                 (- 7 (- current-week-day (argmin identity due-week-days)))))  ; wrapped around to next week
@@ -479,35 +481,6 @@
 (define (autotest-set-reserved-field-3 at value) (at 'set-reserved-field-3 value))
 (define (autotest-set-reserved-field-4 at value) (at 'set-reserved-field-4 value))
 (define (autotest-set-reserved-field-5 at value) (at 'set-reserved-field-5 value))
-
-(define (copy-autotest! from-at to-at)
-  (autotest-set-name to-at (autotest-name from-at))
-  (autotest-set-active? to-at (autotest-active? from-at))
-  (autotest-set-files to-at (autotest-files from-at))
-  (autotest-set-type to-at (autotest-type from-at))
-  (autotest-set-year to-at (autotest-year from-at))
-  (autotest-set-month to-at (autotest-month from-at))
-  (autotest-set-date to-at (autotest-date from-at))
-  (autotest-set-daily? to-at (autotest-daily? from-at))
-  (autotest-set-mon? to-at (autotest-mon? from-at))
-  (autotest-set-tue? to-at (autotest-tue? from-at))
-  (autotest-set-wed? to-at (autotest-wed? from-at))
-  (autotest-set-thu? to-at (autotest-thu? from-at))
-  (autotest-set-fri? to-at (autotest-fri? from-at))
-  (autotest-set-sat? to-at (autotest-sat? from-at))
-  (autotest-set-sun? to-at (autotest-sun? from-at))
-  (autotest-set-hour to-at (autotest-hour from-at))
-  (autotest-set-minute to-at (autotest-minute from-at))
-  (autotest-set-ampm to-at (autotest-ampm from-at))
-  (autotest-set-notify? to-at (autotest-notify? from-at))
-  (autotest-set-email-db to-at (autotest-email-db from-at))
-  (autotest-set-last-run to-at (autotest-last-run from-at))
-  (autotest-set-reserved-field-1 to-at (autotest-reserved-field-1 from-at))
-  (autotest-set-reserved-field-2 to-at (autotest-reserved-field-2 from-at))
-  (autotest-set-reserved-field-3 to-at (autotest-reserved-field-3 from-at))
-  (autotest-set-reserved-field-4 to-at (autotest-reserved-field-4 from-at))
-  (autotest-set-reserved-field-5 to-at (autotest-reserved-field-5 from-at))
-  (write-autotest to-at))
 
 (define (create-duplicate-autotest at)
   (let loop ((i 2))
