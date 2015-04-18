@@ -20,7 +20,7 @@
 (define input (open-input-file "./../tests/Test.rkt"))
 (define output (open-output-file "./../output/OutputDoc.rkt"
                                  #:mode 'text
-                                 #:exists 'update))
+                                 #:exists 'replace))
 
 (define (toFile listOfLists reqsBool inclsBool provsBool procsBool)
   (display "writing to file...")
@@ -48,7 +48,6 @@
   (close-output-port output)
   (send dialog show #t)
 )
-      
 
 
 (define (loopout mylist)
@@ -62,7 +61,7 @@
         )
   )
 )
-  
+
 #|(define (toFile requireLst includeLst provideLst procHeaderLst procDocLst)
   (write-string "requires-----------------------\n")
   (write-string requireLst)

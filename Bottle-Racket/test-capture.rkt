@@ -1,20 +1,10 @@
 #lang racket/gui
 
-;; Load in definitions from test-area-runner for procedures that create strings to write out to a file
 (require "test-tracker.rkt")
 (require "../Common/user-settings-directory.rkt") ; For writing out test results
 (require "../QA-Email/email.rkt"
          "../QA-Email/email-db.rkt"
          "../QA-Email/email-db-ui.rkt") ; For mailing test results
-
-; We want to write a new file with the definitions of test-area-runner
-; and has a require statement with the ps1_area.rkt file. This way that
-; newly generated script will be in the same directory as the test area
-; file and won't need to do any complex directory stuff. This is possibly
-; Just a simple GUI that asks the user to browse the computer for the
-; location of the test area file, then get the directory from there
-; to create a new script that can run that area and generate the test
-; results (and later on, to send an email).
 
 ;; **********************************************************************
 ;; * A couple handy functions from bn-to-racket
