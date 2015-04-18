@@ -20,6 +20,8 @@
 (define RUN-COMMAND 'Run!)
 (define INIT-TIMER-COMMAND 'Set-timer)
 
+;; Timer thread - tracks current time and notifies runner thread when 
+;; a scheduled autotest comes due.
 (define (make-timer runner)
   (define DEBUG #f)
   (thread
@@ -51,7 +53,8 @@
                     (lambda (file) (printf "~a~n" file))
                     (autotest-files at))
                    (printf "~n"))
-                 (sort active-at (lambda (a b) (< (autotest-next-due a) (autotest-next-due b))))))
+                 (sort active-at 
+                       (lambda (a b) (< (autotest-next-due a) (autotest-next-due b))))))
                (else
                 (void))))
        (let hold ()
@@ -60,8 +63,9 @@
            (hold)))
        (loop autotest-list)))))
 
+;; Runner thread - executes an autotest item when directed by timer thread.
 (define (make-runner)
-  (define DEBUG #t)
+  (define DEBUG #f)
   (define VERBOSE #t)
   (thread
    (lambda ()
@@ -75,10 +79,14 @@
                      (eq? RUN-COMMAND (car command)))
                 (when DEBUG
                   (printf "Test Runner: Received a run command~n"))
-                (let ((notify? (autotest-notify? (caddr command)))
+                (let ((at (caddr command))
+                      (notify? (autotest-notify? (caddr command)))
                       (test-name (autotest-name (caddr command)))
                       (email-db (autotest-email-db (caddr command)))
-                      (files (autotest-files (caddr command))))
+                      (files (autotest-files (caddr command)))
+                      (sec (current-seconds)))
+                  (autotest-set-last-run at sec)
+                  (write-autotest at)
                   (for-each
                    (lambda (file)
                      (when (or DEBUG VERBOSE)
@@ -86,17 +94,20 @@
                      (cond ((and notify?
                                  (not (equal? #f email-db)))
                             (let ((subject (string-append "Autotest Result - " test-name)))
-                              (with-handlers ((exn:fail? (lambda (e) 
-                                                           (printf "~n** Error in (run-test-area-email ~v ~v email-db)! **~n~a~n"
-                                                                   file
-                                                                   subject
-                                                                   (exn-message e)))))
+                              (with-handlers 
+                                  ((exn:fail? 
+                                    (lambda (e) 
+                                      (printf "~n** Error in (run-test-area-email ~v ~v email-db)! **~n~a~n"
+                                              file
+                                              subject
+                                              (exn-message e)))))
                                 (run-test-area-email file subject email-db))))
                            (else
-                            (with-handlers ((exn:fail? (lambda (e) 
-                                                         (printf "~n** Error in (run-test-area ~v)! **~n~a~n"
-                                                                 file
-                                                                 (exn-message e)))))
+                            (with-handlers 
+                                ((exn:fail? (lambda (e) 
+                                              (printf "~n** Error in (run-test-area ~v)! **~n~a~n"
+                                                      file
+                                                      (exn-message e)))))
                               (run-test-area file))))
                      (when (or DEBUG VERBOSE)
                        (printf "Complete~n")))
