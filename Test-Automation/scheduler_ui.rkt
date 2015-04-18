@@ -30,7 +30,10 @@
 (define NO-AUTOTEST-SCHEDULED-MESSAGE "No autotest scheduled  ")
 (define VALID-FIELD-COLOR (make-object color% "White"))
 (define INVALID-FIELD-COLOR (make-object color% "Red"))
-(define WARNING-ICON (make-object bitmap% "images/warning-1.png" 'png))
+(define ADD-FILE-ICON (read-bitmap "images/add-file-1.png"))
+(define REMOVE-FILE-ICON (read-bitmap "images/remove-file-1.png"))
+(define OK-ICON (read-bitmap "images/ok-1.png"))
+(define WARNING-ICON (read-bitmap "images/warning-1.png"))
 
 (define selected-email-db #f)
 (define APPROXIMATE-SIZE-X 750)
@@ -317,7 +320,7 @@
 (define add-file-button
   (new button%
        (parent right-buttons-pane)
-       (label "Add...")
+       (label ADD-FILE-ICON)
        (callback
         (lambda (b e)
           (let ((filepaths (get-file-list "Select test files" main-frame)))
@@ -329,7 +332,7 @@
 (define remove-file-button
   (new button%
        (parent right-buttons-pane)
-       (label "Remove")
+       (label REMOVE-FILE-ICON)
        (callback
         (lambda (b e)
           (let ((selected-indexes (sort (send files-list-box get-selections) >)))
@@ -483,7 +486,7 @@
   (new horizontal-pane%
        (parent periodic-group-box)
        (spacing 10)
-       (alignment '(left top))))
+       (alignment '(left center))))
 
 (define (toggle-check-daily check-box)
   (if (and (send check-monday get-value)
@@ -672,8 +675,7 @@
 (define saved-changes-label
   (new message%
        (parent activate-buttons-pane)
-       (label "Saved changes")
-       (min-height 30)))
+       (label OK-ICON)))
 
 (define (show-saved-message)
   (thread
