@@ -183,7 +183,7 @@
   (new choice%
        (parent left-v-panel)
        (label #f)
-       (min-width 260)
+       (min-width 200)
        (horiz-margin 0)
        (vert-margin 3)
        (choices (list "Autotest Actions"
@@ -265,7 +265,7 @@
   (new text-field%
        (parent selected-test-name-box)
        (label "Autotest Name ")
-       (min-width 280)
+       (min-width 340)
        (horiz-margin 3)
        (callback
         (lambda (tf e)
