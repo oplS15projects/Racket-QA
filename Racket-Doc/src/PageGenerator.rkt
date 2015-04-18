@@ -18,6 +18,7 @@
 ;;begin test---------------
 
 
+#|
 (define file1 (list "file_name_1"
                     #t ;;has corrisponding documentation block?
                     '("req_1" "req_3" "req_5" "req_7")
@@ -56,7 +57,7 @@
                     '("proc_22" "proc_44" "proc_66" "proc_88")
                     '("procBody_22" "procBody_44" "procBody_66" "procBody_88")
                     '("blockComment_22" "blockComment_44" "blockComment_66" "procBody_88")))
-
+|#
 
 ;;end test-----------------
 (define currentDateStr "")
@@ -79,14 +80,24 @@
                                  #:exists 'replace))
 
 (define (generationMaster fileList fileNameList reqList inclList provList procList procBodyList docList)
+  (display "fine (1)\n")
   (generateFileHeader)
+  (display "fine (2)\n")
   (generateMainPage)
+  (display "fine (3)\n")
   (generatefileNameListPage fileNameList)
+  (display "fine (4)\n")
+  (display fileNameList)
   (generateSpecifiedFile fileList (cons "PLACE_HOLDER" fileNameList))
+  (display "fine (5)\n")
   (generateRequiresPage reqList)
+  (display "fine (6)\n")
   (generateProvidesPage provList)
+  (display "fine (7)\n")
   (generateProcHeaderPage procList docList)
+  (display "fine (8)\n")
   (generateProcBodyPages procBodyList)
+  (display "fine (9)\n")
   (generateHelpPage)
 )
 
@@ -215,7 +226,7 @@
            (write-string "                      (a ((href ,(embed/url main-page))) \"Home\")\n" output)
            (write-string "                      (html nbsp nbsp nbsp nbsp)\n" output)
            (cond ( (= (length fileList) 1)
-                   ;;don't add ->
+                   (display "HERE!+\n")
                  )
                  (else
                   (write-string "                      (a ((href ,(embed/url " output)
@@ -232,6 +243,7 @@
            (write-string "                     ;add requires\n" output)
            (write-string "                     (b \"Required\")\n" output)
            (write-string "                     (fieldset (code (list " output)
+           (display "HERE!+\n")
            (reqLooper (car (cdr (cdr (car fileList)))))
            (write-string ")))\n" output)
            (write-string "                     (br) (br) (br)\n" output)
@@ -262,7 +274,10 @@
            (write-string "                     (br) (br) (br)\n" output);;sub-end------------
            (write-string "                     ;;add procs and data\n" output);;sub-begin-----------------
            (write-string "                     (b \"Procedures & Data\")\n" output)
-           (procLooper (car (cdr (cdr (cdr (cdr (cdr (car fileList))))))) (car (cdr (cdr (cdr (cdr (cdr (cdr (cdr (car fileList))))))))) 0)
+           (display "HERE!+\n")
+           (display (car (cdr (cdr (cdr (cdr (cdr (cdr (car fileList)))))))))
+           (display "\nafter")
+           (procLooper (car (cdr (cdr (cdr (cdr (cdr (car fileList))))))) (car (cdr (cdr (cdr (cdr (cdr (cdr (car fileList)))))))) 0)
            (write-string "                         )))))\n" output)  
            (write-string "    (send/suspend/dispatch response-generator)))" output)
            (write-string "\n\n\n" output)
@@ -453,14 +468,14 @@
    )
 )
 ;;exe-------------------
-(generationMaster (list file1 file2 file3 file4)
+#|(generationMaster (list file1 file2 file3 file4)
                   '("file_name_1" "file_name_2" "file_name_3" "file_name_4")
                   '("req_1"  "req_2"  "req_3"  "req_4"  "req_5"  "req_6"  "req_7"  "req_8")
                   '("incl_1" "incl_2" "incl_3" "incl_4" "incl_5" "incl_6" "incl_7" "incl_8")
                   '("prov_1" "prov_2" "prov_3" "prov_4" "prov_5" "prov_6" "prov_7" "prov_8")
                   '("proc_1" "proc_2" "proc_3" "proc_4" "proc_5")
                   '("procBody_1" "procBody_2" "procBody_3" "procBody_4" "procBody_5")
-                  '("blockComment_1" "blockComment_2" "blockComment_3" "blockComment_4" "blockComment_5"))
+                  '("blockComment_1" "blockComment_2" "blockComment_3" "blockComment_4" "blockComment_5"))|#
                   
 
 

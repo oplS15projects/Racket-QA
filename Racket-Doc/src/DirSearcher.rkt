@@ -1,8 +1,10 @@
 #lang racket
 
-(define (search)
+(provide search)
+
+(define (search locationStr)
   (rkt-source? (find-files path?
-              "/home/james/OplFiles/Racket-QA/Racket-Doc/tests/testDir"
+              locationStr
            ) '()
   )
 )
@@ -29,4 +31,4 @@
 
 
 ;;exe---------
-(search)
+;(search)

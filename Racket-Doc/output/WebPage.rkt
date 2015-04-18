@@ -5,7 +5,7 @@
 ;; directory containing this file, and run			;;
 ;; "racket [file_name].rkt".					;;
 ;;                                                              ;;
-;; Date Generated On: 4/17/2015                                 ;;
+;; Date Generated On: 4/18/2015                                 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
@@ -55,20 +55,14 @@
                      (center (a ((href ,(embed/url main-page))) "Home"))
                      (br)(br)
                      (p (b "Files:"))
-                     (a ((href, (embed/url file_name_1-page))) "file_name_1")
-                     (br)(br)
-                     (a ((href, (embed/url file_name_1-page))) "file_name_2")
-                     (br)(br)
-                     (a ((href, (embed/url file_name_1-page))) "file_name_3")
-                     (br)(br)
-                     (a ((href, (embed/url file_name_1-page))) "file_name_4")
+                     (a ((href, (embed/url Test.rkt-page))) "Test.rkt")
                      (br)(br)
                      )))))
     (send/suspend/dispatch response-generator)))
 
 
 ;;page for a specified file
-(define (file_name_1-page request)
+(define (Test.rkt-page request)
   (local ((define (response-generator embed/url)
             (response/xexpr
              `(html (head (title "Racket-Doc"))
@@ -76,201 +70,54 @@
                      (center
                       (a ((href ,(embed/url main-page))) "Home")
                       (html nbsp nbsp nbsp nbsp)
-                      (a ((href ,(embed/url file_name_2-page))) "-->")
                       )
                      (br)(br)
                      (p "Specified File page")
                      ;add requires
                      (b "Required")
-                     (fieldset (code (list "req_1" (br) "req_3" (br) "req_5" (br) "req_7" (br) )))
+                     (fieldset (code (list "(require "andThisTest.rkt")" (br) "(require "testing.rkt")" (br) )))
                      (br) (br) (br)
                      ;add included
                      (b "Included")
-                     (fieldset (code (list "incl_1" (br) "incl_3" (br) "incl_5" (br) "incl_7" (br) )))
+                     (fieldset (code (list "(include "secIncl.rkt")" (br) "(include "firstIncl.rkt")" (br) )))
                      (br) (br) (br)
                      ;add provided
                      (b "Provided")
-                     (fieldset (code (list "prov_1" (br) "prov_3" (br) "prov_5" (br) "prov_7" (br) )))
+                     (fieldset (code (list "(provide square)" (br) )))
                      (br) (br) (br)
                      ;;add procs and data
                      (b "Procedures & Data")
                      (fieldset
-                      (code (list (b "proc_1") (br)
-                             (i "blockComment_1") (br))))
+                      (code (list (b "(define five 5)") (br)
+                             (i "#||
+ | Created a variable named five.
+ | and gave it a value.
+ |#") (br))))
                      (a ((href, (embed/url codeblock0-page))) "Code")
                              (br) (br) (br)
                      (fieldset
-                      (code (list (b "proc_3") (br)
-                             (i "blockComment_3") (br))))
+                      (code (list (b "(define (addFour num1 num2 num3 num4)") (br)
+                             (i "#||
+ | This function adds four numbers together.
+ | @param num1 The first number.
+ | @param num2 The
+ |	       second
+ |	       number.
+ | @param num3 The third number.
+ | @param num4 The fourth number.
+ | @return The sum of the numbers.
+ |#") (br))))
                      (a ((href, (embed/url codeblock1-page))) "Code")
                              (br) (br) (br)
                      (fieldset
-                      (code (list (b "proc_5") (br)
-                             (i "blockComment_5") (br))))
+                      (code (list (b "(define (square num)") (br)
+                             (i "#||
+ | This function squares a given number.
+ | @param num Is the number to be squared.
+ |          
+ | @return the square of the numbers
+ |#") (br))))
                      (a ((href, (embed/url codeblock2-page))) "Code")
-                             (br) (br) (br)
-                     (fieldset
-                      (code (list (b "proc_7") (br)
-                             (i "procBody_7") (br))))
-                     (a ((href, (embed/url codeblock3-page))) "Code")
-                             (br) (br) (br)
-                         )))))
-    (send/suspend/dispatch response-generator)))
-
-
-;;page for a specified file
-(define (file_name_2-page request)
-  (local ((define (response-generator embed/url)
-            (response/xexpr
-             `(html (head (title "Racket-Doc"))
-               (body (h1 "*.rkt Files")
-                     (center
-                      (a ((href ,(embed/url file_name_1-page))) "<--")
-                      (html nbsp nbsp nbsp nbsp)
-                      (a ((href ,(embed/url main-page))) "Home")
-                      (html nbsp nbsp nbsp nbsp)
-                      (a ((href ,(embed/url file_name_3-page))) "-->")
-                      )
-                     (br)(br)
-                     (p "Specified File page")
-                     ;add requires
-                     (b "Required")
-                     (fieldset (code (list "req_2" (br) "req_4" (br) "req_6" (br) "req_8" (br) )))
-                     (br) (br) (br)
-                     ;add included
-                     (b "Included")
-                     (fieldset (code (list "incl_2" (br) "incl_4" (br) "incl_6" (br) "incl_8" (br) )))
-                     (br) (br) (br)
-                     ;add provided
-                     (b "Provided")
-                     (fieldset (code (list "prov_2" (br) "prov_4" (br) "prov_6" (br) "prov_8" (br) )))
-                     (br) (br) (br)
-                     ;;add procs and data
-                     (b "Procedures & Data")
-                     (fieldset
-                      (code (list (b "proc_2") (br)
-                             (i "blockComment_2") (br))))
-                     (a ((href, (embed/url codeblock0-page))) "Code")
-                             (br) (br) (br)
-                     (fieldset
-                      (code (list (b "proc_4") (br)
-                             (i "blockComment_4") (br))))
-                     (a ((href, (embed/url codeblock1-page))) "Code")
-                             (br) (br) (br)
-                     (fieldset
-                      (code (list (b "proc_6") (br)
-                             (i "blockComment_6") (br))))
-                     (a ((href, (embed/url codeblock2-page))) "Code")
-                             (br) (br) (br)
-                     (fieldset
-                      (code (list (b "proc_8") (br)
-                             (i "procBody_8") (br))))
-                     (a ((href, (embed/url codeblock3-page))) "Code")
-                             (br) (br) (br)
-                         )))))
-    (send/suspend/dispatch response-generator)))
-
-
-;;page for a specified file
-(define (file_name_3-page request)
-  (local ((define (response-generator embed/url)
-            (response/xexpr
-             `(html (head (title "Racket-Doc"))
-               (body (h1 "*.rkt Files")
-                     (center
-                      (a ((href ,(embed/url file_name_2-page))) "<--")
-                      (html nbsp nbsp nbsp nbsp)
-                      (a ((href ,(embed/url main-page))) "Home")
-                      (html nbsp nbsp nbsp nbsp)
-                      (a ((href ,(embed/url file_name_4-page))) "-->")
-                      )
-                     (br)(br)
-                     (p "Specified File page")
-                     ;add requires
-                     (b "Required")
-                     (fieldset (code (list "req_11" (br) "req_33" (br) "req_55" (br) "req_77" (br) )))
-                     (br) (br) (br)
-                     ;add included
-                     (b "Included")
-                     (fieldset (code (list "incl_11" (br) "incl_33" (br) "incl_55" (br) "incl_77" (br) )))
-                     (br) (br) (br)
-                     ;add provided
-                     (b "Provided")
-                     (fieldset (code (list "prov_11" (br) "prov_33" (br) "prov_55" (br) "prov_77" (br) )))
-                     (br) (br) (br)
-                     ;;add procs and data
-                     (b "Procedures & Data")
-                     (fieldset
-                      (code (list (b "proc_11") (br)
-                             (i "blockComment_11") (br))))
-                     (a ((href, (embed/url codeblock0-page))) "Code")
-                             (br) (br) (br)
-                     (fieldset
-                      (code (list (b "proc_33") (br)
-                             (i "blockComment_33") (br))))
-                     (a ((href, (embed/url codeblock1-page))) "Code")
-                             (br) (br) (br)
-                     (fieldset
-                      (code (list (b "proc_55") (br)
-                             (i "blockComment_55") (br))))
-                     (a ((href, (embed/url codeblock2-page))) "Code")
-                             (br) (br) (br)
-                     (fieldset
-                      (code (list (b "proc_77") (br)
-                             (i "procBody_77") (br))))
-                     (a ((href, (embed/url codeblock3-page))) "Code")
-                             (br) (br) (br)
-                         )))))
-    (send/suspend/dispatch response-generator)))
-
-
-;;page for a specified file
-(define (file_name_4-page request)
-  (local ((define (response-generator embed/url)
-            (response/xexpr
-             `(html (head (title "Racket-Doc"))
-               (body (h1 "*.rkt Files")
-                     (center
-                      (a ((href ,(embed/url file_name_3-page))) "<--")
-                      (html nbsp nbsp nbsp nbsp)
-                      (a ((href ,(embed/url main-page))) "Home")
-                      (html nbsp nbsp nbsp nbsp)
-                      )
-                     (br)(br)
-                     (p "Specified File page")
-                     ;add requires
-                     (b "Required")
-                     (fieldset (code (list "req_22" (br) "req_44" (br) "req_66" (br) "req_88" (br) )))
-                     (br) (br) (br)
-                     ;add included
-                     (b "Included")
-                     (fieldset (code (list "incl_22" (br) "incl_44" (br) "incl_66" (br) "incl_88" (br) )))
-                     (br) (br) (br)
-                     ;add provided
-                     (b "Provided")
-                     (fieldset (code (list "prov_22" (br) "prov_44" (br) "prov_66" (br) "prov_88" (br) )))
-                     (br) (br) (br)
-                     ;;add procs and data
-                     (b "Procedures & Data")
-                     (fieldset
-                      (code (list (b "proc_22") (br)
-                             (i "blockComment_22") (br))))
-                     (a ((href, (embed/url codeblock0-page))) "Code")
-                             (br) (br) (br)
-                     (fieldset
-                      (code (list (b "proc_44") (br)
-                             (i "blockComment_44") (br))))
-                     (a ((href, (embed/url codeblock1-page))) "Code")
-                             (br) (br) (br)
-                     (fieldset
-                      (code (list (b "proc_66") (br)
-                             (i "blockComment_66") (br))))
-                     (a ((href, (embed/url codeblock2-page))) "Code")
-                             (br) (br) (br)
-                     (fieldset
-                      (code (list (b "proc_88") (br)
-                             (i "procBody_88") (br))))
-                     (a ((href, (embed/url codeblock3-page))) "Code")
                              (br) (br) (br)
                          )))))
     (send/suspend/dispatch response-generator)))
@@ -285,7 +132,7 @@
                      (center (a ((href ,(embed/url main-page))) "Home"))
                      (br)(br)
                      (b "Required")
-                     (fieldset (code (list "req_1" (br) "req_2" (br) "req_3" (br) "req_4" (br) "req_5" (br) "req_6" (br) "req_7" (br) "req_8" (br) )))
+                     (fieldset (code (list "(require "andThisTest.rkt")" (br) "(require "testing.rkt")" (br) )))
                      )))))
     (send/suspend/dispatch response-generator)))
 
@@ -298,7 +145,7 @@
                (body (h1 "Provided")
                      (center (a ((href ,(embed/url main-page))) "Home"))
                      (b "Provided")
-                     (fieldset (code (list "prov_1" (br) "prov_2" (br) "prov_3" (br) "prov_4" (br) "prov_5" (br) "prov_6" (br) "prov_7" (br) "prov_8" (br) )))
+                     (fieldset (code (list "(provide square)" (br) )))
                      )))))
     (send/suspend/dispatch response-generator)))
 
@@ -313,29 +160,36 @@
                      ;;add procs and data
                      (br) (br)
                      (fieldset
-                      (code (list (b "proc_1") (br)
-                             (i "blockComment_1") (br))))
+                      (code (list (b "(define five 5)") (br)
+                             (i "#||
+ | Created a variable named five.
+ | and gave it a value.
+ |#") (br))))
                      (a ((href, (embed/url codeblock0-page))) "Code")
                              (br) (br) (br)
                      (fieldset
-                      (code (list (b "proc_2") (br)
-                             (i "blockComment_2") (br))))
+                      (code (list (b "(define (addFour num1 num2 num3 num4)") (br)
+                             (i "#||
+ | This function adds four numbers together.
+ | @param num1 The first number.
+ | @param num2 The
+ |	       second
+ |	       number.
+ | @param num3 The third number.
+ | @param num4 The fourth number.
+ | @return The sum of the numbers.
+ |#") (br))))
                      (a ((href, (embed/url codeblock1-page))) "Code")
                              (br) (br) (br)
                      (fieldset
-                      (code (list (b "proc_3") (br)
-                             (i "blockComment_3") (br))))
+                      (code (list (b "(define (square num)") (br)
+                             (i "#||
+ | This function squares a given number.
+ | @param num Is the number to be squared.
+ |          
+ | @return the square of the numbers
+ |#") (br))))
                      (a ((href, (embed/url codeblock2-page))) "Code")
-                             (br) (br) (br)
-                     (fieldset
-                      (code (list (b "proc_4") (br)
-                             (i "blockComment_4") (br))))
-                     (a ((href, (embed/url codeblock3-page))) "Code")
-                             (br) (br) (br)
-                     (fieldset
-                      (code (list (b "proc_5") (br)
-                             (i "blockComment_5") (br))))
-                     (a ((href, (embed/url codeblock4-page))) "Code")
                              (br) (br) (br)
                      )))))
     (send/suspend/dispatch response-generator)))
@@ -349,7 +203,7 @@
                (body (h1 "Procedure")
                      (center (a ((href ,(embed/url fileNameList-page))) "<--Back"))
                      (br)(br)
-                     (p "procBody_1")
+                     (p "NA")
                      )))))
     (send/suspend/dispatch response-generator)))
 
@@ -362,7 +216,7 @@
                (body (h1 "Procedure")
                      (center (a ((href ,(embed/url fileNameList-page))) "<--Back"))
                      (br)(br)
-                     (p "procBody_2")
+                     (p "NA")
                      )))))
     (send/suspend/dispatch response-generator)))
 
@@ -375,7 +229,7 @@
                (body (h1 "Procedure")
                      (center (a ((href ,(embed/url fileNameList-page))) "<--Back"))
                      (br)(br)
-                     (p "procBody_3")
+                     (p "NA")
                      )))))
     (send/suspend/dispatch response-generator)))
 
@@ -388,7 +242,7 @@
                (body (h1 "Procedure")
                      (center (a ((href ,(embed/url fileNameList-page))) "<--Back"))
                      (br)(br)
-                     (p "procBody_4")
+                     (p "NA")
                      )))))
     (send/suspend/dispatch response-generator)))
 
@@ -401,7 +255,150 @@
                (body (h1 "Procedure")
                      (center (a ((href ,(embed/url fileNameList-page))) "<--Back"))
                      (br)(br)
-                     (p "procBody_5")
+                     (p "NA")
+                     )))))
+    (send/suspend/dispatch response-generator)))
+
+
+;;page for displaying a procedure body.;;help page
+(define (codeblock5-page request)
+  (local ((define (response-generator embed/url)
+            (response/xexpr
+             `(html (head (title "Racket-Doc"))
+               (body (h1 "Procedure")
+                     (center (a ((href ,(embed/url fileNameList-page))) "<--Back"))
+                     (br)(br)
+                     (p "NA")
+                     )))))
+    (send/suspend/dispatch response-generator)))
+
+
+;;page for displaying a procedure body.;;help page
+(define (codeblock6-page request)
+  (local ((define (response-generator embed/url)
+            (response/xexpr
+             `(html (head (title "Racket-Doc"))
+               (body (h1 "Procedure")
+                     (center (a ((href ,(embed/url fileNameList-page))) "<--Back"))
+                     (br)(br)
+                     (p "NA")
+                     )))))
+    (send/suspend/dispatch response-generator)))
+
+
+;;page for displaying a procedure body.;;help page
+(define (codeblock7-page request)
+  (local ((define (response-generator embed/url)
+            (response/xexpr
+             `(html (head (title "Racket-Doc"))
+               (body (h1 "Procedure")
+                     (center (a ((href ,(embed/url fileNameList-page))) "<--Back"))
+                     (br)(br)
+                     (p "NA")
+                     )))))
+    (send/suspend/dispatch response-generator)))
+
+
+;;page for displaying a procedure body.;;help page
+(define (codeblock8-page request)
+  (local ((define (response-generator embed/url)
+            (response/xexpr
+             `(html (head (title "Racket-Doc"))
+               (body (h1 "Procedure")
+                     (center (a ((href ,(embed/url fileNameList-page))) "<--Back"))
+                     (br)(br)
+                     (p "NA")
+                     )))))
+    (send/suspend/dispatch response-generator)))
+
+
+;;page for displaying a procedure body.;;help page
+(define (codeblock9-page request)
+  (local ((define (response-generator embed/url)
+            (response/xexpr
+             `(html (head (title "Racket-Doc"))
+               (body (h1 "Procedure")
+                     (center (a ((href ,(embed/url fileNameList-page))) "<--Back"))
+                     (br)(br)
+                     (p "NA")
+                     )))))
+    (send/suspend/dispatch response-generator)))
+
+
+;;page for displaying a procedure body.;;help page
+(define (codeblock10-page request)
+  (local ((define (response-generator embed/url)
+            (response/xexpr
+             `(html (head (title "Racket-Doc"))
+               (body (h1 "Procedure")
+                     (center (a ((href ,(embed/url fileNameList-page))) "<--Back"))
+                     (br)(br)
+                     (p "NA")
+                     )))))
+    (send/suspend/dispatch response-generator)))
+
+
+;;page for displaying a procedure body.;;help page
+(define (codeblock11-page request)
+  (local ((define (response-generator embed/url)
+            (response/xexpr
+             `(html (head (title "Racket-Doc"))
+               (body (h1 "Procedure")
+                     (center (a ((href ,(embed/url fileNameList-page))) "<--Back"))
+                     (br)(br)
+                     (p "NA")
+                     )))))
+    (send/suspend/dispatch response-generator)))
+
+
+;;page for displaying a procedure body.;;help page
+(define (codeblock12-page request)
+  (local ((define (response-generator embed/url)
+            (response/xexpr
+             `(html (head (title "Racket-Doc"))
+               (body (h1 "Procedure")
+                     (center (a ((href ,(embed/url fileNameList-page))) "<--Back"))
+                     (br)(br)
+                     (p "NA")
+                     )))))
+    (send/suspend/dispatch response-generator)))
+
+
+;;page for displaying a procedure body.;;help page
+(define (codeblock13-page request)
+  (local ((define (response-generator embed/url)
+            (response/xexpr
+             `(html (head (title "Racket-Doc"))
+               (body (h1 "Procedure")
+                     (center (a ((href ,(embed/url fileNameList-page))) "<--Back"))
+                     (br)(br)
+                     (p "NA")
+                     )))))
+    (send/suspend/dispatch response-generator)))
+
+
+;;page for displaying a procedure body.;;help page
+(define (codeblock14-page request)
+  (local ((define (response-generator embed/url)
+            (response/xexpr
+             `(html (head (title "Racket-Doc"))
+               (body (h1 "Procedure")
+                     (center (a ((href ,(embed/url fileNameList-page))) "<--Back"))
+                     (br)(br)
+                     (p "NA")
+                     )))))
+    (send/suspend/dispatch response-generator)))
+
+
+;;page for displaying a procedure body.;;help page
+(define (codeblock15-page request)
+  (local ((define (response-generator embed/url)
+            (response/xexpr
+             `(html (head (title "Racket-Doc"))
+               (body (h1 "Procedure")
+                     (center (a ((href ,(embed/url fileNameList-page))) "<--Back"))
+                     (br)(br)
+                     (p "NA")
                      )))))
     (send/suspend/dispatch response-generator)))
 
