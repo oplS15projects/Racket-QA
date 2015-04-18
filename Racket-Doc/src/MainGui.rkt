@@ -14,7 +14,7 @@
 (require racket/gui)
 
 (require "Parser.rkt")
-(require "FileIO.rkt")
+(require "PageGenerator.rkt")
 (require "AdvancedGui.rkt")
 (require "ProcessingGui.rkt")
 
@@ -60,11 +60,27 @@
            (send outputTextField set-value (path->string dirpath))
           )))
 
+
 (define (okBtnCallback button event)
   (display "\n\"Run\" button pressed\n")
   ;(send frame show #f)
   ;(send procFrame show #t)
-  (toFile (each-line "./../tests/Test.rkt" '() '() '() '() '()) reqs? incls? provs? procs?))
+  ;;each-line will return a list of lists: a list containing the requires, includes, etc.
+  (let ([aFileStruct (each-line (open-input-file (send inputTextField get-value)) (file-name-from-path (send inputTextField get-value)) '() '() '() '() '())])
+    (display "\nHERE!\n")
+    (display (string-length (car aFileStruct)))
+    (display "\n\n")
+    (generationMaster (list aFileStruct) ;;list of file structures (i.e. "objects")
+                        (list (car aFileStruct)) ;;list of file names
+                        (car (cdr (cdr aFileStruct))) ;;list of "requires"
+                        (car (cdr (cdr (cdr aFileStruct)))) ;;list of "includes"
+                        (car (cdr (cdr (cdr (cdr aFileStruct))))) ;;list of "provides"
+                        (car (cdr (cdr (cdr (cdr (cdr aFileStruct)))))) ;;list of proc "headers"
+                        '("NA" "NA" "NA" "NA" "NA" "NA" "NA" "NA" "NA" "NA" "NA" "NA" "NA" "NA" "NA" "NA") ;;list of code blocks
+                        (car (cdr (cdr (cdr (cdr (cdr (cdr aFileStruct))))))) ;;list of proc doc blocks 
+                        )
+  )
+)
 
 (define (advancedBtnCallback button event)
   (display "\n\"Advanced\" button pressed\n")

@@ -13,7 +13,10 @@
 
 (require racket/file)
 (require racket/date)
+
+(provide generationMaster)
 ;;begin test---------------
+
 
 (define file1 (list "file_name_1"
                     #t ;;has corrisponding documentation block?
@@ -53,6 +56,7 @@
                     '("proc_22" "proc_44" "proc_66" "proc_88")
                     '("procBody_22" "procBody_44" "procBody_66" "procBody_88")
                     '("blockComment_22" "blockComment_44" "blockComment_66" "procBody_88")))
+
 
 ;;end test-----------------
 (define currentDateStr "")
@@ -258,7 +262,7 @@
            (write-string "                     (br) (br) (br)\n" output);;sub-end------------
            (write-string "                     ;;add procs and data\n" output);;sub-begin-----------------
            (write-string "                     (b \"Procedures & Data\")\n" output)
-           (procLooper (car (cdr (cdr (cdr (cdr (cdr (car fileList))))))) (car (cdr (cdr (cdr (cdr (cdr (car fileList))))))) 0)
+           (procLooper (car (cdr (cdr (cdr (cdr (cdr (car fileList))))))) (car (cdr (cdr (cdr (cdr (cdr (cdr (cdr (car fileList))))))))) 0)
            (write-string "                         )))))\n" output)  
            (write-string "    (send/suspend/dispatch response-generator)))" output)
            (write-string "\n\n\n" output)
@@ -349,10 +353,10 @@
            (write-string "  (local ((define (response-generator embed/url)\n" output)
            (write-string "            (response/xexpr\n" output)
            (write-string "             `(html (head (title \"Racket-Doc\"))\n" output)
-           (write-string "               (body (h1 \"" output)
-           (write-string (car lst) output)
+           (write-string "               (body (h1 \"Procedure" output)
+           ;(write-string (car lst) output)
            (write-string "\")\n" output)
-           (write-string "                     (center (a ((href ,(embed/url file_name_1-page))) \"<--Back\"))\n" output)
+           (write-string "                     (center (a ((href ,(embed/url fileNameList-page))) \"<--Back\"))\n" output)
            (write-string "                     (br)(br)\n" output)
            (write-string "                     (p \"" output)
            (write-string (car lst) output)
@@ -449,18 +453,6 @@
    )
 )
 ;;exe-------------------
-#|(generationMaster '("file_1" "file_2" "file_3" "file_4" "file_5" "file_6" "file_7" "file_8")
-                  '("req_1"  "req_2"  "req_3"  "req_4"  "req_5"  "req_6"  "req_7"  "req_8")
-                  '("incl_1" "incl_2" "incl_3" "incl_4" "incl_5" "incl_6" "incl_7" "incl_8")
-                  '("prov_1" "prov_2" "prov_3" "prov_4" "prov_5" "prov_6" "prov_7" "prov_8")
-                  '("proc_1" "proc_2" "proc_3" "proc_4" "proc_5")
-                  '("procBody_1" "procBody_2" "procBody_3" "procBody_4" "procBody_5")
-                  '("blockComment_1" "blockComment_2" "blockComment_3" "blockComment_4" "blockComment_5"))|#
-
-;;- - - - - - - - -
-
-
-
 (generationMaster (list file1 file2 file3 file4)
                   '("file_name_1" "file_name_2" "file_name_3" "file_name_4")
                   '("req_1"  "req_2"  "req_3"  "req_4"  "req_5"  "req_6"  "req_7"  "req_8")
