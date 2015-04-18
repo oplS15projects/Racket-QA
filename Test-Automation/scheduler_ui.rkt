@@ -37,8 +37,8 @@
 (define APPROXIMATE-SIZE-Y 650)
 
 (define-values (size-x size-y) (get-display-size))
-(define x-pos (fl->exact-integer (* (- size-x APPROXIMATE-SIZE-X) 0.5)))
-(define y-pos (fl->exact-integer (* (- size-y APPROXIMATE-SIZE-Y) 0.5)))
+(define x-pos (fl->exact-integer (floor (* (- size-x APPROXIMATE-SIZE-X) 0.5))))
+(define y-pos (fl->exact-integer (floor (* (- size-y APPROXIMATE-SIZE-Y) 0.5))))
 
 ;; (define my-frame%
 ;;   (class frame%
