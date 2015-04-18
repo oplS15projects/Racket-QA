@@ -62,9 +62,9 @@
 (define left-v-panel
   (new vertical-panel%
        (parent main-h-panel)
-       (spacing 6)
+       (spacing 0)
        (horiz-margin 3)
-       (alignment '(center top))))
+       (alignment '(left top))))
 
 (define right-v-panel
   (new vertical-panel%
@@ -80,9 +80,9 @@
        (label "Active Tests")
        (choices '())
        (horiz-margin 0)
-       (vert-margin 0)
-       (min-width 170)
-       (min-height 200)
+       (vert-margin 2)
+       (min-width 220)
+       (min-height 180)
        (style '(single vertical-label))
        (callback
         (lambda (list click-type)
@@ -110,8 +110,8 @@
        (choices '())
        (horiz-margin 0)
        (vert-margin 0)
-       (min-width 170)
-       (min-height 220)
+       (min-width (send active-tests-list-box get-width))
+       (min-height 200)
        (style '(single vertical-label))
        (callback
         (lambda (list click-type)
@@ -131,6 +131,34 @@
          (send inactive-tests-list-box append NO-INACTIVE-AUTOTEST-MESSAGE))
         (else (map add-to-list-box inactive-test-list))))
 
+(define last-run-label
+  (new message%
+       (parent left-v-panel)
+       (label "Last Run:  ")
+       (vert-margin 0)
+       (auto-resize #t)))
+
+(define last-run-text
+  (new message%
+       (parent left-v-panel)
+       (label "")
+       (vert-margin 0)
+       (auto-resize #t)))
+
+(define next-due-label
+  (new message%
+       (parent left-v-panel)
+       (label "Next Due:  ")
+       (vert-margin 0)
+       (auto-resize #t)))
+
+(define next-due-text
+  (new message%
+       (parent left-v-panel)
+       (label "")
+       (vert-margin 0)
+       (auto-resize #t)))
+
 (define autotest-actions-choice
   (new choice%
        (parent left-v-panel)
@@ -141,6 +169,7 @@
        (choices (list "Autotest Actions"
                       "Activate this test"
                       "Deactivate this test"
+                      "Duplicate this test"
                       "Delete this test"))
        (callback
         (lambda (ch e)
@@ -165,7 +194,23 @@
                          (autotest-set-active? at #f)
                          (write-autotest-list)
                          (write-autotest at)))))
-                  ((equal? selected-index 3)  ; delete
+                  ((equal? selected-index 3)  ; duplicate
+                   (let ((active-selection (send active-tests-list-box get-selection))
+                         (inactive-selection (send inactive-tests-list-box get-selection)))
+                     (cond ((and (not (equal? #f active-selection))
+                                 (not (equal? NO-ACTIVE-AUTOTEST-MESSAGE 
+                                              (send active-tests-list-box get-string-selection))))
+                            (let ((at (send active-tests-list-box get-data active-selection)))
+                              (create-duplicate-autotest at)
+                              (setup-ui)))
+                           ((and (not (equal? #f inactive-selection))
+                                 (not (equal? NO-INACTIVE-AUTOTEST-MESSAGE
+                                              (send inactive-tests-list-box get-string-selection))))
+                            (let ((at (send inactive-tests-list-box get-data inactive-selection)))
+                              (create-duplicate-autotest at)
+                              (setup-ui)))
+                           (else (void)))))
+                  ((equal? selected-index 4)  ; delete
                    (let ((active-selection (send active-tests-list-box get-selection))
                          (inactive-selection (send inactive-tests-list-box get-selection)))
                      (cond ((and (not (equal? #f active-selection))
@@ -733,6 +778,14 @@
                          (send check-notify get-value))
                      selected-email-db))))
 
+;; Fills the hour, minute, and AM/PM fields with current time values.
+(define (refresh-time-fields)
+  (define hour (date-hour (current-date)))
+  (define ampm (if (< hour 12) "AM" "PM"))
+  (when (> hour 12) (set! hour (- hour 12)))
+  (send hour-combo-field set-value (number->string hour))
+  (send minute-text-field set-value (number->string (date-minute (current-date))))
+  (send ampm-combo-field set-value ampm))
 
 ;; Fills the configuration pane (right side) for the selected autotest.
 (define (populate-autotest-info lb)
@@ -751,9 +804,7 @@
          (send check-saturday set-value #f)
          (send check-sunday set-value #f)
          (toggle-onetime-periodic)
-         (send hour-combo-field set-value "1")
-         (send minute-text-field set-value "0")
-         (send ampm-combo-field set-value "AM")
+         (refresh-time-fields)
          (send check-notify set-value #f)
          (send mailing-list-name-message set-label NO-MAILING-LIST-MESSAGE))        
         (else
@@ -796,6 +847,10 @@
            (send inactive-tests-list-box get-data (send inactive-tests-list-box get-selection)))
           (else
            (send active-tests-list-box get-data (send active-tests-list-box get-selection)))))
+  (send last-run-text show #t)
+  (send next-due-text show #t)
+  (send last-run-text set-label (autotest-last-run-string at))
+  (send next-due-text set-label (autotest-next-due-string at))
   (send autotest-name-text-field set-value (autotest-name at))
   (send schedule-new-button enable #t)
   (enable-all-children left-v-panel)
@@ -818,6 +873,8 @@
 
 ;; UI setting when no autotest is selected
 (define (config-ui-no-selection-mode)
+  (send last-run-text show #f)
+  (send next-due-text show #f)
   (enable-all-children left-v-panel)
   (populate-autotest-info 'default)
   (send selected-test-name-box change-children name-field-no-selection-mode)
@@ -839,6 +896,8 @@
 
 ;; UI setting when no autotest schedule exists
 (define (config-ui-empty-mode)
+  (send last-run-text show #f)
+  (send next-due-text show #f)
   (disable-all-children left-v-panel)
   (send selected-test-name-box change-children name-field-empty-mode)
   (send selected-autotest-message set-label "No autotest scheduled")
@@ -865,6 +924,8 @@
   (define selection-in-inactive-tests-list-box (send inactive-tests-list-box get-selection))
   (when (not (equal? #f selection-in-inactive-tests-list-box))
     (send inactive-tests-list-box select selection-in-inactive-tests-list-box #f))
+  (send last-run-text show #f)
+  (send next-due-text show #f)
   (disable-all-children left-v-panel)
   (populate-autotest-info 'default)
   (send selected-test-name-box change-children name-field-create-mode)
@@ -878,6 +939,7 @@
   (set-minute-text-field-background)
   (toggle-onetime-periodic)
   (enable-all-children time-of-day-pane)
+  (refresh-time-fields)
   (enable-email-db-controls)
   (send activate-buttons-pane change-children buttons-create-mode)
   (set! selected-email-db #f))
@@ -1041,7 +1103,6 @@
                            (string->number (send year-combo-field get-value)))
        (valid-one-time-periodic-entries?)
        (not (equal? 0 (send files-list-box get-number)))))
-
 
 ;; entry point
 (define (launch-scheduler)
