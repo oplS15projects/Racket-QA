@@ -66,6 +66,8 @@
        (parent main-h-panel)
        (spacing 0)
        (horiz-margin 3)
+       (min-width 260)
+       (stretchable-width #f)
        (alignment '(left top))))
 
 (define right-v-panel
@@ -132,7 +134,6 @@
   (new message%
        (parent left-v-panel)
        (label "Last Run:  ")
-       (min-width 220)
        (vert-margin 0)
        (auto-resize #f)))
 
@@ -141,12 +142,15 @@
        (parent left-v-panel)
        (label "")
        (vert-margin 0)
+       (min-width 220)
+       (stretchable-width #f)
        (auto-resize #t)))
 
 (define next-due-label
   (new message%
        (parent left-v-panel)
        (label "Next Due:  ")
+       (stretchable-width #f)
        (vert-margin 0)
        (auto-resize #f)))
 
@@ -154,7 +158,9 @@
   (new message%
        (parent left-v-panel)
        (label "")
+       (stretchable-width #f)
        (vert-margin 0)
+       (min-width 220)
        (auto-resize #t)))
 
 (define (refresh-run-info)
@@ -177,7 +183,7 @@
   (new choice%
        (parent left-v-panel)
        (label #f)
-       (min-width 220)
+       (min-width 260)
        (horiz-margin 0)
        (vert-margin 3)
        (choices (list "Autotest Actions"
@@ -304,6 +310,7 @@
 (define right-buttons-pane
   (new vertical-pane%
        (parent files-list-and-buttons-pane)
+       (stretchable-width #f)
        (alignment '(left top))))
 
 ;; "Add file" button
