@@ -1,6 +1,6 @@
-# Racket-QA Automated Test Scheduler
+# Racket-QA Automated-Test Scheduler
 
-Racket QA Test Scheduler provides functionality to schedule a one-time or recurring test to be run without the user's presence and record the result or send it to a specified mailing list. The scheduler relies on Bottle-Racket functionality to execute a test and generate the results.
+Racket QA Test Scheduler provides functionality to schedule a one-time or recurring test to be run without the user's presence and store the result or send it to a specified mailing list. The scheduler relies on <a href="https://github.com/oplS15projects/Racket-QA/blob/master/Bottle-Racket/README.md" target="_blank">**Bottle-Racket**</a> functionality to execute a test and generate the results.
 
 There are 6 files that comprise the test scheduler.
 * `autotest.rkt` implements an autotest object that contains all the information necessary to execute a set of racket source files without user intervention, such as the execution time, list of files to execute, whether to notify the results through email, and so on.
@@ -47,7 +47,7 @@ When an active autotest comes due, the files associated with it will be executed
 
 ![UI_run_test](https://github.com/oplS15projects/Racket-QA/blob/master/Test-Automation/images/documentation/ui_run_test.png)
 
-Once the test is run, the result files will be generated and placed in locations specified when the test was created through <a href="https://github.com/oplS15projects/Racket-QA/blob/master/Bottle-Racket/README.md" target="_blank">**Bottle-Racket**</a>. It will also be mailed to the mailing list if Notify? checkbox was checked and a mailing list was provided. If the test is a repeating test, it will automatically execute again at the next due time. A one-time test will only run once. It will stay in the scheduler UI, however, so the user can run it again any time by changing its due time.
+Once the test is run, the result files will be generated and placed in locations specified when the test was created through <a href="https://github.com/oplS15projects/Racket-QA/blob/master/Bottle-Racket/README.md" target="_blank">**Bottle-Racket**</a>. It will also be mailed to the mailing list if Notify? checkbox was checked and a mailing list was provided. If the test is a repeating test, it will automatically execute again at the next due time. A one-time test will only run once. It will stay in the scheduler UI, however, so the user can run it again by changing its due time.
 
 
 ### Limitation
