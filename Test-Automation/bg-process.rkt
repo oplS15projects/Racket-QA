@@ -10,4 +10,4 @@
 
 (define runner (make-runner))
 (define timer (make-timer runner))
-(thread-send runner (list INIT-TIMER-COMMAND timer))
+(thread-send runner (list INIT-TIMER-MESSAGE timer))

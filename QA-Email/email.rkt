@@ -134,8 +134,7 @@
 ;;  ex) (list "roy.racketscience@gmail.com" "racket.riot@gmail.com")
 ;;
 (define (send-html-file to subject html-file-path list-of-recipients)
-  (define body (read-file html-file-path))
-  (connect-and-send to subject body list-of-recipients 'html))
+  (connect-and-send to subject (read-file html-file-path) list-of-recipients 'html))
 
 
 ;; Convenience proc for sending the entire contents of a text file.
@@ -153,8 +152,7 @@
 ;;  ex) (list "roy.racketscience@gmail.com" "racket.riot@gmail.com")
 ;;
 (define (send-text-file to subject text-file-path list-of-recipients)
-  (define body (read-file text-file-path))
-  (connect-and-send to subject body list-of-recipients 'text))
+  (connect-and-send to subject (read-file text-file-path) list-of-recipients 'text))
 
   
 ;; **********************************************************************
