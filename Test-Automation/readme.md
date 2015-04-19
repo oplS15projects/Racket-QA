@@ -43,11 +43,11 @@ Clicking "Select Mailing List..." button launches QA-Email UI which allows confi
 
 ![UI_actions](https://github.com/oplS15projects/Racket-QA/blob/master/Test-Automation/images/documentation/ui_actions.png)
 
-When an active autotest comes due, the files associated with it will be executed by [**Bottle-Racket**][Bottle-Racket Document] APIs. The scheduler will also output to the Dr.Racket REPL console which files are currently being executed.
+When an active autotest comes due, the files associated with it will be executed by <a href="https://github.com/oplS15projects/Racket-QA/blob/master/Bottle-Racket/README.md" target="_blank">**Bottle-Racket**</a> APIs. The scheduler will also output to the Dr.Racket REPL console which files are currently being executed.
 
 ![UI_run_test](https://github.com/oplS15projects/Racket-QA/blob/master/Test-Automation/images/documentation/ui_run_test.png)
 
-Once the test is run, the result files will be generated and placed in locations specified when the test was created through [**Bottle-Racket**][Bottle-Racket Document]. It will also be mailed to the mailing list if Notify? checkbox was checked and a mailing list was provided. If the test is a repeating test, it will automatically execute again at the next due time. A one-time test will only run once. It will stay in the scheduler UI, however, so the user can run it again any time by changing its due time.
+Once the test is run, the result files will be generated and placed in locations specified when the test was created through <a href="https://github.com/oplS15projects/Racket-QA/blob/master/Bottle-Racket/README.md" target="_blank">**Bottle-Racket**</a>. It will also be mailed to the mailing list if Notify? checkbox was checked and a mailing list was provided. If the test is a repeating test, it will automatically execute again at the next due time. A one-time test will only run once. It will stay in the scheduler UI, however, so the user can run it again any time by changing its due time.
 
 
 ### Limitation
