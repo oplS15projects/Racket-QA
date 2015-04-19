@@ -15,6 +15,7 @@
          "autotest.rkt"
          "../Common/user-settings-directory.rkt"
          "../QA-Email/email.rkt"
+         "../QA-Email/email-db.rkt"
          "../Bottle-Racket/test-tracker.rkt")
 
 (provide make-runner
@@ -36,30 +37,38 @@
 (define (make-shell-command arg-file-path)
   (string-append RACKET-COMMAND (whitespace-fix arg-file-path)))
 
-;; Executes racket executable with a .rkt file as argument.
+;; Executes racket executable with a .rkt file as argument. Returns the output as a string.
 (define (run-racket-file arg-file-path)
   (call-with-output-string
    (lambda (p) (parameterize ((current-error-port p)
                               (current-output-port p))
                  (system (make-shell-command arg-file-path))))))
 
+(define (attach-output-header at-name executed-time-in-sec output-string arg-file-path)
+  (string-append "##############################################################################"
+                 "# Auto-test Name: " at-name "\n"
+                 "# RKT File Executed: " arg-file-path "\n"
+                 "# Executed on: " (date->string (seconds->date executed-time-in-sec) #t) "\n"
+                 "##############################################################################\n\n"
+                 output-string))
+
 (define (save-result output-string arg-file-path file-exists-option)
   (let ((output-directory
          (cleanse-path-string
           (string-append 
            (get-dirpath-from-filepath arg-file-path) "/Racket-QA Auto-Test Result/"))))
-  (when (not (directory-exists? output-directory))
-    (make-directory* output-directory))
-  (call-with-output-file 
-      (cleanse-path-string 
-       (string-append output-directory 
-                      "result-"
-                      (get-filename-from-filepath arg-file-path)
-                      ".txt"))
-    (lambda (out)
-      (fprintf out "~a~n~n~n" output-string))
-    #:mode 'text
-    #:exists file-exists-option)))
+    (when (not (directory-exists? output-directory))
+      (make-directory* output-directory))
+    (call-with-output-file 
+        (cleanse-path-string 
+         (string-append output-directory 
+                        "result-"
+                        (get-filename-from-filepath arg-file-path)
+                        ".txt"))
+      (lambda (out)
+        (fprintf out "~a~n~n~n~n" output-string))
+      #:mode 'text
+      #:exists file-exists-option)))
 
 
 ;; Timer thread - tracks current time and notifies runner thread when 
@@ -133,24 +142,36 @@
                    (lambda (file)
                      (when (or DEBUG VERBOSE)
                        (printf "Test Runner: Executing file ~a..." file))
-                     (cond ((and notify?
-                                 (not (equal? #f email-db)))
-                            (let ((subject (string-append "Autotest Result - " test-name)))
-                              (with-handlers 
-                                  ((exn:fail? 
-                                    (lambda (e) 
-                                      (printf "~n** Error in (run-test-area-email ~v ~v email-db)! **~n~a~n"
-                                              file
-                                              subject
-                                              (exn-message e)))))
-                                (run-test-area-email file subject email-db))))
-                           (else
-                            (with-handlers 
-                                ((exn:fail? (lambda (e) 
-                                              (printf "~n** Error in (run-test-area ~v)! **~n~a~n"
-                                                      file
-                                                      (exn-message e)))))
-                              (run-test-area file))))
+                     (define email-subject (string-append "Autotest Result - " (get-filename-from-filepath file)))
+                     (if #t
+                         (cond ((and notify? (not (equal? #f email-db)))  ; Bottle-Racket area file
+                                (with-handlers 
+                                    ((exn:fail? 
+                                      (lambda (e) 
+                                        (printf "~n** Error in (run-test-area-email ~v ~v email-db)! **~n~a~n"
+                                                file
+                                                email-subject
+                                                (exn-message e)))))
+                                  (run-test-area-email file email-subject email-db)))
+                               (else
+                                (with-handlers 
+                                    ((exn:fail? (lambda (e) 
+                                                  (printf "~n** Error in (run-test-area ~v)! **~n~a~n"
+                                                          file
+                                                          (exn-message e)))))
+                                  (run-test-area file))))
+                         (with-handlers  ; other .rkt file
+                             ((exn:fail?
+                               (lambda (e)
+                                 (printf "~n** Error in (run-racket-file ~v)! **~n~a~n" file (exn-message e)))))
+                           (let ((output-string (string-append (run-racket-file file))))
+                             (save-result (attach-output-header test-name sec output-string file) file 'append)
+                             (when notify? 
+                               (send-text (email-db-name email-db) 
+                                          email-subject 
+                                          (attach-output-header test-name sec output-string file)
+                                          (email-db-addresses email-db))))))
+                     
                      (when (or DEBUG VERBOSE)
                        (printf "Complete~n")))
                    files)))
