@@ -39,4 +39,5 @@
  | Created a variable named five.
  | and gave it a value.
  |#
-(define five 5)
+(define five
+     5)

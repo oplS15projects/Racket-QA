@@ -68,8 +68,8 @@
                 (set! prevLine 'prov)
                 (each-line file fileNm requireLst includeLst (cons thisLine provideLst) procHeaderLst procBodyLst procDocLst)
               )
-              ( (equal? (proc? thisLine) #t) ;; procedure and data first line (i.e. "header")
-                (set! prevLine 'proc)
+              ( (equal? (procHead? thisLine) #t) ;; procedure and data first line (i.e. "header")
+                (set! prevLine 'procHead)
                 (each-line file fileNm requireLst includeLst provideLst (cons thisLine procHeaderLst) procBodyLst procDocLst)
               )
               ( (equal? (commentStatus thisLine) 'begin) ;; beginning of documentation block
@@ -80,10 +80,22 @@
                 (set! prevLine 'docu)
                 (each-line file fileNm requireLst includeLst provideLst procHeaderLst procBodyLst (cons (string-append (car procDocLst) "\n" thisLine) (cdr procDocLst)))
               )
+              ( (and (equal? (procBody? thisLine) #t)
+                     (equal? prevLine 'procHead)
+                )
+                (set! prevLine 'procBody)
+                (each-line file fileNm requireLst includeLst provideLst procHeaderLst (cons thisLine procBodyLst) procDocLst)
+              )
+              ( (and (equal? (procBody? thisLine) #t)
+                     (equal? prevLine 'procBody)
+                )
+                (each-line file fileNm requireLst includeLst provideLst procHeaderLst (cons (string-append (car procBodyLst) "\n" thisLine) (cdr procBodyLst)) procDocLst)
+              )
               (else
-               (set! prevLine 'proc) ;; inside procedure
-               (display prevLine)
-               (each-line file fileNm requireLst includeLst provideLst procHeaderLst (cons thisLine procBodyLst) procDocLst)
+               (set! prevLine 'null) ;; inside procedure
+               ;(display prevLine)
+               (each-line file fileNm requireLst includeLst provideLst procHeaderLst procBodyLst procDocLst)
+               ;(each-line file fileNm requireLst includeLst provideLst procHeaderLst (cons thisLine procBodyLst) procDocLst)
               )
          )
         )
@@ -121,7 +133,7 @@
         )))
 
 ;;determines if the line is a procedure "header".
-(define (proc? line)
+(define (procHead? line)
   (cond ( (or (equal? (regexp-match #rx"(?<=define).*" line) #f)
               (equal? (substring line 0 1) " ")
           )
@@ -130,6 +142,20 @@
         (else
          #t
         )))
+
+    
+(define (procBody? line)
+  (cond ( (equal? line "")
+          #f
+        )
+        ( (equal? (substring (remove-lead-whitespace line) 0 1) ";")
+          #f
+        )
+        (else
+         #t
+        )
+  )
+)
 
 
 (define (commentStatus line)
@@ -160,6 +186,7 @@
 
 
 ;;exe------------------------------
+
 #|
 (each-line (open-input-file "/home/james/OplFiles/Racket-QA/Racket-Doc/tests/Test.rkt")
            (file-name-from-path "file_name.rkt")
@@ -168,5 +195,5 @@
            '("prov1" "prov2")
            '("procH1" "procH2")
            '("procB1" "procB2")
-           '("procDoc1" "procDoc2"))|#
-
+           '("procDoc1" "procDoc2"))
+|#
