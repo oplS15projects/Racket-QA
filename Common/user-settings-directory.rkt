@@ -347,10 +347,18 @@
            (string-replace str "\\" "/"))
           (else str)))
 
-;; Miscellaneous helpers (only for Windows)
+
+;; Miscellaneous utilities
 (define (double-backslash windows-str)
   (when (eq? (system-type) 'windows)
     (string-replace windows-str "\\" "\\\\")))
+
+(define (whitespace-fix a-string)
+  (cond ((eq? (system-type) 'windows)
+         (valid-path-windows a-string))
+        ((member (system-type) '(unix macosx))
+         (valid-path-linux a-string))
+        (else "whitespace-fix: platform not supported")))
 
 (define (valid-path-windows windows-str)
   (when (eq? (system-type) 'windows)
