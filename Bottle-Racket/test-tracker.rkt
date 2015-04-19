@@ -51,23 +51,28 @@
  |         However, note that this function
  |         does not actually send an email.
  |#
-(define (run-test-area full-test-area-path)
-  (current-directory (get-dirpath-from-filepath full-test-area-path))
+(define (run-test-area full-test-path)
+  (current-directory (get-dirpath-from-filepath full-test-path))
+  (define temp-file-path (string-append (cleanse-path-string
+                                  (string-append (get-dirpath-from-filepath full-test-path) "/"))
+                                  "temp-test-run.rkt"))
   (define output-email-file-path (string-append (cleanse-path-string
-                                  (string-append (get-dirpath-from-filepath full-test-area-path) "/"))
+                                  (string-append (get-dirpath-from-filepath full-test-path) "/"))
                                                 "test-results-email.txt"))
   (define output-results-file-path (string-append (cleanse-path-string
-                                     (string-append (get-dirpath-from-filepath full-test-area-path) "/"))
+                                     (string-append (get-dirpath-from-filepath full-test-path) "/"))
                                                 "test-results.txt"))
   ;; This needs to be done for the system call to work properly for paths with spaces in them.
-  (define fixed-full-test-area-path (cond ((eq? (system-type) 'windows) (valid-path-windows full-test-area-path))
-                                          ((eq? (system-type) 'unix) (valid-path-linux full-test-area-path))
-                                          ((eq? (system-type) 'macosx) (valid-path-linux full-test-area-path))
+  (define fixed-temp-file-path (cond ((eq? (system-type) 'windows) (valid-path-windows temp-file-path))
+                                          ((eq? (system-type) 'unix) (valid-path-linux temp-file-path))
+                                          ((eq? (system-type) 'macosx) (valid-path-linux temp-file-path))
                                           (else (error "Platform not supported"))))
   (begin (remake-file output-email-file-path)
          (remake-file output-results-file-path)
-         (system (string-append RACKET-PATH " " fixed-full-test-area-path))
-         (parse-test-results (get-filename-from-filepath full-test-area-path)
+         (create-temp-test-file full-test-path temp-file-path)
+         (system (string-append RACKET-PATH " " fixed-temp-file-path))
+         (remake-file temp-file-path)
+         (parse-test-results (get-filename-from-filepath full-test-path)
                              output-results-file-path
                              output-email-file-path))
 )
@@ -91,27 +96,32 @@
  |         the passed mailing list after the
  |         test area finishes running.
  |#
-(define (run-test-area-email full-test-area-path subject-field mailing-list)
+(define (run-test-area-email full-test-path subject-field mailing-list)
   (define mail-list-id (email-db-id mailing-list))
   (define to-field (email-db-name mailing-list))
   (define recipients (email-db-addresses mailing-list))
   (cond ((not (equal? #f mailing-list))
-         (current-directory (get-dirpath-from-filepath full-test-area-path))
+         (current-directory (get-dirpath-from-filepath full-test-path))
+         (define temp-file-path (string-append (cleanse-path-string
+                                  (string-append (get-dirpath-from-filepath full-test-path) "/"))
+                                  "temp-test-run.rkt"))
          (define output-email-file-path (string-append (cleanse-path-string
-                                                        (string-append (get-dirpath-from-filepath full-test-area-path) "/"))
+                                                        (string-append (get-dirpath-from-filepath full-test-path) "/"))
                                                        "test-results-email.txt"))
          (define output-results-file-path (string-append (cleanse-path-string
-                                                          (string-append (get-dirpath-from-filepath full-test-area-path) "/"))
+                                                          (string-append (get-dirpath-from-filepath full-test-path) "/"))
                                                          "test-results.txt"))
          ;; This needs to be done for the system call to work properly for paths with spaces in them.
-         (define fixed-full-test-area-path (cond ((eq? (system-type) 'windows) (valid-path-windows full-test-area-path))
-                                                 ((eq? (system-type) 'unix) (valid-path-linux full-test-area-path))
-                                                 ((eq? (system-type) 'macosx) (valid-path-linux full-test-area-path))
-                                                 (else (error "Platform not supported"))))
+         (define fixed-temp-file-path (cond ((eq? (system-type) 'windows) (valid-path-windows temp-file-path))
+                                            ((eq? (system-type) 'unix) (valid-path-linux temp-file-path))
+                                            ((eq? (system-type) 'macosx) (valid-path-linux temp-file-path))
+                                            (else (error "Platform not supported"))))
          (begin (remake-file output-email-file-path)
                 (remake-file output-results-file-path)
-                (system (string-append RACKET-PATH " " fixed-full-test-area-path))
-                (parse-test-results (get-filename-from-filepath full-test-area-path)
+                (create-temp-test-file full-test-path temp-file-path)
+                (system (string-append RACKET-PATH " " fixed-temp-file-path))
+                (remake-file temp-file-path)
+                (parse-test-results (get-filename-from-filepath full-test-path)
                                     output-results-file-path
                                     output-email-file-path))
          (send-text-file to-field subject-field output-email-file-path recipients))
@@ -586,6 +596,44 @@
 ;; **********************************************************************
 ;; * PARSING TEST RESULTS
 ;; **********************************************************************
+
+#||
+ | This function is used to create the Racket code
+ | that calls run-tests to run the textual interface
+ | on the racket suites. It takes no parameters.
+ |          
+ | @return List of strings representing
+ |         what to write out to the test
+ |         suite file that concern test
+ |         running and statistics.
+ |#
+(define (create-running-lines)
+  (list ";; These lines concern the test results file and running the test suites."
+        "(define test-result-raw-output (open-output-file \"test-results.txt\"))"
+        "(current-error-port test-result-raw-output) ; File containing test information"
+        "(current-output-port test-result-raw-output)"
+        "(map run-tests test-list) ; The tests are run with this line"
+        "(close-output-port test-result-raw-output)\n"))
+
+#||
+ | This function creates a temporary file that is composed
+ | of the lines of a test suite file, and also has the code
+ | to run the test suites appended to the end.
+ | @param full-test-file-dir
+ |        The file with the test suites.
+ | @param full-temp-file-dir
+ }        The temporary file to create to run those
+ |        test suites.
+ |          
+ | @return Arbitrary value. The important result
+ |         is a temporary file.
+ |#
+(define (create-temp-test-file full-test-file-dir full-temp-file-dir)
+  (define file-lines (file->lines full-test-file-dir))
+  (define lines-to-write-out (append file-lines (create-running-lines)))
+  (begin (remake-file full-temp-file-dir)
+         (display-lines-to-file lines-to-write-out full-temp-file-dir #:separator"\n"))
+)
 
 #||
  | This function looks through a test result file and

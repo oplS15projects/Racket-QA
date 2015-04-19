@@ -350,24 +350,6 @@
   suite-to-return
 )
 
-#||
- | This function is used to create the Racket code
- | that calls run-tests to run the textual interface
- | on the racket suites. It takes no parameters.
- |          
- | @return List of strings representing
- |         what to write out to the test
- |         suite file that concern test
- |         running and statistics.
- |#
-(define (create-running-lines)
-  (list ";; These lines concern the test results file and running the test suites."
-        "(define test-result-raw-output (open-output-file \"test-results.txt\"))"
-        "(current-error-port test-result-raw-output) ; File containing test information"
-        "(current-output-port test-result-raw-output)"
-        "(map run-tests test-list) ; The tests are run with this line"
-        "(close-output-port test-result-raw-output)\n"))
-
 ;; **********************************************************************
 ;; * Test Suite File Creation Procedures
 ;; **********************************************************************
@@ -441,7 +423,7 @@
 (define (create-test-suite-list suite-names)
   (define test-list-define (list "(define test-list (list"))
   (define test-suite-list (map create-suite-string suite-names))
-  (define define-with-suites (append test-list-define test-suite-list (list "))\n") (create-running-lines)))
+  (define define-with-suites (append test-list-define test-suite-list (list "))\n")))
   (define footer-to-return (append define-with-suites (list "(provide (all-defined-out))\n")))
   footer-to-return
 )
