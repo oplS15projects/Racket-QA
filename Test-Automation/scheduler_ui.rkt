@@ -43,13 +43,6 @@
 (define x-pos (fl->exact-integer (floor (* (- size-x APPROXIMATE-SIZE-X) 0.5))))
 (define y-pos (fl->exact-integer (floor (* (- size-y APPROXIMATE-SIZE-Y) 0.5))))
 
-;; (define my-frame%
-;;   (class frame%
-;;     (super-new)
-;;     (define/augment (on-close)
-;;       (kill-thread timer)
-;;       (kill-thread runner))))
-
 (define main-frame
   (new frame%
        (label "Test Scheduler")
@@ -79,7 +72,11 @@
        (spacing 4)
        (alignment '(left top))))
 
-;; List box for active tests (left pane).
+;; **********************************************************************
+;; * Left Side
+;; **********************************************************************
+
+;; List box containing active tests (top left).
 (define active-tests-list-box
   (new list-box%
        (parent left-v-panel)
@@ -96,7 +93,7 @@
               (send inactive-tests-list-box select selection-in-inactive-tests-list-box #f))
             (setup-ui))))))
 
-;; Fills the active autotest list box (left pane).
+;; Fills the active autotest list box.
 (define (populate-active-tests-list-box)
   (let ((active-test-list (filter autotest-active? autotest-list))
         (add-to-list-box
@@ -106,7 +103,7 @@
            (send active-tests-list-box append NO-ACTIVE-AUTOTEST-MESSAGE))
           (else (for-each add-to-list-box active-test-list)))))
 
-;; List box for inactive tests (left pane).
+;; List box for inactive tests (below the active tests list box).
 (define inactive-tests-list-box
   (new list-box%
        (parent left-v-panel)
@@ -123,7 +120,7 @@
               (send active-tests-list-box select selection-in-active-tests-list-box #f))
             (setup-ui))))))
 
-;; Fills the inactive autotest list box (left pane)
+;; Fills the inactive autotest list box.
 (define (populate-inactive-tests-list-box)
   (let ((inactive-test-list (filter (negate autotest-active?) autotest-list))
         (add-to-list-box
@@ -131,8 +128,9 @@
     (send inactive-tests-list-box clear)
     (cond ((null? inactive-test-list)
            (send inactive-tests-list-box append NO-INACTIVE-AUTOTEST-MESSAGE))
-          (else (for-each add-to-list-box inactive-test-list)))))
+          (else (for-each add-to-list-box inactive-test-list))))) 
 
+;; "Last Run:"
 (define last-run-label
   (new message%
        (parent left-v-panel)
@@ -140,6 +138,7 @@
        (vert-margin 0)
        (auto-resize #f)))
 
+;; "Saturday, April 10th, 2015 4:01:00pm"
 (define last-run-text
   (new message%
        (parent left-v-panel)
@@ -149,6 +148,7 @@
        (stretchable-width #f)
        (auto-resize #t)))
 
+;; "Next Due:"
 (define next-due-label
   (new message%
        (parent left-v-panel)
@@ -157,6 +157,7 @@
        (vert-margin 0)
        (auto-resize #f)))
 
+;; "Sunday, April 11th, 2015 4:01:00pm"
 (define next-due-text
   (new message%
        (parent left-v-panel)
@@ -166,6 +167,7 @@
        (min-width 220)
        (auto-resize #t)))
 
+;; Updates last-run and next-due labels for the selected autotest.
 (define (refresh-run-info)
   (let ((active-selection (send active-tests-list-box get-selection))
         (inactive-selection (send inactive-tests-list-box get-selection)))
@@ -175,13 +177,13 @@
     (when at
       (send last-run-text set-label (autotest-last-run-string at))
       (send next-due-text set-label (autotest-next-due-string at)))))
-
 (thread (lambda ()
           (let loop ()
             (refresh-run-info)
             (sleep 1.0)
             (loop))))
 
+;; drop-down menu on bottom left
 (define autotest-actions-choice
   (new choice%
        (parent left-v-panel)
@@ -243,11 +245,15 @@
             (populate-autotest-info 'default)
             (setup-ui))))))
 
+
+;; **********************************************************************
+;; * Right Side
+;; **********************************************************************
+
 (define top-right-h-pane
   (new horizontal-pane%
        (parent right-v-panel)))
 
-;; box enclosing the selected autotest name (top right)
 (define selected-test-name-box
   (new pane%
        (parent top-right-h-pane)
@@ -264,6 +270,8 @@
        (label NO-AUTOTEST-SELECTED-MESSAGE)
        (auto-resize #t)))
 
+;; Shows the name of currently selected autotest item.
+;; User can edit it to change the name.
 (define autotest-name-text-field
   (new text-field%
        (parent selected-test-name-box)
@@ -279,6 +287,8 @@
        (parent top-right-h-pane)
        (alignment '(right center))))
 
+;; Button - enables the input fields so the user can fill them out
+;; to create a new autotest.
 (define schedule-new-button
   (new button%
        (parent schedule-new-button-pane)
@@ -287,7 +297,6 @@
         (lambda (b e)
           (config-ui-create-mode)))))
 
-;; files list-box
 (define test-resource-panel
   (new group-box-panel%
        (parent right-v-panel)
@@ -301,6 +310,7 @@
        (parent test-resource-panel)
        (alignment '(left top))))
 
+;; list box containing the files to execute for the selected autotest.
 (define files-list-box
   (new list-box%
        (parent files-list-and-buttons-pane)
@@ -316,7 +326,7 @@
        (stretchable-width #f)
        (alignment '(left top))))
 
-;; "Add file" button
+;; "Add file" button - opens the file-choose dialog.
 (define add-file-button
   (new button%
        (parent right-buttons-pane)
@@ -328,7 +338,7 @@
               (for-each (lambda (path) (send files-list-box append (path->string path))) filepaths))
             (toggle-files-warning-icon))))))
 
-;; Button to remove files
+;; "Remove file" button - deletes the selected files.
 (define remove-file-button
   (new button%
        (parent right-buttons-pane)
@@ -345,7 +355,7 @@
        (parent right-buttons-pane)
        (alignment '(left bottom))))
 
-;; warning sign when no file is specified
+;; warning sign to show when no file is selected for an autotest item
 (define files-list-box-warning-label
   (new message%
        (parent files-warning-pane)
@@ -598,7 +608,7 @@
           (toggle-check-daily c)
           (toggle-periodic-warning-icon)))))
 
-;; Turns on when periodic test is selected but no days are checked.
+;; warning to show when "repeat" is selected but no days are checked.
 (define periodic-warning-label
   (new message%
        (parent days-of-week-pane)
@@ -653,7 +663,7 @@
        (parent email-h-pane)
        (alignment '(right center))))
 
-;; Button - Select mailing list
+;; Opens a dialog to selects a mailing list for sending the test result.
 (define select-email-db-button
   (new button%
        (parent email-db-button-h-pane)
@@ -672,11 +682,11 @@
        (vert-margin 3)
        (alignment '(center top))))
 
+;; Shows an icon signaling changes are successfully saved.
 (define saved-changes-label
   (new message%
        (parent activate-buttons-pane)
        (label OK-ICON)))
-
 (define (show-saved-message)
   (thread
    (lambda ()
@@ -684,6 +694,8 @@
      (sleep 1.0)
      (send saved-changes-label show #f))))
 
+;; Updates the selected autotest item with information in the 
+;; current UI input form.
 (define (save-changes at)
   (let ((temp-at (make-autotest-from-ui (autotest-active? at))))
     (autotest-set-name at (autotest-name temp-at))
@@ -708,7 +720,7 @@
     (autotest-set-email-db at (autotest-email-db temp-at))
     (write-autotest at)))
 
-;; Saves configurations in the UI to the currently selected autotest item.
+;; Calls save-changes procedure.
 (define save-changes-button
   (new button%
        (parent activate-buttons-pane)
@@ -725,20 +737,26 @@
                                      (send active-tests-list-box get-string-selection))))
                    (let ((at (send active-tests-list-box get-data active-selection)))
                      (save-changes at)
+                     (send active-tests-list-box set-string active-selection
+                           (send autotest-name-text-field get-value))
+                     (send active-tests-list-box set-selection active-selection)
                      (show-saved-message)
-                     
                      (toggle-warning-icons #f)))
                   ((and (not (equal? #f inactive-selection))
                         (not (equal? NO-INACTIVE-AUTOTEST-MESSAGE
                                      (send inactive-tests-list-box get-string-selection))))
                    (let ((at (send inactive-tests-list-box get-data inactive-selection)))
                      (save-changes at)
+                     (send inactive-tests-list-box set-string inactive-selection
+                           (send autotest-name-text-field get-value))
+                     (send inactive-tests-list-box set-selection inactive-selection)
+                     (populate-inactive-tests-list-box)
                      (show-saved-message)
                      (toggle-warning-icons #f)))
                   (else (void))))))))
 
 ;; 'Create and Activate' Button
-;; - Creates a new test and activates it at the same time
+;; - Creates a new test and activates it at the same time.
 (define create-active-button
   (new button%
        (parent activate-buttons-pane)
@@ -754,7 +772,7 @@
               (toggle-warning-icons))))))
 
 ;; 'Create as Inactive' Button
-;; - Creates a new autotest schedule but does not activate it
+;; - Creates and saves a new autotest schedule but does not activate it (it won't run).
 (define create-inactive-button
   (new button%
        (parent activate-buttons-pane)
@@ -769,7 +787,7 @@
                      (toggle-warning-icons #f))
               (toggle-warning-icons))))))
 
-;; Cancel Button - Cancels creating a new autotest schedule
+;; Cancel Button - Cancels creating a new autotest schedule.
 (define cancel-button
   (new button%
        (parent activate-buttons-pane)
@@ -780,7 +798,7 @@
           (toggle-warning-icons #f)
           (setup-ui)))))
 
-;; Creates a new autotest.
+;; Creates a new autotest object from the Ui input form.
 (define (make-autotest-from-ui (activate? #t))
   (when (entries-are-valid?)
     (let ((num-files (send files-list-box get-number))
@@ -813,7 +831,7 @@
                          (send check-notify get-value))
                      selected-email-db))))
 
-;; Fills the hour, minute, and AM/PM fields with current time values.
+;; Fills the hour, minute, and AM/PM input fields with current time values.
 (define (refresh-time-fields)
   (define hour (date-hour (current-date)))
   (define ampm (if (< hour 12) "AM" "PM"))
@@ -822,13 +840,14 @@
   (send minute-text-field set-value (number->string (date-minute (current-date))))
   (send ampm-combo-field set-value ampm))
 
-;; Fills the year, month, date fields with current date values.
+;; Fills the year, month, date input fields with current date values.
 (define (refresh-date-fields)
   (send year-combo-field set-value (number->string (date-year (current-date))))
   (send month-combo-field set-value (number->string (date-month (current-date))))
   (send date-text-field set-value (number->string (date-day (current-date)))))
 
-;; Fills the configuration pane (right side) for the selected autotest.
+;; Fills the configuration pane (right side) with the selected autotest.
+;; Uses default values when 'default is given as the argument.
 (define (populate-autotest-info at)
   (cond ((eq? at 'default)
          (send autotest-name-text-field set-value "")
@@ -868,7 +887,7 @@
              (send mailing-list-name-message set-label (email-db-name selected-email-db))
              (send mailing-list-name-message set-label NO-MAILING-LIST-MESSAGE)))))
 
-;; UI setting for normal browsing (when an entry is selected in autotest lists)
+;; UI setting for normal browsing (when user clicks an autotest item from the list).
 (define (config-ui-normal-mode)
   (define at
     (cond ((equal? #f (send active-tests-list-box get-selection))
@@ -894,7 +913,7 @@
   (toggle-warning-icons #f)
   (populate-autotest-info at))
 
-;; UI setting when no autotest is selected
+;; UI setting when no autotest is selected by user.
 (define (config-ui-no-selection-mode)
   (send last-run-text show #f)
   (send next-due-text show #f)
@@ -917,7 +936,7 @@
   (set! selected-email-db #f)
   (toggle-warning-icons #f))
 
-;; UI setting when no autotest schedule exists
+;; UI setting when no autotest schedule exists to show.
 (define (config-ui-empty-mode)
   (send last-run-text show #f)
   (send next-due-text show #f)
@@ -939,7 +958,7 @@
   (set! selected-email-db #f)
   (toggle-warning-icons #f))
 
-;; UI setting when creating a new autotest schedule
+;; UI setting when creating a new autotest schedule.
 (define (config-ui-create-mode)
   (define selection-in-active-tests-list-box (send active-tests-list-box get-selection))
   (when (not (equal? #f selection-in-active-tests-list-box))
@@ -964,7 +983,7 @@
   (send activate-buttons-pane change-children buttons-create-mode)
   (set! selected-email-db #f))
 
-;; Renders an appropriate UI configuration based on user selection.
+;; Renders an appropriate UI configuration based on user action.
 (define (setup-ui)
   (cond ((or (and (equal? 0 (send active-tests-list-box get-number))
                   (equal? 0 (send inactive-tests-list-box get-number)))
@@ -985,7 +1004,7 @@
 
 
 ;; **********************************************************************
-;; * Enable/disable UI controls
+;; * Helpers to enable/disable UI controls based on user move
 ;; **********************************************************************
 
 ;; helpers for change-children method for selected-test-name-box
@@ -1036,7 +1055,11 @@
 (define (send-enable control) (send control enable #t))
 (define (send-disable control) (send control enable #f))
 
-;; show different background color for invalid entries
+
+;; **********************************************************************
+;; * Helpers to show a different field background color for invalid input.
+;; **********************************************************************
+
 (define (set-autotest-name-text-field-background)
   (if (valid-autotest-name-string? (send autotest-name-text-field get-value))
       (send autotest-name-text-field set-field-background VALID-FIELD-COLOR)
@@ -1143,7 +1166,7 @@
        (valid-one-time-periodic-entries?)
        (not (equal? 0 (send files-list-box get-number)))))
 
-;; entry point
+;; entry point - opens the UI.
 (define (launch-scheduler)
   (populate-active-tests-list-box)
   (populate-inactive-tests-list-box)
