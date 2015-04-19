@@ -354,9 +354,9 @@
   
 ;;generate procedure body pages (each will be named "codeblock[number]-page")
 (define (generateProcBodyPages procBodyList)
-  (display "******This is the list of proc bodies*******\n")
-  (display procBodyList)
-  (display "\n\n\n")
+  ;(display "******This is the list of proc bodies*******\n")
+  ;(display procBodyList)
+  ;(display "\n\n\n")
   (define (bodyLooper lst count)
     (cond ( (null? lst)
             (display "")

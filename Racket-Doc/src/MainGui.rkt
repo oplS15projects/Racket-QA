@@ -89,14 +89,27 @@
             ;;pass each file to each-line
             (define (loopEachLine fileList finalList)
               (cond ( (null? fileList)
-                      ;(generationMaster finalList)
+                      (display "successfully finished extracting data from files.")
+                      ;;call ElementOrganizer
+                      
+                      ;;call generationMaster
+                      ;(display (getFileNameLooper finalList '()))
+                      (generationMaster finalList
+                                        (getFileNameLooper finalList '()) ;; this will extract the file names and return them in the empty list provided
+                                        (car (cdr (cdr (car finalList)))) ;;list of "requires"
+                                        (car (cdr (cdr (cdr (car finalList)))))
+                                        (car (cdr (cdr (cdr (cdr (car finalList))))))
+                                        (car (cdr (cdr (cdr (cdr (cdr (car finalList)))))))
+                                        (car (cdr (cdr (cdr (cdr (cdr (cdr (car finalList))))))))
+                                        (car (cdr (cdr (cdr (cdr (cdr (cdr (cdr (car finalList)))))))))
+                      )
                     )
                     (else
-                     (cons (each-line (open-input-file (car fileList)) (file-name-from-path (car fileList)) '() '() '() '() '() '()))
+                     (loopEachLine (cdr fileList) (cons (each-line (open-input-file (car fileList)) (file-name-from-path (car fileList)) '() '() '() '() '() '()) finalList))
                     )
               )
             )
-            (loopEachLine (search (path->string (send inputTextField get-value))) '())
+            (loopEachLine (search (send inputTextField get-value)) '())
             ;;bundle
             ;;pass to generationMaster
         )
@@ -172,7 +185,15 @@
                                [callback cancelBtnCallback]))
 
 
-
+(define (getFileNameLooper fileList finalList)
+  (cond ( (null? fileList)
+          finalList
+        )
+        (else
+         (getFileNameLooper (cdr fileList) (cons (car (car fileList)) finalList))
+        )
+  )
+)
 
 
 (send frame show #t)

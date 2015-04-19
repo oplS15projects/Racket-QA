@@ -55,7 +55,11 @@
                      (center (a ((href ,(embed/url main-page))) "Home"))
                      (br)(br)
                      (p (b "Files:"))
-                     (a ((href, (embed/url Test.rkt-page))) "Test.rkt")
+                     (a ((href, (embed/url Test3.rkt-page))) "Test3.rkt")
+                     (br)(br)
+                     (a ((href, (embed/url Test3.rkt-page))) "Test2.rkt")
+                     (br)(br)
+                     (a ((href, (embed/url Test3.rkt-page))) "Test.rkt")
                      (br)(br)
                      )))))
     (send/suspend/dispatch response-generator)))
@@ -70,6 +74,7 @@
                      (center
                       (a ((href ,(embed/url main-page))) "Home")
                       (html nbsp nbsp nbsp nbsp)
+                      (a ((href ,(embed/url Test2.rkt-page))) "-->")
                       )
                      (br)(br)
                      (p "Specified File page")
@@ -88,7 +93,7 @@
                      ;;add procs and data
                      (b "Procedures & Data")
                      (fieldset
-                      (code (list (b "(define five") (br)
+                      (code (list (b "(define") (br)
                              (i "#||
  | Created a variable named five.
  | and gave it a value.
@@ -118,6 +123,107 @@
  | @return the square of the numbers
  |#") (br))))
                      (a ((href, (embed/url codeblock2-page))) "Code")
+                             (br) (br) (br)
+                         )))))
+    (send/suspend/dispatch response-generator)))
+
+
+;;page for a specified file
+(define (Test2.rkt-page request)
+  (local ((define (response-generator embed/url)
+            (response/xexpr
+             `(html (head (title "Racket-Doc"))
+               (body (h1 "*.rkt Files")
+                     (center
+                      (a ((href ,(embed/url Test3.rkt-page))) "<--")
+                      (html nbsp nbsp nbsp nbsp)
+                      (a ((href ,(embed/url main-page))) "Home")
+                      (html nbsp nbsp nbsp nbsp)
+                      (a ((href ,(embed/url Test.rkt-page))) "-->")
+                      )
+                     (br)(br)
+                     (p "Specified File page")
+                     ;add requires
+                     (b "Required")
+                     (fieldset (code (list "#lang racket" (br) )))
+                     (br) (br) (br)
+                     ;add included
+                     (b "Included")
+                     (fieldset (code (list "(include racket/filesystem)" (br) "(include "fileIO.rkt")" (br) )))
+                     (br) (br) (br)
+                     ;add provided
+                     (b "Provided")
+                     (fieldset (code (list )))
+                     (br) (br) (br)
+                     ;;add procs and data
+                     (b "Procedures & Data")
+                     (fieldset
+                      (code (list (b "(define status") (br)
+                             (i "#||
+ | This variable stores the status of something.
+ |#") (br))))
+                     (a ((href, (embed/url codeblock0-page))) "Code")
+                             (br) (br) (br)
+                     (fieldset
+                      (code (list (b "(define (printStrings substr1 substr2)") (br)
+                             (i "#||
+ | This proc concatinates two strings
+ | together.
+ | @param substr1 The first string
+ | @param substr2 The second string         
+ | @return the square of the numbers
+ |#") (br))))
+                     (a ((href, (embed/url codeblock1-page))) "Code")
+                             (br) (br) (br)
+                         )))))
+    (send/suspend/dispatch response-generator)))
+
+
+;;page for a specified file
+(define (Test3.rkt-page request)
+  (local ((define (response-generator embed/url)
+            (response/xexpr
+             `(html (head (title "Racket-Doc"))
+               (body (h1 "*.rkt Files")
+                     (center
+                      (a ((href ,(embed/url Test2.rkt-page))) "<--")
+                      (html nbsp nbsp nbsp nbsp)
+                      (a ((href ,(embed/url main-page))) "Home")
+                      (html nbsp nbsp nbsp nbsp)
+                      )
+                     (br)(br)
+                     (p "Specified File page")
+                     ;add requires
+                     (b "Required")
+                     (fieldset (code (list "#lang racket" (br) )))
+                     (br) (br) (br)
+                     ;add included
+                     (b "Included")
+                     (fieldset (code (list "(include racket/filesystem)" (br) "(include "fileIO.rkt")" (br) )))
+                     (br) (br) (br)
+                     ;add provided
+                     (b "Provided")
+                     (fieldset (code (list )))
+                     (br) (br) (br)
+                     ;;add procs and data
+                     (b "Procedures & Data")
+                     (fieldset
+                      (code (list (b "(define status3") (br)
+                             (i "#||
+ | This variable stores the status of something.
+ |#") (br))))
+                     (a ((href, (embed/url codeblock0-page))) "Code")
+                             (br) (br) (br)
+                     (fieldset
+                      (code (list (b "(define (printStrings3 substr1 substr2)") (br)
+                             (i "#||
+ | This proc concatinates two strings
+ | together.
+ | @param substr1 The first string
+ | @param substr2 The second string         
+ | @return the square of the numbers
+ |#") (br))))
+                     (a ((href, (embed/url codeblock1-page))) "Code")
                              (br) (br) (br)
                          )))))
     (send/suspend/dispatch response-generator)))
@@ -160,7 +266,7 @@
                      ;;add procs and data
                      (br) (br)
                      (fieldset
-                      (code (list (b "(define five") (br)
+                      (code (list (b "(define") (br)
                              (i "#||
  | Created a variable named five.
  | and gave it a value.
@@ -203,7 +309,7 @@
                (body (h1 "Procedure")
                      (center (a ((href ,(embed/url fileNameList-page))) "<--Back"))
                      (br)(br)
-                     (p "     5)")
+                     (p "  five 5)")
                      )))))
     (send/suspend/dispatch response-generator)))
 
@@ -216,8 +322,7 @@
                (body (h1 "Procedure")
                      (center (a ((href ,(embed/url fileNameList-page))) "<--Back"))
                      (br)(br)
-                     (p "  (display "this is a string to be printed")
-  (+ num1 num2 num3 num4))")
+                     (p "  (+ num1 num2 num3 num4))")
                      )))))
     (send/suspend/dispatch response-generator)))
 
@@ -230,9 +335,7 @@
                (body (h1 "Procedure")
                      (center (a ((href ,(embed/url fileNameList-page))) "<--Back"))
                      (br)(br)
-                     (p "  (* num num)
-  (display "finished doing math")
-  (display "reached end of procedure squre"))")
+                     (p "  (* num num))")
                      )))))
     (send/suspend/dispatch response-generator)))
 
