@@ -15,7 +15,9 @@
  | @return the square of the numbers
  |#
 (define (square num)
-  (* num num))
+  (* num num)
+  (display "finished doing math")
+  (display "reached end of procedure squre"))
 
 
 #||
@@ -29,6 +31,7 @@
  | @return The sum of the numbers.
  |#
 (define (addFour num1 num2 num3 num4)
+  (display "this is a string to be printed")
   (+ num1 num2 num3 num4))
 
 
