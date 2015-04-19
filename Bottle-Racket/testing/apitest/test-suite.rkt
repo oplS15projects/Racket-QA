@@ -1,6 +1,9 @@
 #lang racket
 
 (require rackunit)
+(require racket/include)
+(require rackunit/text-ui)
+(require rackunit/gui)
 (require "source.rkt")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -47,8 +50,19 @@
   (test-case "(fact 20)" (check-equal? (fact 20) 2432902008176640000))
   (test-case "(comb 5 2)" (check-equal? (comb 5 2) 10))
 )
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define test-list (list first-suite second-suite))
+(define test-list (list
+  first-suite
+  second-suite
+))
+
+;; These lines concern the test results file and running the test suites.
+(define test-result-raw-output (open-output-file "test-results.txt"))
+(current-error-port test-result-raw-output) ; File containing test information
+(current-output-port test-result-raw-output)
+(map run-tests test-list) ; The tests are run with this line
+(close-output-port test-result-raw-output)
 
 (provide (all-defined-out))
 

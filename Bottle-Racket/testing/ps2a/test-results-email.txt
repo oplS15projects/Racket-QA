@@ -1,6 +1,0 @@
->>> Results for test area file 'ps2a_area.rkt'
-
--> Total: 15
--> Passed: 15 (100%)
--> Failed: 0 (0%)
-

@@ -350,6 +350,24 @@
   suite-to-return
 )
 
+#||
+ | This function is used to create the Racket code
+ | that calls run-tests to run the textual interface
+ | on the racket suites. It takes no parameters.
+ |          
+ | @return List of strings representing
+ |         what to write out to the test
+ |         suite file that concern test
+ |         running and statistics.
+ |#
+(define (create-running-lines)
+  (list ";; These lines concern the test results file and running the test suites."
+        "(define test-result-raw-output (open-output-file \"test-results.txt\"))"
+        "(current-error-port test-result-raw-output) ; File containing test information"
+        "(current-output-port test-result-raw-output)"
+        "(map run-tests test-list) ; The tests are run with this line"
+        "(close-output-port test-result-raw-output)\n"))
+
 ;; **********************************************************************
 ;; * Test Suite File Creation Procedures
 ;; **********************************************************************
@@ -384,7 +402,10 @@
 (define (make-suite-header assignment-name all-lines)
   (define all-source-requires (create-requires-for-loads (get-all-loaded-files all-lines)))
   (define rkt-header (list "#lang racket\n"
-                           "(require rackunit)"))
+                           "(require rackunit)"
+                           "(require racket/include)"
+                           "(require rackunit/text-ui)"
+                           "(require rackunit/gui)"))
   (define single-assignment-require (list (string-append "(require \"" assignment-name ".rkt\")\n")))
   (if (= (length all-source-requires) 1)
       (append rkt-header single-assignment-require)
@@ -420,7 +441,7 @@
 (define (create-test-suite-list suite-names)
   (define test-list-define (list "(define test-list (list"))
   (define test-suite-list (map create-suite-string suite-names))
-  (define define-with-suites (append test-list-define test-suite-list (list "))\n")))
+  (define define-with-suites (append test-list-define test-suite-list (list "))\n") (create-running-lines)))
   (define footer-to-return (append define-with-suites (list "(provide (all-defined-out))\n")))
   footer-to-return
 )
@@ -454,101 +475,19 @@
 )
 
 ;; **********************************************************************
-;; * Test Area File Creation Procedures
-;; **********************************************************************
-
-#||
- | This function is used for generating
- | the portion of the test area file
- | related to actually running the
- | test cases.
- | @param test-mode
- |        string representing either
- |        "make-gui-runner" or
- |        "run-tests", which is the
- |        textual interface.
- |          
- | @return List of strings representing
- |         what to write out to the test
- |         area file concerning the
- |         actual run of the test suite.
- |#
-(define (gui-or-text test-mode)
-  (cond ((equal? test-mode "make-gui-runner")
-         (list ";; map is used here to allow each test suite to appear in the same GUI window."
-               "(map (make-gui-runner) test-list)\n"))
-        ((equal? test-mode "run-tests")
-         (list "(define test-result-raw-output (open-output-file \"test-results.txt\"))"
-               "(current-error-port test-result-raw-output) ; File containing test information"
-               "(current-output-port test-result-raw-output)"
-               "(map run-tests test-list) ; The tests are run with this line"
-               "(close-output-port test-result-raw-output)"))
-        (else nil)) ;; end cond
-) ;; end define
-        
-#||
- | This function is used to create the top
- | lines of the test area file.
- | @param assignment-name
- |        Basically the source file.
- | @param test-mode
- |        string representing either
- |        "make-gui-runner" or
- |        "run-tests", which is the
- |        textual interface.
- |          
- | @return List of strings representing
- |         what to write out to the test
- |         area file at the top, with
- |         the require statements.
- |#
-(define (create-test-area-lines assignment-name test-mode)
-  (define rkt-header (list "#lang racket\n"
-                           ";; Racket Unit Testing Libraries"
-                           "(require racket/include)"
-                           "(require rackunit)"
-                           "(require rackunit/text-ui)"
-                           "(require rackunit/gui)\n"
-                           ";; Suite file to run"
-                           (string-append "(require \"" assignment-name "_suite.rkt\")")
-                           ))
-  (define gui-or-text-lines (gui-or-text test-mode))
-  (define test-area-lines (append rkt-header gui-or-text-lines (list "\n(provide (all-defined-out))\n")))
-  test-area-lines
-)
-
-#||
- | This function takes a list of strings
- | representing the lines to write out as
- | the area file along with an absolute
- | path specifying where the test area
- | file will be written.
- | @param lines A list of strings to be
- |              written out to file.
- | @param absolute-dir Full path to the
- |                     test area file
- |                     to be written.
- |          
- | @return Arbitrary value. The area
- |         file is written out to
- |         absolute-dir.
- |#
-(define (write-area-file lines absolute-dir)
-  (define path-back (regexp-match #rx"\\\\" absolute-dir))
-  (define path-forward (regexp-match #rx"/" absolute-dir))
-  (cond ((not (equal? path-back #f))
-         (define placeholder (remake-file absolute-dir))
-         (display-lines-to-file lines absolute-dir #:separator"\n"))
-        ((not (equal? path-forward #f))
-         (define placeholder (remake-file absolute-dir))
-         (display-lines-to-file lines absolute-dir #:separator"\n"))
-        (else "undefined"))
-)
-
-;; **********************************************************************
 ;; * Windows/Unix Filepath Utilities
 ;; **********************************************************************
 
+#||
+ | This function is used to get the
+ | test-suite name from a specified
+ | racket file.
+ | @param absolute-dir
+ |        Full path to a file.
+ |          
+ | @return String representing the name
+ |         of the test suite filename.
+ |#
 (define (get-assn-from-filepath absolute-dir)
   (define separation-back-slash (string-split absolute-dir "\\"))
   (define assignment-back (if (not (equal? (regexp-match #rx"\\\\" absolute-dir) #f))

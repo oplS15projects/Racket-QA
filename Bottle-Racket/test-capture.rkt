@@ -50,7 +50,7 @@
                          (label "Test-Capture")))
 
 ; Display simple message prompting user to enter input
-(define description (string-append "Select a Test Area File and specify email fields."))
+(define description (string-append "Select a Test Suites File and specify email fields."))
 
 (define user-prompt (new message% [parent dialog]
                          [auto-resize #t]
@@ -63,10 +63,10 @@
 
 (define suite-filepath (new text-field%
                          (parent suite-panel)
-                         (label "Test Area File:")
+                         (label "Test Suites File:")
                          (min-width 600)))
 
-(send suite-filepath set-value "Click Browse and locate the test area file.")
+(send suite-filepath set-value "Click Browse and locate the test suite file.")
 
 (new button%
      (parent suite-panel)
@@ -129,12 +129,12 @@
 
                   ;; Variables specifying test data                 
                   (define output-dir (get-dirpath-from-filepath (send suite-filepath get-value)))
-                  (define area-file (get-filename-from-filepath (send suite-filepath get-value)))
-                  (define full-test-area-path (get-full-path output-dir "" area-file))
+                  (define suites-file (get-filename-from-filepath (send suite-filepath get-value)))
+                  (define full-test-area-path (get-full-path output-dir "" suites-file))
                   (run-test-area full-test-area-path)
                   
                   ;; Indicate to the user that the script was successfully created
-                  (send user-prompt set-label (string-append "Successfully ran '" area-file "'."))
+                  (send user-prompt set-label (string-append "Successfully ran '" suites-file "'."))
                   
                                     ) ; end lambda
       ] ; end callback
@@ -146,8 +146,8 @@
 
                   ;; Variables specifying test data                 
                   (define output-dir (get-dirpath-from-filepath (send suite-filepath get-value)))
-                  (define area-file (get-filename-from-filepath (send suite-filepath get-value)))
-                  (define full-test-area-path (get-full-path output-dir "" area-file))
+                  (define suites-file (get-filename-from-filepath (send suite-filepath get-value)))
+                  (define full-test-area-path (get-full-path output-dir "" suites-file))
                   
                   ;; Run the generated test running script. Change working directory to that script's directory.
                   ;; Remember mailing-list is the global variable to pass to the run-test-area-email procedure.
@@ -155,7 +155,7 @@
                   (run-test-area-email full-test-area-path subject-field mailing-list)
                   
                   ;; Indicate to the user that the script was successfully created
-                  (send user-prompt set-label (string-append "Successfully ran '" area-file "' and sent email."))
+                  (send user-prompt set-label (string-append "Successfully ran '" suites-file "' and sent email."))
                   
                                     ) ; end lambda
       ] ; end callback

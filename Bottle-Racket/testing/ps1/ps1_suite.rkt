@@ -1,6 +1,9 @@
 #lang racket
 
 (require rackunit)
+(require racket/include)
+(require rackunit/text-ui)
+(require rackunit/gui)
 (require "ps1.rkt")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -43,6 +46,13 @@
 (define test-list (list
   ps1
 ))
+
+;; These lines concern the test results file and running the test suites.
+(define test-result-raw-output (open-output-file "test-results.txt"))
+(current-error-port test-result-raw-output) ; File containing test information
+(current-output-port test-result-raw-output)
+(map run-tests test-list) ; The tests are run with this line
+(close-output-port test-result-raw-output)
 
 (provide (all-defined-out))
 
