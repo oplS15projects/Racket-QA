@@ -1,6 +1,6 @@
 # Racket-QA Automated-Test Scheduler
 
-Racket QA Test Scheduler provides functionality to schedule a one-time or recurring test to be run without the user's presence and store the result or send it to a specified mailing list. The scheduler relies on <a href="https://github.com/oplS15projects/Racket-QA/blob/master/Bottle-Racket/README.md" target="_blank">**Bottle-Racket**</a> functionality to execute a test and generate the results.
+Racket QA Test Scheduler provides functionality to schedule a one-time or recurring test to be run without the user's presence and store the result or send it to a specified mailing list. The scheduler uses <a href="https://github.com/oplS15projects/Racket-QA/blob/master/Bottle-Racket/README.md" target="_blank">**Bottle-Racket**</a> functionality to execute a test and generate the results.
 
 There are 6 files that comprise the test scheduler.
 * `autotest.rkt` implements an autotest object that contains all the information necessary to execute a set of racket source files without user intervention, such as the execution time, list of files to execute, whether to notify the results through email, and so on.
