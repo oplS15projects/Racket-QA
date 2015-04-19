@@ -45,11 +45,11 @@
                  (system (make-shell-command arg-file-path))))))
 
 (define (attach-output-header at-name executed-time-in-sec output-string arg-file-path)
-  (string-append "##############################################################################"
+  (string-append "################################################################################\n"
                  "# Auto-test Name: " at-name "\n"
                  "# RKT File Executed: " arg-file-path "\n"
                  "# Executed on: " (date->string (seconds->date executed-time-in-sec) #t) "\n"
-                 "##############################################################################\n\n"
+                 "################################################################################\n\n"
                  output-string))
 
 (define (save-result output-string arg-file-path file-exists-option)
