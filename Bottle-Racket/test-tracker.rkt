@@ -196,7 +196,6 @@
 ;; * Constructors for parsing information from failed test cases
 ;; **********************************************************************
 
-;; The test name lines have a > symbol in the middle of them. They're after it.
 #||
  | This function extracts the test case name
  | from the test case results file. e.g.
