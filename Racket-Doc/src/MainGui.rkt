@@ -32,7 +32,7 @@
 
 ;;create radio button callback
 (define (selectFileOrDirCallback radio event)
-  (display (send fileOrDirRBtn get-selection))
+  ;(display (send fileOrDirRBtn get-selection))
   (display "\n"))
 
 ;;create button callbacks
@@ -70,23 +70,33 @@
   ;(send procFrame show #t)
   ;;each-line will return a list of lists: a list containing the requires, includes, etc.
   (cond ( (= (send fileOrDirRBtn get-selection) 0)
-          (let ([aFileStruct (each-line (open-input-file (send inputTextField get-value)) (file-name-from-path (send inputTextField get-value)) '() '() '() '() '())])
-            (display "\nHERE!\n")
-            (display "\n\n")
+          (let ([aFileStruct (each-line (open-input-file (send inputTextField get-value)) (file-name-from-path (send inputTextField get-value)) '() '() '() '() '() '())])
+            ;(display "\nHERE!\n")
+            ;(display (car (cdr (cdr (cdr (cdr (cdr (cdr aFileStruct))))))))
+            ;(display "\n\n")
             (generationMaster (list aFileStruct) ;;list of file structures (i.e. "objects")
                               (list (car aFileStruct)) ;;list of file names
                               (car (cdr (cdr aFileStruct))) ;;list of "requires"
                               (car (cdr (cdr (cdr aFileStruct)))) ;;list of "includes"
                               (car (cdr (cdr (cdr (cdr aFileStruct))))) ;;list of "provides"
                               (car (cdr (cdr (cdr (cdr (cdr aFileStruct)))))) ;;list of proc "headers"
-                              '("NA" "NA" "NA" "NA" "NA" "NA" "NA" "NA" "NA" "NA" "NA" "NA" "NA" "NA" "NA" "NA") ;;list of code blocks
-                              (car (cdr (cdr (cdr (cdr (cdr (cdr aFileStruct)))))))) ;;list of proc doc blocks 
+                              (car (cdr (cdr (cdr (cdr (cdr (cdr aFileStruct))))))) ;;list of code blocks
+                              (car (cdr (cdr (cdr (cdr (cdr (cdr (cdr aFileStruct))))))))) ;;list of proc doc blocks 
            )
          )
         (else
             (display "deal with dir of files here")
-            (search (path->string (send inputTextField get-value)))
             ;;pass each file to each-line
+            (define (loopEachLine fileList finalList)
+              (cond ( (null? fileList)
+                      ;(generationMaster finalList)
+                    )
+                    (else
+                     (cons (each-line (open-input-file (car fileList)) (file-name-from-path (car fileList)) '() '() '() '() '() '()))
+                    )
+              )
+            )
+            (loopEachLine (search (path->string (send inputTextField get-value))) '())
             ;;bundle
             ;;pass to generationMaster
         )

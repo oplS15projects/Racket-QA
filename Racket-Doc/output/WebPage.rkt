@@ -5,7 +5,7 @@
 ;; directory containing this file, and run			;;
 ;; "racket [file_name].rkt".					;;
 ;;                                                              ;;
-;; Date Generated On: 4/18/2015                                 ;;
+;; Date Generated On: 4/19/2015                                 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
@@ -75,7 +75,7 @@
                      (p "Specified File page")
                      ;add requires
                      (b "Required")
-                     (fieldset (code (list "(require "andThisTest.rkt")" (br) "(require "testing.rkt")" (br) )))
+                     (fieldset (code (list "(require "andThisTest.rkt")" (br) "(require "testing.rkt")" (br) "#lang racket" (br) )))
                      (br) (br) (br)
                      ;add included
                      (b "Included")
@@ -88,7 +88,7 @@
                      ;;add procs and data
                      (b "Procedures & Data")
                      (fieldset
-                      (code (list (b "(define five 5)") (br)
+                      (code (list (b "(define five") (br)
                              (i "#||
  | Created a variable named five.
  | and gave it a value.
@@ -132,7 +132,7 @@
                      (center (a ((href ,(embed/url main-page))) "Home"))
                      (br)(br)
                      (b "Required")
-                     (fieldset (code (list "(require "andThisTest.rkt")" (br) "(require "testing.rkt")" (br) )))
+                     (fieldset (code (list "(require "andThisTest.rkt")" (br) "(require "testing.rkt")" (br) "#lang racket" (br) )))
                      )))))
     (send/suspend/dispatch response-generator)))
 
@@ -160,7 +160,7 @@
                      ;;add procs and data
                      (br) (br)
                      (fieldset
-                      (code (list (b "(define five 5)") (br)
+                      (code (list (b "(define five") (br)
                              (i "#||
  | Created a variable named five.
  | and gave it a value.
@@ -203,7 +203,7 @@
                (body (h1 "Procedure")
                      (center (a ((href ,(embed/url fileNameList-page))) "<--Back"))
                      (br)(br)
-                     (p "NA")
+                     (p "     5)")
                      )))))
     (send/suspend/dispatch response-generator)))
 
@@ -216,7 +216,8 @@
                (body (h1 "Procedure")
                      (center (a ((href ,(embed/url fileNameList-page))) "<--Back"))
                      (br)(br)
-                     (p "NA")
+                     (p "  (display "this is a string to be printed")
+  (+ num1 num2 num3 num4))")
                      )))))
     (send/suspend/dispatch response-generator)))
 
@@ -229,176 +230,9 @@
                (body (h1 "Procedure")
                      (center (a ((href ,(embed/url fileNameList-page))) "<--Back"))
                      (br)(br)
-                     (p "NA")
-                     )))))
-    (send/suspend/dispatch response-generator)))
-
-
-;;page for displaying a procedure body.;;help page
-(define (codeblock3-page request)
-  (local ((define (response-generator embed/url)
-            (response/xexpr
-             `(html (head (title "Racket-Doc"))
-               (body (h1 "Procedure")
-                     (center (a ((href ,(embed/url fileNameList-page))) "<--Back"))
-                     (br)(br)
-                     (p "NA")
-                     )))))
-    (send/suspend/dispatch response-generator)))
-
-
-;;page for displaying a procedure body.;;help page
-(define (codeblock4-page request)
-  (local ((define (response-generator embed/url)
-            (response/xexpr
-             `(html (head (title "Racket-Doc"))
-               (body (h1 "Procedure")
-                     (center (a ((href ,(embed/url fileNameList-page))) "<--Back"))
-                     (br)(br)
-                     (p "NA")
-                     )))))
-    (send/suspend/dispatch response-generator)))
-
-
-;;page for displaying a procedure body.;;help page
-(define (codeblock5-page request)
-  (local ((define (response-generator embed/url)
-            (response/xexpr
-             `(html (head (title "Racket-Doc"))
-               (body (h1 "Procedure")
-                     (center (a ((href ,(embed/url fileNameList-page))) "<--Back"))
-                     (br)(br)
-                     (p "NA")
-                     )))))
-    (send/suspend/dispatch response-generator)))
-
-
-;;page for displaying a procedure body.;;help page
-(define (codeblock6-page request)
-  (local ((define (response-generator embed/url)
-            (response/xexpr
-             `(html (head (title "Racket-Doc"))
-               (body (h1 "Procedure")
-                     (center (a ((href ,(embed/url fileNameList-page))) "<--Back"))
-                     (br)(br)
-                     (p "NA")
-                     )))))
-    (send/suspend/dispatch response-generator)))
-
-
-;;page for displaying a procedure body.;;help page
-(define (codeblock7-page request)
-  (local ((define (response-generator embed/url)
-            (response/xexpr
-             `(html (head (title "Racket-Doc"))
-               (body (h1 "Procedure")
-                     (center (a ((href ,(embed/url fileNameList-page))) "<--Back"))
-                     (br)(br)
-                     (p "NA")
-                     )))))
-    (send/suspend/dispatch response-generator)))
-
-
-;;page for displaying a procedure body.;;help page
-(define (codeblock8-page request)
-  (local ((define (response-generator embed/url)
-            (response/xexpr
-             `(html (head (title "Racket-Doc"))
-               (body (h1 "Procedure")
-                     (center (a ((href ,(embed/url fileNameList-page))) "<--Back"))
-                     (br)(br)
-                     (p "NA")
-                     )))))
-    (send/suspend/dispatch response-generator)))
-
-
-;;page for displaying a procedure body.;;help page
-(define (codeblock9-page request)
-  (local ((define (response-generator embed/url)
-            (response/xexpr
-             `(html (head (title "Racket-Doc"))
-               (body (h1 "Procedure")
-                     (center (a ((href ,(embed/url fileNameList-page))) "<--Back"))
-                     (br)(br)
-                     (p "NA")
-                     )))))
-    (send/suspend/dispatch response-generator)))
-
-
-;;page for displaying a procedure body.;;help page
-(define (codeblock10-page request)
-  (local ((define (response-generator embed/url)
-            (response/xexpr
-             `(html (head (title "Racket-Doc"))
-               (body (h1 "Procedure")
-                     (center (a ((href ,(embed/url fileNameList-page))) "<--Back"))
-                     (br)(br)
-                     (p "NA")
-                     )))))
-    (send/suspend/dispatch response-generator)))
-
-
-;;page for displaying a procedure body.;;help page
-(define (codeblock11-page request)
-  (local ((define (response-generator embed/url)
-            (response/xexpr
-             `(html (head (title "Racket-Doc"))
-               (body (h1 "Procedure")
-                     (center (a ((href ,(embed/url fileNameList-page))) "<--Back"))
-                     (br)(br)
-                     (p "NA")
-                     )))))
-    (send/suspend/dispatch response-generator)))
-
-
-;;page for displaying a procedure body.;;help page
-(define (codeblock12-page request)
-  (local ((define (response-generator embed/url)
-            (response/xexpr
-             `(html (head (title "Racket-Doc"))
-               (body (h1 "Procedure")
-                     (center (a ((href ,(embed/url fileNameList-page))) "<--Back"))
-                     (br)(br)
-                     (p "NA")
-                     )))))
-    (send/suspend/dispatch response-generator)))
-
-
-;;page for displaying a procedure body.;;help page
-(define (codeblock13-page request)
-  (local ((define (response-generator embed/url)
-            (response/xexpr
-             `(html (head (title "Racket-Doc"))
-               (body (h1 "Procedure")
-                     (center (a ((href ,(embed/url fileNameList-page))) "<--Back"))
-                     (br)(br)
-                     (p "NA")
-                     )))))
-    (send/suspend/dispatch response-generator)))
-
-
-;;page for displaying a procedure body.;;help page
-(define (codeblock14-page request)
-  (local ((define (response-generator embed/url)
-            (response/xexpr
-             `(html (head (title "Racket-Doc"))
-               (body (h1 "Procedure")
-                     (center (a ((href ,(embed/url fileNameList-page))) "<--Back"))
-                     (br)(br)
-                     (p "NA")
-                     )))))
-    (send/suspend/dispatch response-generator)))
-
-
-;;page for displaying a procedure body.;;help page
-(define (codeblock15-page request)
-  (local ((define (response-generator embed/url)
-            (response/xexpr
-             `(html (head (title "Racket-Doc"))
-               (body (h1 "Procedure")
-                     (center (a ((href ,(embed/url fileNameList-page))) "<--Back"))
-                     (br)(br)
-                     (p "NA")
+                     (p "  (* num num)
+  (display "finished doing math")
+  (display "reached end of procedure squre"))")
                      )))))
     (send/suspend/dispatch response-generator)))
 
