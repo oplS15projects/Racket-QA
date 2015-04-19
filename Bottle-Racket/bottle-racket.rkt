@@ -42,7 +42,7 @@
 (define assn-filepath (new text-field%
                          (parent assn-panel)
                          (label "Assignment Source File:")
-                         (min-width 800)))
+                         (min-width 700)))
 
 (send assn-filepath set-value "Click Browse and locate the source assignment file (e.g. ps1.rkt).")
 
@@ -61,7 +61,7 @@
 (define bn-filepath (new text-field%
                          (parent bn-panel)
                          (label "Bottlenose Perl Test File:")
-                         (min-width 800)))
+                         (min-width 700)))
 
 (send bn-filepath set-value "Click Browse and locate the bottlenose test file for this assignment (e.g. test.t).")
 
@@ -121,7 +121,7 @@
 (define suite-out-field (new text-field%
                          (parent suite-out-panel)
                          (label "Output Test Suite File:")
-                         (min-width 800)))
+                         (min-width 700)))
 
 (send suite-out-field set-value "The Test Suite path will be shown here after Convert is clicked.")
 
