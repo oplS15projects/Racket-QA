@@ -12,6 +12,7 @@
 (require racket/date
          rackunit
          setup/dirs
+         2htdp/batch-io
          "autotest.rkt"
          "../Common/user-settings-directory.rkt"
          "../QA-Email/email.rkt"
@@ -140,40 +141,42 @@
                   (write-autotest at)
                   (for-each
                    (lambda (file)
-                     (when (or DEBUG VERBOSE)
-                       (printf "Test Runner: Executing file ~a..." file))
-                     (define email-subject (string-append "Autotest Result - " (get-filename-from-filepath file)))
-                     (if #t
-                         (cond ((and notify? (not (equal? #f email-db)))  ; Bottle-Racket area file
-                                (with-handlers 
-                                    ((exn:fail? 
-                                      (lambda (e) 
-                                        (printf "~n** Error in (run-test-area-email ~v ~v email-db)! **~n~a~n"
-                                                file
-                                                email-subject
-                                                (exn-message e)))))
-                                  (run-test-area-email file email-subject email-db)))
-                               (else
-                                (with-handlers 
-                                    ((exn:fail? (lambda (e) 
-                                                  (printf "~n** Error in (run-test-area ~v)! **~n~a~n"
-                                                          file
-                                                          (exn-message e)))))
-                                  (run-test-area file))))
-                         (with-handlers  ; other .rkt file
-                             ((exn:fail?
-                               (lambda (e)
-                                 (printf "~n** Error in (run-racket-file ~v)! **~n~a~n" file (exn-message e)))))
-                           (let ((output-string (string-append (run-racket-file file))))
-                             (save-result (attach-output-header test-name sec output-string file) file 'append)
-                             (when notify? 
-                               (send-text (email-db-name email-db) 
-                                          email-subject 
-                                          (attach-output-header test-name sec output-string file)
-                                          (email-db-addresses email-db))))))
-                     
-                     (when (or DEBUG VERBOSE)
-                       (printf "Complete~n")))
+                     (cond ((file-exists? file)
+                            (when (or DEBUG VERBOSE)
+                              (printf "Test Runner: Executing file ~a..." file))
+                            (define email-subject (string-append "Autotest Result - " (get-filename-from-filepath file)))
+                            (let ((file-contents (read-file file)))
+                              (if (regexp-match #px"\\(\\s*define\\s+test-list\\s+\\(\\s*list\\s+" file-contents)
+                                  (cond ((and notify? (not (equal? #f email-db)))  ; Bottle-Racket test suite file
+                                         (with-handlers 
+                                             ((exn:fail? 
+                                               (lambda (e) 
+                                                 (printf "~n** Error in (run-test-area-email ~v ~v email-db)! **~n~a~n"
+                                                         file
+                                                         email-subject
+                                                         (exn-message e)))))
+                                           (run-test-area-email file email-subject email-db)))
+                                        (else
+                                         (with-handlers 
+                                             ((exn:fail? (lambda (e) 
+                                                           (printf "~n** Error in (run-test-area ~v)! **~n~a~n"
+                                                                   file
+                                                                   (exn-message e)))))
+                                           (run-test-area file))))
+                                  (with-handlers  ; other .rkt file
+                                      ((exn:fail?
+                                        (lambda (e)
+                                          (printf "~n** Error in (run-racket-file ~v)! **~n~a~n" file (exn-message e)))))
+                                    (let ((output-string (string-append (run-racket-file file))))
+                                      (save-result (attach-output-header test-name sec output-string file) file 'append)
+                                      (when notify? 
+                                        (send-text (email-db-name email-db) 
+                                                   email-subject 
+                                                   (attach-output-header test-name sec output-string file)
+                                                   (email-db-addresses email-db))))))                     
+                              (when (or DEBUG VERBOSE)
+                                (printf "Complete~n"))))
+                           (else (printf "Test Runner: File does not exist - ~a~n" file))))
                    files)))
                ((eq? command 'print)
                 (thread-send timer 'print))))
