@@ -470,7 +470,7 @@
 
 ;; **********************************************************************
 ;; * Procedures for retrieving test result statistics from the output
-;; * file generated, using the get procedures defined above.
+;; * file generated, using the get procedures created above.
 ;; **********************************************************************
 
 #||
@@ -591,9 +591,6 @@
   (define failed-case-list (create-list-of-failed-cases all-lines))
   (append failed-case-header failed-case-list))
 
-;; **********************************************************************
-;; * PARSING TEST RESULTS
-;; **********************************************************************
 
 #||
  | This function looks through a test result file and
@@ -612,21 +609,17 @@
  |         the email body to send.
  |#
 (define (parse-test-results test-suite-name full-test-results-path output-email-file)
-  ;; Analyze test result file lines
-  (define test-results-lines (file->lines full-test-results-path))
+  (define test-results-lines (file->lines full-test-results-path))  ;; Analyze test result file lines
   (define pass-fail-info (get-passed-failed-info test-results-lines))
   (define successful-list (get-successful-tests pass-fail-info))
   (define failed-list (get-failed-tests pass-fail-info))
-  (define total-list (get-total-tests pass-fail-info))
-  ;; Here is where we actually got the physical statistics
+  (define total-list (get-total-tests pass-fail-info))  ;; Here is where we actually got the physical statistics
   (define num-passed (add-list-of-string-nums successful-list))
   (define num-failed (add-list-of-string-nums failed-list))
-  (define num-total (add-list-of-string-nums total-list))
-  ;; Get file lines to write out to the output file to send as an email
+  (define num-total (add-list-of-string-nums total-list))  ;; Get file lines to write out to the output file to send as an email
   (define failed-case-lines-to-write (create-failed-cases-lines
                                       test-results-lines num-failed num-total test-suite-name))
-  ;; Now write the processed lines above out to file.
-  (begin (remake-file output-email-file)
+  (begin (remake-file output-email-file)  ;; Now write the processed lines above out to file.
          (display-lines-to-file failed-case-lines-to-write output-email-file #:separator"\n"))
 )
 

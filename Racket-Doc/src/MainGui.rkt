@@ -14,6 +14,7 @@
 (require racket/gui)
 
 (require "DirSearcher.rkt")
+(require "ElementOrganizer.rkt")
 (require "Parser.rkt")
 (require "PageGenerator.rkt")
 (require "AdvancedGui.rkt")
@@ -81,7 +82,7 @@
                               (car (cdr (cdr (cdr (cdr aFileStruct))))) ;;list of "provides"
                               (car (cdr (cdr (cdr (cdr (cdr aFileStruct)))))) ;;list of proc "headers"
                               (car (cdr (cdr (cdr (cdr (cdr (cdr aFileStruct))))))) ;;list of code blocks
-                              (car (cdr (cdr (cdr (cdr (cdr (cdr (cdr aFileStruct))))))))) ;;list of proc doc blocks 
+                              (car (cdr (cdr (cdr (cdr (cdr (cdr (cdr aFileStruct))))))))) ;; list of proc doc blocks 
            )
          )
         (else
@@ -91,17 +92,30 @@
               (cond ( (null? fileList)
                       (display "successfully finished extracting data from files.")
                       ;;call ElementOrganizer
+                      ;(let ([combinedRequireLst (catWithoutDuplLst
                       
                       ;;call generationMaster
                       ;(display (getFileNameLooper finalList '()))
-                      (generationMaster finalList
+                      #|(generationMaster finalList
                                         (getFileNameLooper finalList '()) ;; this will extract the file names and return them in the empty list provided
-                                        (car (cdr (cdr (car finalList)))) ;;list of "requires"
-                                        (car (cdr (cdr (cdr (car finalList)))))
-                                        (car (cdr (cdr (cdr (cdr (car finalList))))))
-                                        (car (cdr (cdr (cdr (cdr (cdr (car finalList)))))))
-                                        (car (cdr (cdr (cdr (cdr (cdr (cdr (car finalList))))))))
-                                        (car (cdr (cdr (cdr (cdr (cdr (cdr (cdr (car finalList)))))))))
+                                        (car (cdr (cdr (car finalList)))) ;; list of "requires"
+                                        (car (cdr (cdr (cdr (car finalList))))) ;; list of "includes"
+                                        (car (cdr (cdr (cdr (cdr (car finalList)))))) ;; list of "provides"
+                                        (car (cdr (cdr (cdr (cdr (cdr (car finalList))))))) ;; list of proc "headers"
+                                        (car (cdr (cdr (cdr (cdr (cdr (cdr (car finalList)))))))) ;; list of code blocks
+                                        (car (cdr (cdr (cdr (cdr (cdr (cdr (cdr (car finalList))))))))) ;; list of proc doc blocks
+                      )|#
+                      (display "\n---------------------------\n")
+                      (display (getRequiresLooper finalList '()) )
+                      (display "\n---------------------------\n")
+                      (generationMaster finalList
+                                        (getFileNameLooper finalList '())
+                                        (catWithoutDuplLst (getRequiresLooper finalList '()) )
+                                        (catWithoutDuplLst (getIncludesLooper finalList '()) )
+                                        (getProvidesLooper finalList '())
+                                        (getProcHeadersLooper finalList '())
+                                        (getProcBodiesLooper finalList '())
+                                        (getProcDocBlocksLooper finalList '())
                       )
                     )
                     (else
@@ -185,15 +199,86 @@
                                [callback cancelBtnCallback]))
 
 
+;;---------------------helper procedures-----------------------
+
+
 (define (getFileNameLooper fileList finalList)
   (cond ( (null? fileList)
-          finalList
+          (reverse (flatten finalList))
         )
         (else
          (getFileNameLooper (cdr fileList) (cons (car (car fileList)) finalList))
         )
   )
 )
+
+
+(define (getRequiresLooper fileList finalList)
+  (cond ( (null? fileList)
+          (flatten finalList)
+        )
+        (else
+         (getRequiresLooper (cdr fileList) (cons (car (cdr (cdr (car fileList)))) finalList))
+        )
+  )
+)
+
+
+(define (getIncludesLooper fileList finalList)
+  (cond ( (null? fileList)
+          (flatten finalList)
+        )
+        (else
+         (getIncludesLooper (cdr fileList) (cons (car (cdr (cdr (cdr (car fileList))))) finalList))
+        )
+  )
+)
+
+
+(define (getProvidesLooper fileList finalList)
+  (cond ( (null? fileList)
+          (flatten finalList)
+        )
+        (else
+         (getProvidesLooper (cdr fileList) (cons (car (cdr (cdr (cdr (cdr (car fileList)))))) finalList))
+        )
+  )
+)
+
+
+(define (getProcHeadersLooper fileList finalList)
+  (cond ( (null? fileList)
+          (flatten finalList)
+        )
+        (else
+         (getProcHeadersLooper (cdr fileList) (cons (car (cdr (cdr (cdr (cdr (cdr (car fileList))))))) finalList))
+        )
+  )
+)
+
+
+(define (getProcBodiesLooper fileList finalList)
+  (cond ( (null? fileList)
+          (flatten finalList)
+        )
+        (else
+         (getProcBodiesLooper (cdr fileList) (cons (car (cdr (cdr (cdr (cdr (cdr (cdr (car fileList)))))))) finalList))
+        )
+  )
+)
+
+
+(define (getProcDocBlocksLooper fileList finalList)
+  (cond ( (null? fileList)
+          (flatten finalList)
+        )
+        (else
+         (getProcDocBlocksLooper (cdr fileList) (cons (car (cdr (cdr (cdr (cdr (cdr (cdr (cdr (car fileList))))))))) finalList))
+        )
+  )
+)
+
+
 
 
 (send frame show #t)
