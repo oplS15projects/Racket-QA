@@ -146,6 +146,7 @@
   (define cleansed-filename (cleanse-path-string filename))
   (file-exists? (full-path-in-settings-directory cleansed-filename)))
 
+
 #||
  | Checks if the specified sub-directory exists in the settings directory.
  | 
@@ -192,6 +193,7 @@
             (else #f))
       #f))
 
+
 #||
  | Deletes a file from the user-specific application settings directory.
  | Has no effect if the file does not exist already.
@@ -210,6 +212,7 @@
   (if (file-exists? (full-path-in-settings-directory cleansed-filename))
       (delete-file (full-path-in-settings-directory cleansed-filename))
       #f))
+
 
 #||
  | Renames a file or a sub-directory in the user-specific application settings directory.
@@ -231,6 +234,7 @@
           (full-path-in-settings-directory cleansed-new)
           #t))
         (else #f)))
+
 
 #||
  | For Windows, applies a 'hidden' attribute to a file or directory.
@@ -254,12 +258,14 @@
          (process (string-append "mv " filepath " " new-filepath)))
         (else #f)))
 
+
 #||
  | Reverses hide-file-or-directory.
  | TODO: Implement Linux/Mac version.
  |#
 (define (unhide-file filepath)
   (process (string-append "attrib -h \"" filepath "\"")))
+
 
 #||
  | Extracts the directory portion from a file path.
@@ -282,6 +288,7 @@
              ""))
         (else #f)))
 
+
 #||
  | Extracts the file name portion from a file path.
  | 
@@ -300,6 +307,7 @@
              filepath))
         (else #f)))
 
+
 #||
  | Checks if a string starts with a dot character.
  | 
@@ -310,6 +318,7 @@
  |# 
 (define (first-char-is-dot? a-string)
   (pair? (regexp-match #rx"^\\." a-string)))
+
 
 #||
  | For Windows, replaces all / to \\.
