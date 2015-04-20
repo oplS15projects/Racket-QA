@@ -177,11 +177,6 @@
     (when at
       (send last-run-text set-label (autotest-last-run-string at))
       (send next-due-text set-label (autotest-next-due-string at)))))
-(thread (lambda ()
-          (let loop ()
-            (refresh-run-info)
-            (sleep 1.0)
-            (loop))))
 
 ;; drop-down menu on bottom left
 (define autotest-actions-choice
@@ -319,6 +314,23 @@
        (min-width 400)
        (min-height 150)
        (style '(multiple))))
+
+(define MISSING-FILE-PREFIX "<Missing> ")
+(define MISSING-FILE-PREFIX-LENGTH 9)
+(define (refresh-files-list-box)
+  (let ((num-files (send files-list-box get-number)))
+    (for ((i num-files))
+      (let ((str (send files-list-box get-string i))
+            (prefixed? (regexp-match MISSING-FILE-PREFIX (send files-list-box get-string i))))
+        (define file (if prefixed?
+                         (substring str (+ MISSING-FILE-PREFIX-LENGTH 1))
+                         str))
+        (cond ((file-exists? file)
+               (when prefixed?
+                 (send files-list-box set-string i file)))
+              (else
+               (when (not prefixed?)
+                 (send files-list-box set-string i (string-append MISSING-FILE-PREFIX file)))))))))
 
 (define right-buttons-pane
   (new vertical-pane%
@@ -804,7 +816,10 @@
     (let ((num-files (send files-list-box get-number))
           (files '()))
       (for ((i num-files))
-        (set! files (append files (list (send files-list-box get-string i)))))
+        (let ((file (send files-list-box get-string i)))
+          (when (regexp-match MISSING-FILE-PREFIX file)
+            (set! file (substring file (+ MISSING-FILE-PREFIX-LENGTH 1))))
+          (set! files (append files (list file)))))
       (make-autotest (generate-autotest-id)
                      (send autotest-name-text-field get-value)
                      activate?
@@ -1165,6 +1180,14 @@
                            (string->number (send year-combo-field get-value)))
        (valid-one-time-periodic-entries?)
        (not (equal? 0 (send files-list-box get-number)))))
+
+;; clock
+(thread (lambda ()
+          (let loop ()
+            (refresh-run-info)
+            (refresh-files-list-box)
+            (sleep 1.0)
+            (loop))))
 
 ;; entry point - opens the UI.
 (define (launch-scheduler)
