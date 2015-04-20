@@ -161,7 +161,7 @@
 )
  
 
-;;
+;; generate code for the source file index
 (define (generatefileNameListPage fileNameList)
   (write-string ";;page for displaying file list\n" output)
   (write-string "(define (fileNameList-page request)\n" output)
@@ -178,7 +178,7 @@
           )
           (else
            (write-string"                     (a ((href, (embed/url " output)
-           (write-string (car fileNameList) output)
+           (write-string (car lst) output)
            (write-string "-page))) \"" output)
            (write-string (car lst) output)
            (write-string "\")\n" output)
@@ -195,7 +195,7 @@
 )
 
 
-;;***modify this***
+;;generate code to create a page designated for each source file.
 (define isFirstItFlag #t)
 
 (define (generateSpecifiedFile fileList fileNameList)
@@ -206,7 +206,7 @@
           (else
            (write-string ";;page for a specified file\n" output);;begin---------------
            (write-string "(define (" output)
-           (write-string (car (car fileList)) output)
+           (write-string (car (car fileList)) output) ;; 
            (write-string "-page" output)
            (write-string " request)\n" output)
            (write-string "  (local ((define (response-generator embed/url)\n" output)
@@ -352,6 +352,8 @@
   (write-string "\n" output);;end
 )
   
+(define globalCounter 0)
+
 ;;generate procedure body pages (each will be named "codeblock[number]-page")
 (define (generateProcBodyPages procBodyList)
   ;(display "******This is the list of proc bodies*******\n")
@@ -383,11 +385,12 @@
            (write-string "    (send/suspend/dispatch response-generator)))\n" output)
            (write-string "\n" output)
            (write-string "\n" output)
-           (bodyLooper (cdr lst) (+ count 1))
+           (set! globalCounter (+ globalCounter 1))
+           (bodyLooper (cdr lst) globalCounter)
           )
      )
   )
-  (bodyLooper procBodyList 0)
+  (bodyLooper procBodyList globalCounter)
 )
   
 ;;generate help page
@@ -447,10 +450,15 @@
   )
 ) 
 
+(define gollum 0)
+
 (define (procLooper pLst dLst count)
+  (display "!!!!!!!!!!!!!!!!!!:")
+  (display gollum)
   (cond ( (or (null? pLst)
               (null? dLst)
           )
+          (set! gollum 0)
           (display "")
           )
         (else
@@ -468,7 +476,8 @@
          (write-string (number->string count) output)
          (write-string "-page))) \"Code\")\n" output)
          (write-string "                             (br) (br) (br)\n" output)
-         (procLooper (cdr pLst) (cdr dLst) (+ count 1))
+         (set! gollum (+ gollum 1))
+         (procLooper (cdr pLst) (cdr dLst) gollum)
         )
    )
 )
