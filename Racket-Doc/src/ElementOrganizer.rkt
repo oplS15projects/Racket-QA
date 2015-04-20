@@ -14,6 +14,8 @@
 
 #lang racket
 
+(provide catWithoutDuplLst)
+
 ;;compile a list of "required" packages, OR "included" packages, OR etc.  The firstList can 
 ;;double as the final list.
 (define (catWithoutDuplLst firstList . listOfOtherLists)
@@ -57,8 +59,11 @@
   
   
 ;;exe--------------------
-(catWithoutDuplLst '("racket/gui" "scheme/gui")
-                  '("racket/gui" "racket/filesystem" "racket/regex")
-                  '("racket/gui" "racket/regex" "racket/io")
-                  '("scheme/gui" "racket/regex"))
+#|
+(catWithoutDuplLst '("#lang racket" "racket/gui"   "scheme/gui")
+                   '("#lang racket" "racket/gui"   "racket/filesystem" "racket/regex")
+                   '("#lang racket" "racket/gui"   "racket/regex"      "racket/io")
+                   '("scheme/gui"   "racket/regex"))
+|#
+
 
