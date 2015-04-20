@@ -27,7 +27,7 @@ The information filled out by the user can be reviewed after the test has been c
 
 ![UI_browse](https://github.com/oplS15projects/Racket-QA/blob/master/Test-Automation/images/documentation/ui_browse.png)
 
-Clicking "Select Mailing List..." button launches QA-Email UI which allows configuring and selecting a mailing list to associate it with the autotest item.
+Clicking "Select Mailing List..." button launches QA-Email UI which allows configuring and selecting a mailing list to associate it with the autotest item if the user wants the result to be mailed.
 
 ![UI_email](https://github.com/oplS15projects/Racket-QA/blob/master/Test-Automation/images/documentation/ui_email.png)
 
