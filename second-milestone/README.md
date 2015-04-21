@@ -17,6 +17,14 @@ For Second Milestones:
   3. `Scheduler` has successfully generated result files for test run-ups as well as sent them to a mailing list configured through its UI.
   4. `Scheduler` is only functional when loaded in Dr.Racket framework. Once Dr.Racket closes, time-tracking threads are killed, and scheduled tests will not run anymore.
 
+
+Future Tasks:
+1. We can standardize our file headers. Currently, Roy uses ;; *** style headers, James uses ;;, and I use #|| style headers. We have also been putting varying information on our headers. Although this is not a professional software project and there is no requirement for it, we can surely look more professional.
+2. We need to ensure our codes are compatible with the major platforms - Windows, Linux, and Mac. We have four different components that have been developed in all different platforms; Windows for Bottle-Racket, Linux for RacketDoc, Mac and Windows for Test Scheduler and QA-Email. Although Racket language is supposed to be cross-platform, it is not guaranteed that a code written in one platform would work correctly in another. It wouldn't make sense a part of a program works on one platform, and another part have to be on a different platform when they are all in one program. We need to test compatibility as a whole program to ensure parts of it doesn't break on users.
+3. If we have time, we can create a user interface that brings together all components of the Racket-QA application. Currently, we have three major components (except QA-Email which is kind of a helper to other components) that have been developed separately and operates independently from each other. From the user's perspective, it would make more sense for an application to have one executable, instead of three. Maybe we can have a small start-up UI with 3 icon buttons launching each component.
+
+
+
 <!-- Links -->
 [QA-Email Document]: https://github.com/oplS15projects/Racket-QA/blob/master/QA-Email/readme.md
 [Racket-Doc Document]: https://github.com/oplS15projects/Racket-QA/blob/master/Racket-Doc/README.md
