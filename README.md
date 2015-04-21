@@ -1,6 +1,6 @@
 # Racket QA
 
-### First Milestone
+### Versions
 * [**Racket-QA v0.2.0**][Milestone2]
 * [**Racket-QA v0.1.0**][Milestone1]
 
