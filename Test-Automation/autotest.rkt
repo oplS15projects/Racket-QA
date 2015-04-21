@@ -39,7 +39,7 @@
 ;; Creates necessary files and initializes global variables
 ;; to get the autotest database functioning.
 (define (init-autotest)
-  (when (not (directory-exists? AUTOTEST-DIRPATH))    
+  (when (not (directory-exists? AUTOTEST-DIRPATH))
     (create-autotest-directory))
   (when (not (file-exists? AUTOTEST-LIST-FILE))
     (create-autotest-list-file)
@@ -127,13 +127,15 @@
               (lambda (entry)
                 (equal? id entry))))
 
-;; Generates a new autotest id.
-;; TODO: change this to resemble the mailing list id generator.
+;; Generates a new autotest id. ID is unique for all autotest object.
 (define generate-autotest-id
-  (let ((try-this-id 0))
+  (let ((try-this-id autotest-min-id))
     (lambda ()
-      (cond ((not (autotest-id-exists? try-this-id)) 
+      (cond ((or (null? existing-autotest-ids)
+                 (< (argmax identity existing-autotest-ids) try-this-id))
              (set! existing-autotest-ids (append existing-autotest-ids (list try-this-id)))
+             (set! autotest-min-id (+ 1 try-this-id))
+             (write-autotest-id-file)
              try-this-id)
             (else (set! try-this-id (+ 1 try-this-id))
                   (generate-autotest-id))))))
