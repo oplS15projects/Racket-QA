@@ -85,7 +85,7 @@ When it needs to retrieve the email addresses for a specific mailing list in the
 
 Note that procedures to retrieve email addresses by other attributes of a mailing list will not be implemented because ID is the only attribute that is guaranteed to be unique per each mailing list. For example, the user can create multiple mailing list with the same name, so it is not a good practice
 to identify mailing lists by their names. File path is not the best choice either because file names or paths may change as internal implementation of the email database changes. The ID is the only thing guaranteed not to change for a specific mailing list, and therefore, should be used to identify each mailing list.
-```
+```racket
 Example 2:
 
 #lang racket
