@@ -25,10 +25,13 @@ Future Tasks:
 	3. James uses `;;`
 	4. Yong uses `#||` style headers
 	5. We have also been putting varying information on our headers. Commenting needs to be standardized so style differences don't separate the project.
-  2. We need to ensure our codes are compatible with the major platforms - Windows, Linux, and Mac. We have four different components that have been developed in all different platforms; Windows for Bottle-Racket, Linux for Racket-Doc, Mac and Windows for Test Scheduler and QA-Email. Although Racket language is supposed to be cross-platform, it is not guaranteed that a code written in one platform would work correctly in another. It wouldn't make sense for a part of a program to work on one platform, and another part to be on a different platform when they are all in one program. We need to test compatibility as a whole program to ensure parts of it doesn't break on users.
+  2. We need to ensure our code is compatible across major platforms - Windows, Linux, and Mac. We have four different components that have been developed in all different platforms:
+    3. Windows for `Bottle-Racket`
+	4. Linux for `Racket-Doc
+	5. Mac and Windows for `Test Scheduler` and `QA-Email`
+	6. Although Racket language is supposed to be cross-platform, it is not guaranteed that a code written in one platform would work correctly in another. It wouldn't make sense for a part of a program to work on one platform, and another part to be on a different platform when they are all in one program. We need to test compatibility as a whole program to ensure parts of it doesn't break on users.
   3. If we have time, we can create a user interface that brings together all components of the Racket-QA application.
     4. Currently, we have three major components (except `QA-Email` which is a helper to other components) that have been developed separately and operates independently from each other. From the user's perspective, it would make more sense for an application to have one executable, instead of three. Maybe we can have a small start-up UI with 3 icon buttons launching each component.
-
 
 
 <!-- Links -->
