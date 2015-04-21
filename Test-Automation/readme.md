@@ -7,11 +7,11 @@ Racket QA Test Scheduler provides functionality to schedule an execution of Rack
 
 In order to start the scheduler, load (require) `scheduler_ui.rkt` and run `(launch-scheduler)` procedure. On the left side of the scheduler window are two list boxes containing active and inactive 'autotest' items. An autotest is a kind of a container scheduler uses to identify multiple Racket source files that are to be handled together and executed at a same time. The purpose of 'inactive' autotest is to allow users to temporarily disable a periodic autotest from running instead of having to delete it altogether. When the UI is first launched and there is no autotest configured, the list boxes will be empty.
 
-![UI_empty](https://github.com/oplS15projects/Racket-QA/blob/master/Test-Automation/images/documentation/ui_empty.png)
+![UI_empty](images/documentation/ui_empty.png)
 
 User can click the "Create A New Autotest" button on the top right corner to schedule a new autotest. Clicking this button will enable the input fields on the right side of the window so they can be filled out. Some of the input fields will be disabled based on whether the user has selected 'one-time' or 'repeat' radio button. For one-time test, a date of execution must be provided. For repeating test, at least one day of week must be checked. When the user enters an invalid entry or omits a required field, the background color of that field will change to red to signal it needs correction.
 
-![UI_create](https://github.com/oplS15projects/Racket-QA/blob/master/Test-Automation/images/documentation/ui_create.png)
+![UI_create](images/documentation/ui_create.png)
 
 The input form collects all the information necessary to manage an autotest item and execute the test files associated with it without user's presence. Here are the information required from the user to schedule an autotest.
 * Name of the autotest item
@@ -25,19 +25,19 @@ The input form collects all the information necessary to manage an autotest item
 
 The information filled out by the user can be reviewed after the test has been created by clicking the test name shown on either active or inactive test list box. User can also modify the configuration of an autotest item after creating it by editing the input fields and clicking "Save Changes" button.
 
-![UI_browse](https://github.com/oplS15projects/Racket-QA/blob/master/Test-Automation/images/documentation/ui_browse.png)
+![UI_browse](images/documentation/ui_browse.png)
 
 Clicking "Select Mailing List..." button launches QA-Email UI which allows configuring and selecting a mailing list to associate it with the autotest item if the user wants the result to be mailed.
 
-![UI_email](https://github.com/oplS15projects/Racket-QA/blob/master/Test-Automation/images/documentation/ui_email.png)
+![UI_email](images/documentation/ui_email.png)
 
 "Autotest Actions" choice field below the test list boxes allows user to activate, deactivate, duplicate, or delete an autotest item.
 
-![UI_actions](https://github.com/oplS15projects/Racket-QA/blob/master/Test-Automation/images/documentation/ui_actions.png)
+![UI_actions](images/documentation/ui_actions.png)
 
 When an active autotest comes due, the Racket source files associated with it will be executed by <a href="https://github.com/oplS15projects/Racket-QA/blob/master/Bottle-Racket/README.md" target="_blank">**Bottle-Racket**</a> APIs. If the source file is not configured for the Bottle-Racket APIs, the scheduler will fall back to executing it with the Racket executable (i.e. racket.exe). During the test execution, the scheduler will output to the Dr.Racket REPL console which files are currently being executed.
 
-![UI_run_test](https://github.com/oplS15projects/Racket-QA/blob/master/Test-Automation/images/documentation/ui_run_test.png)
+![UI_run_test](images/documentation/ui_run_test.png)
 
 Once the test is complete, the result files will be generated and placed in locations specified when the test was created through <a href="https://github.com/oplS15projects/Racket-QA/blob/master/Bottle-Racket/README.md" target="_blank">**Bottle-Racket**</a>. For non-Bottle-Racket source files, the output and error ports will be captured and saved in the same directory as the source file executed. If the user had checked the Notify? option and configured a mailing list in the scheduler UI, the result will be mailed to the mailing list. If the test is a repeating test, it will automatically execute again at the next due time. Although a one-time test will only run once, it will stay in the scheduler UI, so the user can run it again by changing its due time.
 
