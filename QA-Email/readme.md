@@ -17,7 +17,7 @@ There are 3 interface procedures that are provided in `email.rkt` that can be us
 
 * send-text
 : sends a plain text string as the body of an email.
-```
+```racket
 (send-text to subject a-string-to-send list-of-recipients)
 
 (send-text "Project Dev Team A"
@@ -28,7 +28,7 @@ There are 3 interface procedures that are provided in `email.rkt` that can be us
 
 * send-text-file
 : sends the entire contents of a text file as the body of an email.
-```
+```racket
 (send-text-file to subject a-text-file-to-send list-of-recipients)
 
 (send-text-file "Project Dev Team B"
@@ -39,7 +39,7 @@ There are 3 interface procedures that are provided in `email.rkt` that can be us
 
 * send-html-file
 : sends the entire contents of an html file as the body of an email.
-```
+```racket
 (send-html-file to subject a-html-file-to-send list-of-recipients)
 
 (send-html-file "Project Dev Team C"
@@ -66,7 +66,7 @@ Signature:
 (open-manage-mailing-list-dialog (command #f))
 ```
 
-```
+```racket
 Example 1:
 
 (require "../QA-Email/email.rkt"
