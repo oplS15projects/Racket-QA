@@ -1,21 +1,7 @@
 #lang racket/gui
 
-;; **********************************************************************
-;; * - Name: Roy Van Liew
-;; * - Section: 91.301.201 - Organization of Programming Languages
-;; * - FP1: BOTTLENOSE PERL TESTS TO RACKET TEST CONVERTER
-;; *   This script takes in a perl bottlenose test script file, usually
-;; *   labeled test.t, and then changes the perl tests into Racket
-;; *   test cases to be run in either the RackUnit GUI or
-;; *   textual interface. That script must be run separately.
-;; **********************************************************************
-
 (require racket/file)
 (define nil '())
-
-;; **********************************************************************
-;; * Selectors for finding certain parts of the perl test case
-;; **********************************************************************
 
 #||
  | This function checks if a certain file line
@@ -107,10 +93,6 @@
       (caddr all-parts)
       (cadddr all-parts)))
 
-;; **********************************************************************
-;; * Constructors for removing unnecessary parts of the perl test case
-;; **********************************************************************
-
 #||
  | This function actually parses the loaded file
  | in the Bottlenose test case. The original
@@ -142,10 +124,6 @@
  |         string.
  |#
 (define (find-test-input line)
-  ;; Opening parentheses, followed by zero or more whitespaces, followed by \ and ",
-  ;; followed by zero or more whitespaces, everything in between is the test input,
-  ;; followed by zero or more whitespaces, followed by \ and ", followed by zero or more
-  ;; whitespaces, followed by a closing parentheses.
   (define expected (regexp-match #rx"\\(\\s*\\\"\\s*(.*)\\s*\\\"\\s*\\)" line))
   (if (not (equal? expected #f))
       (string-trim (cadr expected))
@@ -178,19 +156,10 @@
  |         string.
  |#
 (define (find-test-name line)
-  ;; Zero or more whitespaces, followed by \ and ",
-  ;; followed by zero or more whitespaces, everything in between is the test input,
-  ;; followed by zero or more whitespaces, followed by \ and ", followed by zero or more
-  ;; whitespaces, followed by a closing parentheses.
   (define expected (regexp-match #rx"\\s*\\\"\\s*(.*)\\s*\\\"\\s*\\)" line))
   (if (not (equal? expected #f))
       (string-trim (cadr expected))
       #f))
-
-;; **********************************************************************
-;; * Procedures for retrieving all test inputs, expected values, and
-;; * test names in a bottlenose perl file.
-;; **********************************************************************
 
 #||
  | This function takes multiple lists and
@@ -301,11 +270,6 @@
       (cons (string-append "(require \"" (car loaded-file-list) "\")") (create-requires-for-loads (cdr loaded-file-list))))
 )
 
-;; **********************************************************************
-;; * Procedures for creating strings representing what we want to write
-;; * out to our suite file for the test cases inside the test suite.
-;; **********************************************************************
-
 #||
  | This function takes a sublist from a
  | zipped list generated from
@@ -349,10 +313,6 @@
   (define suite-to-return (append header-with-tests (list ")\n;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;\n")))
   suite-to-return
 )
-
-;; **********************************************************************
-;; * Test Suite File Creation Procedures
-;; **********************************************************************
 
 #||
  | This function allows us to recreate
@@ -455,10 +415,6 @@
          (display-lines-to-file lines absolute-dir #:separator"\n"))
         (else "undefined"))
 )
-
-;; **********************************************************************
-;; * Windows/Unix Filepath Utilities
-;; **********************************************************************
 
 #||
  | This function is used to get the

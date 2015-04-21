@@ -1,6 +1,5 @@
 #lang racket
 
-;; RackUnit and other project libraries
 (require "../Common/user-settings-directory.rkt") ; For writing out test results
 (require "../QA-Email/email.rkt"
          "../QA-Email/email-db.rkt"
@@ -10,8 +9,6 @@
 (require rackunit)
 (require rackunit/text-ui)
 (require rackunit/gui)
-
-;; For determining racket path
 (require setup/dirs)
 
 (define RACKET-PATH-UNFIXED
@@ -62,7 +59,6 @@
   (define output-results-file-path (string-append (cleanse-path-string
                                      (string-append (get-dirpath-from-filepath full-test-path) "/"))
                                                 "test-results.txt"))
-  ;; This needs to be done for the system call to work properly for paths with spaces in them.
   (define fixed-temp-file-path (cond ((eq? (system-type) 'windows) (valid-path-windows temp-file-path))
                                           ((eq? (system-type) 'unix) (valid-path-linux temp-file-path))
                                           ((eq? (system-type) 'macosx) (valid-path-linux temp-file-path))
@@ -111,7 +107,6 @@
          (define output-results-file-path (string-append (cleanse-path-string
                                                           (string-append (get-dirpath-from-filepath full-test-path) "/"))
                                                          "test-results.txt"))
-         ;; This needs to be done for the system call to work properly for paths with spaces in them.
          (define fixed-temp-file-path (cond ((eq? (system-type) 'windows) (valid-path-windows temp-file-path))
                                             ((eq? (system-type) 'unix) (valid-path-linux temp-file-path))
                                             ((eq? (system-type) 'macosx) (valid-path-linux temp-file-path))
@@ -127,10 +122,6 @@
          (send-text-file to-field subject-field output-email-file-path recipients))
         (else "An email list was not selected."))
 )
-
-;; **********************************************************************
-;; * Selectors for finding certain test components
-;; **********************************************************************
 
 #||
  | This function determines if a certain line in
@@ -202,10 +193,6 @@
 (define (is-expected? line)
   (if (regexp-match #rx"^\\s*expected:.*" line) #t #f))
 
-;; **********************************************************************
-;; * Constructors for parsing information from failed test cases
-;; **********************************************************************
-
 #||
  | This function extracts the test case name
  | from the test case results file. e.g.
@@ -261,12 +248,6 @@
 (define (parse-expected-value line)
   (define parse-result (regexp-match #rx"^\\s*expected:(.*)" line))
   (if (not (equal? parse-result #f)) (string-trim (cadr parse-result)) #f))
-
-;; **********************************************************************
-;; * Procedures for retrieving all test case information, including
-;; * test names, locations in the suite file, actual values, expected
-;; * values, and the suite name.
-;; **********************************************************************
 
 #||
  | This function takes multiple lists and
@@ -470,11 +451,6 @@
 (define (get-total-tests pass-fail-list)
   (map parse-total-tests pass-fail-list))
 
-;; **********************************************************************
-;; * Procedures for retrieving test result statistics from the output
-;; * file generated, using the get procedures defined above.
-;; **********************************************************************
-
 #||
  | This function is used to turn the numbers
  | represented as strings retrieved from
@@ -502,13 +478,6 @@
  |#
 (define (add-list-of-string-nums passed-list)
   (accumulate (strings-to-nums passed-list) 0 + (lambda (x) x)))
-
-;; **********************************************************************
-;; * Procedures for creating a list of strings to write out to file:
-;; * - A list of strings representing the failed test case information
-;; * - A list of strings representing the pass/fail rate
-;; * - Combining these two lists
-;; **********************************************************************
 
 #||
  | This function is used to create a string
@@ -593,10 +562,6 @@
   (define failed-case-list (create-list-of-failed-cases all-lines))
   (append failed-case-header failed-case-list))
 
-;; **********************************************************************
-;; * PARSING TEST RESULTS
-;; **********************************************************************
-
 #||
  | This function is used to create the Racket code
  | that calls run-tests to run the textual interface
@@ -652,20 +617,16 @@
  |         the email body to send.
  |#
 (define (parse-test-results test-suite-name full-test-results-path output-email-file)
-  ;; Analyze test result file lines
   (define test-results-lines (file->lines full-test-results-path))
   (define pass-fail-info (get-passed-failed-info test-results-lines))
   (define successful-list (get-successful-tests pass-fail-info))
   (define failed-list (get-failed-tests pass-fail-info))
   (define total-list (get-total-tests pass-fail-info))
-  ;; Here is where we actually got the physical statistics
   (define num-passed (add-list-of-string-nums successful-list))
   (define num-failed (add-list-of-string-nums failed-list))
   (define num-total (add-list-of-string-nums total-list))
-  ;; Get file lines to write out to the output file to send as an email
   (define failed-case-lines-to-write (create-failed-cases-lines
                                       test-results-lines num-failed num-total test-suite-name))
-  ;; Now write the processed lines above out to file.
   (begin (remake-file output-email-file)
          (display-lines-to-file failed-case-lines-to-write output-email-file #:separator"\n"))
 )
