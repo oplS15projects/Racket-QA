@@ -46,7 +46,6 @@
   (when (not (file-exists? EMAIL-DB-ID-FILE))
     (create-email-db-id-file)
     (write-email-db-id-file))
-  (validate-and-correct-email-db-list-file)
   (read-email-db-list)
   (read-email-db-id-file)
   (set! existing-email-db-ids (ids-in-email-db-list))
@@ -353,11 +352,6 @@
     (lambda (in)
       (set! email-db-list (map storage-form-to-db (read in))))
     #:mode 'binary))
-
-;; Checks the integrity of the contents in the EMAIL-DB-LIST-FILE and removes invalid 
-;; entries. Leaves a valid email-db-list which can be used throughout the program run.
-(define (validate-and-correct-email-db-list-file)
-  (void))
 
 ;; good-o accumulate helper
 (define (accumulate sequence init op term)
