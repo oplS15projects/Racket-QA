@@ -10,13 +10,11 @@
 #lang racket
 
 (require racket/date
-         racket/flonum
          racket/gui/base
          "autotest.rkt"
          "bg-process.rkt"
          "calendar.rkt"
          "input-validation.rkt"
-         "scheduler.rkt"
          "../QA-Email/email-db.rkt"
          "../QA-Email/email-db-ui.rkt")
 
