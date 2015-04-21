@@ -36,18 +36,10 @@
 (define WARNING-ICON (read-bitmap "images/warning-1.png"))
 
 (define selected-email-db #f)
-(define APPROXIMATE-SIZE-X 750)
-(define APPROXIMATE-SIZE-Y 650)
-
-(define-values (size-x size-y) (get-display-size))
-(define x-pos (fl->exact-integer (floor (* (- size-x APPROXIMATE-SIZE-X) 0.5))))
-(define y-pos (fl->exact-integer (floor (* (- size-y APPROXIMATE-SIZE-Y) 0.5))))
 
 (define main-frame
   (new frame%
        (label "Test Scheduler")
-       (x x-pos)
-       (y y-pos)
        (spacing 2)))
 
 (define main-h-panel
@@ -955,7 +947,7 @@
 (define (config-ui-empty-mode)
   (send last-run-text show #f)
   (send next-due-text show #f)
-  (disable-all-children left-v-panel)
+  (enable-all-children left-v-panel)
   (send selected-test-name-box change-children name-field-empty-mode)
   (send selected-autotest-message set-label NO-AUTOTEST-SCHEDULED-MESSAGE)
   (send schedule-new-button enable #t)
@@ -1194,4 +1186,5 @@
   (populate-active-tests-list-box)
   (populate-inactive-tests-list-box)
   (setup-ui)
+  (send main-frame center)
   (send main-frame show #t))
