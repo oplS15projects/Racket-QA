@@ -99,17 +99,17 @@ Example 2:
 (define mailing-list-name (email-db-name mailing-list))
 (define mailing-list-addresses (email-db-addresses mailing-list))
 
-mailing-list-id
-> 1
-mailing-list-name
-> "Team Racket Science"
-mailing-list-addresses
-> '("yong_cho@student.uml.edu" "yongjec@gmail.com" "racket.riot@gmail.com")
+> mailing-list-id
+1
+> mailing-list-name
+"Team Racket Science"
+> mailing-list-addresses
+'("yong_cho@student.uml.edu" "yongjec@gmail.com" "racket.riot@gmail.com")
 
 (define recipients (db-id-to-addresses mailing-list-id))
 
-recipients
-> '("yong_cho@student.uml.edu" "yongjec@gmail.com" "racket.riot@gmail.com")
+> recipients
+'("yong_cho@student.uml.edu" "yongjec@gmail.com" "racket.riot@gmail.com")
 
 (send-text-file "Project Dev Team A"
                 "Test Result 4/9"
