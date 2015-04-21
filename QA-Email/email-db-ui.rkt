@@ -10,18 +10,11 @@
 
 (require "email.rkt"
          "email-db.rkt"
-         "email-db-entry-edit-ui.rkt")
+         "email-db-entry-edit-ui.rkt"
+         "smtp-info.rkt")
 
-;; open-manage-mailing-list-dialog
-;; 
-;; Usage
-;; (open-manage-mailing-list-dialog 'return-addresses) 
-;; -> Returns a list of all email address strings in the selected db.
-;; (open-manage-mailing-list-dialog 'return-db)
-;; -> Returns the selected email-db object.
-;; (open-manage-mailing-list-dialog)
-;; -> Returns nothing. Just for managing the mailing list.
 (provide open-manage-mailing-list-dialog)
+
 
 
 (init-email-db)
@@ -95,15 +88,15 @@
           (define selection-index (send email-db-actions-choice get-selection))
           (cond ((equal? selection-index 0)
                  (void))
-                 ((equal? selection-index 1)  ; add a new db
-                  (define name (get-text-from-user "Create new mailing list"
-                                                   "Please enter a name:"
-                                                   manage-mailing-list-dialog))
-                  (when (not (equal? name #f))
-                    (define new-db (make-email-db (generate-email-db-id) name '()))
-                    (add-to-email-db-list new-db)
-                    (populate-email-db-list-box))
-                  (send email-db-actions-choice set-selection 0))
+                ((equal? selection-index 1)  ; add a new db
+                 (define name (get-text-from-user "Create new mailing list"
+                                                  "Please enter a name:"
+                                                  manage-mailing-list-dialog))
+                 (when (not (equal? name #f))
+                   (define new-db (make-email-db (generate-email-db-id) name '()))
+                   (add-to-email-db-list new-db)
+                   (populate-email-db-list-box))
+                 (send email-db-actions-choice set-selection 0))
                 ((equal? selection-index 2)  ; delete selected db
                  (define db-list-indexes (send email-db-list-box get-selections))
                  (when (not (null? db-list-indexes))
@@ -120,6 +113,7 @@
 (define selected-email-db-title-box
   (new horizontal-pane%
        (parent right-v-panel)
+       (min-width 450)
        (min-height 30)
        (stretchable-height #f)
        (alignment '(left center))))
@@ -137,17 +131,25 @@
        (alignment '(right center))))
 
 ;; Button - send test email to selected email-db
-(new button%
-     (parent test-email-button-pane)
-     (label "Send Test Email")
-     (callback
-      (lambda (b e)
-        (define selected-db-index (send email-db-list-box get-selection))
-        (when (not (eq? selected-db-index #f))
-          (write selected-db-index)
-          (define db (send email-db-list-box get-data selected-db-index))
-          (send-text "Team Racket Science" "Test Email" "This is a test email sent from Manage-Email-DB UI" (email-db-addresses db))))))
+(define test-email-button
+  (new button%
+       (parent test-email-button-pane)
+       (label "Send Test Email")
+       (callback
+        (lambda (b e)
+          (define selected-db-index (send email-db-list-box get-selection))
+          (when (not (eq? selected-db-index #f))
+            (define db (send email-db-list-box get-data selected-db-index))
+            (send-text "Team Racket Science" "Test Email" "This is a test email sent from Manage-Email-DB UI" (email-db-addresses db)))))))
 
+;; Button - configures smtp log-in information for sending emails.
+(define smtp-config-button
+  (new button%
+       (parent test-email-button-pane)
+       (label "SMTP Config...")
+       (callback
+        (lambda (b e)
+          (open-smtp-config)))))
 
 ;; pane below the selected email-db title box
 (define right-email-db-pane
@@ -173,12 +175,10 @@
        (vert-margin 0)
        (min-width 300)
        (min-height 350)
-       (stretchable-width #f)
-       (stretchable-height #f)
        (columns '("Name" "E-mail"))
        (style '(single vertical-label column-headers)))) 
-(send email-address-list-box set-column-width NAME-COLUMN 120 30 250)   ; width, min-width, max-width
-(send email-address-list-box set-column-width EMAIL-COLUMN 150 30 250)
+(send email-address-list-box set-column-width NAME-COLUMN 160 30 300)   ; width, min-width, max-width
+(send email-address-list-box set-column-width EMAIL-COLUMN 200 30 300)
 
 ;; fills the list box on the right pane with names and email addresses
 (define (populate-email-address-list-box)
@@ -201,6 +201,7 @@
 (define email-db-buttons-vertical-pane
   (new vertical-pane%
        (parent email-db-horizontal-pane)
+       (stretchable-width #f)
        (alignment '(left top))))
 
 ;; Edit button - modifying the selected email-db-entry.
@@ -220,7 +221,7 @@
                 (define db (send email-db-list-box get-data db-selection))
                 (replace-db-entry db old-entry new-entry)
                 (populate-email-address-list-box))))))))
-            
+
 ;; Add button - adding an entry to the selected email-db.
 (define email-db-add-button
   (new button%
@@ -263,6 +264,15 @@
        (spacing 10)
        (alignment '(center top))))
 
+;; Cancel button
+(define cancel-button
+  (new button% 
+       (parent bottom-buttons-pane) 
+       (label "Cancel")
+       (min-width 75)
+       (callback (λ (button event)
+                   (send manage-mailing-list-dialog show #f)))))
+
 ;; Ok button - returns a list of the email addresses for the selected email-db.
 (define ok-button
   (new button% 
@@ -278,16 +288,25 @@
                      (set! return-list (map email-db-entry-email-address (email-db-entries db))))
                    (send manage-mailing-list-dialog show #f)))))
 
-;; Cancel button
-(define cancel-button
-  (new button% 
-       (parent bottom-buttons-pane) 
-       (label "Cancel")
-       (min-width 75)
-       (callback (λ (button event)
-                   (send manage-mailing-list-dialog show #f)))))
+(when (system-position-ok-before-cancel?)
+  (send bottom-buttons-pane change-children reverse))
 
-;; Opens the main dialog.
+
+#||
+ | Opens the main dialog. Upon exit from the dialog, this procedure can return
+ | a list of email addresses for the selected mailing list, or the raw
+ | email-db object based on the optional 'command' argument.
+ | 
+ | Example:
+ | > (open-manage-mailing-list-dialog 'return-addresses)
+ | > (open-manage-mailing-list-dialog 'return-db)
+ | > (open-manage-mailing-list-dialog)
+ |
+ |@param command 'return-addresses
+ |       Returns the list of email addresses for the chosen mailing list.
+ |       command 'return-db
+ |       Returns the raw email-db object.
+ |#
 (define (open-manage-mailing-list-dialog (command #f))
   (populate-email-db-list-box)
   (populate-email-address-list-box)
@@ -301,14 +320,13 @@
         (send manage-mailing-list-dialog set-label "Manage Mailing List")
         (send ok-button show #f)
         (send cancel-button show #f)))
-  (when (system-position-ok-before-cancel?)
-    (send bottom-buttons-pane change-children reverse))
   (set! return-list '())
   (set! return-db #f)
   (send selected-email-db-title-label set-label
         (cond ((= 0 (send email-db-list-box get-number)) "There is no mailing list configured")
-                    ((null? (send email-db-list-box get-selections)) "Select an email-db ")
-                    (else "Please select a mailing list")))
+              ((null? (send email-db-list-box get-selections)) "No mailing list selected ")
+              (else "")))
+  (send manage-mailing-list-dialog center)
   (send manage-mailing-list-dialog show #t)
   ;; Blocking until Cancel or Ok button is clicked.
   (cond ((eq? command 'return-addresses)
