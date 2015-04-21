@@ -1,8 +1,8 @@
 # Racket QA
 
 ### First Milestone
-[**Racket-QA v0.2.0**][Milestone2]
-[**Racket-QA v0.1.0**][Milestone1]
+* [**Racket-QA v0.2.0**][Milestone2]
+* [**Racket-QA v0.1.0**][Milestone1]
 
 ##### Project Information
 * <a href="https://github.com/Dossar/FP4-proposal" target="_blank">**Racket QA Project Proposal**</a>
