@@ -869,6 +869,7 @@
          (set-autotest-name-text-field-background)
          (send files-list-box clear)
          (for-each (lambda (file) (send files-list-box append file)) (autotest-files at))
+         (refresh-files-list-box)
          (if (eq? 'one-time (autotest-type at))
              (send one-time-periodic-radio-box set-selection 0)
              (send one-time-periodic-radio-box set-selection 1))
