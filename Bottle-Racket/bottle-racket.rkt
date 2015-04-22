@@ -24,8 +24,14 @@
                          (label "Bottle-Racket")))
 
 ; Load in the bottlenose to racket image
+;(define background
+;  (read-bitmap "images/bottleracket.png"))
+
 (define background
-  (read-bitmap "images/bottleracket.png"))
+  (read-bitmap (cond ((eq? (system-type) 'windows) "images\\bottleracket.png")
+                     ((eq? (system-type) 'unix) "images/bottleracket.png")
+                     ((eq? (system-type) 'macosx) "images/bottleracket.png")
+                     (else (error "Platform not supported")))))
 
 (define image-loaded (new message% [parent dialog]
                           [label background]))
