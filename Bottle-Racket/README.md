@@ -1,53 +1,106 @@
-# Final Project Assignment 2: Explore One More! (FP2) 
-DUE March 30, 2015 Monday (2015-03-30)
+# Bottle-Racket and Test-Capture
 
-### My Library: Racket Graphical Interface Toolkit
+This portion of Racket-QA deals with two components:
+* `Bottle-Racket` is just a converter. It converts a Bottlenose Perl test file from the OPL course into Racket test cases. This is intended to be used on Problem Sets 1, 2, 3, and 5 which are provided in the testing directory. For our purposes this is all we need for test suites.
+* `Test-Capture` has changed significantly since the first release. It takes a specified test suite file and is able to run the test suites with the option of also sending an email of the test results.
 
-For the second exploration solo project I used the GUI Toolkit that comes with Racket. This is an expansion to my FP1 which looked through a bottlenose perl test file and converted the tests to Racket test cases in a new suite file, along with creating an area file for running that suite. The motivation behind using this library was to create a simple user-friendly window for a person to use if they wanted to run this converter and generate test suite and area files for their assignment implementations.
+I've split up this README into four parts:
+* The Structure of a Test Suite File
+* Video Demonstration of using both components
+* Text and Picture Demonstration of using `Bottle-Racket`
+* Text and Picture Demonstration of using `Test-Capture`
 
-The `converter-gui.rkt` script generates a window which allows a user to browse their computer for the source assignment file and the bottlenose test file, along with specifying the testing mode (GUI or textual interface). Then there is a `Convert` button that does everything FP1 did in converting the files and writing to output files. However, an advantage to having this GUI is that it shows the source assignment file path and bottlenose test file path along with test mode so the user knows he/she is working with the desired files. After clicking `Convert` the user will be able to see the paths of the two generated files along with the test mode they specified, so they can go straight to the path of the test area file and run it.
 
-In terms of actually using the GUI library, I just did a `#lang racket/gui` and according to the Racket Documentation it combines the following:
-* All bindings in `racket` language
-* All bindings in `racket/gui/base`
-* All bindings in `racket/draw`
+### The Structure of a Test Suite File
 
-### Script
+The test suites to run with this application are meant to be minimalistic and easy to follow. Test Suites in this context contain the following:
+* Top: `require` statements for RackUnit, along with the necessary source files with procedure definitions for testing
+* Body: test suite bodies composed of test cases, made with `define-test-suite`
+* Bottom: `test-list`, a list containing the test suites to run
 
-You can find the code for implementing this GUI in [**converter-gui.rkt**][gui-code-rkt]. The original `bn-to-racket.rkt` code was changed a bit from FP1 to try handling linux paths with forward slashes. Originally the script had a dependency on windows in that it only worked with backslash paths. `converter-gui.rkt` is what this FP2 is really about however since it implemented the GUI for the converter.
+For an example, the following is a test suite generated from ps1.
+```
+#lang racket
 
-This high level overview of `bn-to-racket.rkt` is taken from FP1.
-* Read in all lines from the bottlenose perl test script.
-* Obtain all the test cases in the perl test script and convert them to Racket test cases.
-* Create a list of strings that represent what to write out to the Racket file containing the test suite.
-* Create a list of strings that represent what to write out to the Racket file containing the test area (the script that runs the test cases).
-* `display-lines-to-file` is used to write these strings out to the test suite and test area files.
+(require rackunit)
+(require racket/include)
+(require rackunit/text-ui)
+(require rackunit/gui)
+(require "ps1.rkt")
 
-### Output
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(define-test-suite ps1
+  #:before (lambda () (display "Starting Test Suite 'ps1'\n"))
+  #:after (lambda () (display "Finished Test Suite 'ps1'\n"))
+  (test-case "(square 3)" (check-equal? (square 3) 9))
+  (test-case "(square 1)" (check-equal? (square 1) 1))
+  ...
+  (test-case "(smallest-tripled 30 20 10)" (check-equal? (smallest-tripled 30 20 10) 30))
+)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-The output here will consist of screenshots that demonstrate running the script.
+(define test-list (list
+  ps1
+))
 
-#### Running the script
+(provide (all-defined-out))
+```
 
-1. This is the window you will see when running `converter-gui.rkt`, and the text fields have some helpful descriptions as to what will go in them.
-![ss1.png](https://raw.githubusercontent.com/Dossar/FP2/master/demo/ss1.png)
 
-2. The Browse buttons are provided to search the computer for the assignment source file and bottlenose test file. This is a window that opens when you click Browse for instance.
-![ss2.png](https://raw.githubusercontent.com/Dossar/FP2/master/demo/ss2.png)
+### Video Demonstration
 
-3. This is the screen after you've browsed the computer for the files; note the text fields have the absolute path of the source files.
-![ss3.png](https://raw.githubusercontent.com/Dossar/FP2/master/demo/ss3.png)
+The following YouTube video link demonstrates how to use `Bottle-Racket` to convert Bottlenose test files into Racket files, and then use `Test-Capture` to run a test suite file both without and with sending an email.
+[**Video Demonstration**][Bottle-Video]
 
-4. The `Convert` button is clicked and you see that the bottom three text fields are now filled in with the absolute paths of the test suite and test area files. Along with that, the dialog under the picture changed to saying that the conversion for the assignment was successful.
-![ss4.png](https://raw.githubusercontent.com/Dossar/FP2/master/demo/ss4.png)
 
-5. Go to the path specified in the Output Test Area File field. You'll find the suite and area files generated here.
-![ss5.png](https://raw.githubusercontent.com/Dossar/FP2/master/demo/ss5.png)
+### Bottle-Racket GUI
 
-6. Open the test area script and run it. In this case we specified make-gui-runner so we get the RackUnit GUI when running the test area file.
-![ss6.png](https://raw.githubusercontent.com/Dossar/FP2/master/demo/ss6.png)
+File: `bottle-racket.rkt`
 
-I would also like to note that the paths shown here have backslashes, indicating I am using Windows. FP1 had the dependency of Windows for this. In FP2, I've made some changes to try dealing with paths that have forward slashes like in Linux. When in doubt, go by the Browse button paths rather than entering in the paths manually.
+As stated previously, `Bottle-Racket` is just a converter. It does not actually run any tests. For our project we will use the assignment test files in the course as the basis of our test suites. Run `Bottle-Racket` first to generate the test suite files.
+
+This is the window you will start with when you run the script. 
+* The first two text fields will be populated based on the file you select with the `Browse...` button.
+* The option for either GUI or textual interface has been removed. The only relevant part of RackUnit for our purposes is the textual interface as it displays important textual output of the test results.
+* When the `Convert` button is clicked, the bottom text field will be populated with the location of the generated test suite file for the assignment source file and test file selected.
+
+![bottle1.png](https://raw.githubusercontent.com/oplS15projects/Racket-QA/master/Bottle-Racket/documentation/bottle-racket/v3/bottle1.png)
+
+This is what the window will look like when you click the `Convert` button after specifying the source assignment file and the test file associated with it. You now have a test suite file for that assignment, so we're ready to move on to `Test-Capture`.
+
+![bottle2.png](https://raw.githubusercontent.com/oplS15projects/Racket-QA/master/Bottle-Racket/documentation/bottle-racket/v3/bottle2.png)
+
+### Test-Capture GUI
+
+File: `test-capture.rkt`
+
+Now that we have the test suite file generated from `Bottle-Racket`, we can run the test suite and send the results to an email list.
+
+This is the window you will start with when you run the script.
+* The `Test Suites File` text field is populated by using the `Browse...` button to find a test suite file.
+* The `To` field is populated when the email list is configured. Do not manually populate this field.
+* The `Subject` field is the subject of the email that will be sent when the test script is run.
+
+![test1.png](https://raw.githubusercontent.com/oplS15projects/Racket-QA/master/Bottle-Racket/documentation/test-capture/v3/test1.png)
+
+We can run the test suite without configuring any email by clicking `Run Script`. You can go ahead and try this; the directory of the test suite file will have a test results file and the email file associated with it, but no emails will be sent.
+
+![test2.png](https://raw.githubusercontent.com/oplS15projects/Racket-QA/master/Bottle-Racket/documentation/test-capture/v3/test2.png)
+
+For the third button we need to configure the email list to send the test results out to. Click `Configure Emails` to get a new dialog window. Initially this window might be empty, so I'm dealing with that case here. Email lists are stored in a database on the local computer, so next time you won't have to configure this email list.
+
+![test3.png](https://raw.githubusercontent.com/oplS15projects/Racket-QA/master/Bottle-Racket/documentation/test-capture/v3/test3.png)
+
+On the bottom left in the drop down menu, select `Add Mailing List...` to enter in a new mailing list with a name. Then select this name and on the right there should be a list of names, initially empty. Click the `Add` button on the right to put entries into this mailing list. If you feel like you are done with the mailing list, select that mailing list and click `Ok` to return to the main `Test-Capture` window. You should see the `To` field change.
+
+![test4.png](https://raw.githubusercontent.com/oplS15projects/Racket-QA/master/Bottle-Racket/documentation/test-capture/v3/test4.png)
+
+![test5.png](https://raw.githubusercontent.com/oplS15projects/Racket-QA/master/Bottle-Racket/documentation/test-capture/v3/test5.png)
+
+Now that we have the mailing list to send results to, it's time to run the test suite. Click the `Run Script and Send Email` button at the bottom to run the tests. This may take a little while to run, so be patient. When the test suite is done running, an email will be sent out to the mailing list that was specified.
+
+![test6.png](https://raw.githubusercontent.com/oplS15projects/Racket-QA/master/Bottle-Racket/documentation/test-capture/v3/test6.png)
+
 
 <!-- Links -->
-[gui-code-rkt]: https://github.com/Dossar/FP2/blob/master/converter-gui.rkt
+[Bottle-Video]: https://www.youtube.com/watch?v=gEtNu75CSl4

@@ -1,6 +1,9 @@
 #lang racket
 
 (require rackunit)
+(require racket/include)
+(require rackunit/text-ui)
+(require rackunit/gui)
 (require "ps3a.rkt")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

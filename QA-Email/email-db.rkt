@@ -1,3 +1,12 @@
+#||
+ | email-db.rkt
+ | author: Yong Cho (Yong_Cho@student.uml.edu)
+ | Created on: 4/3/2015
+ |
+ | This file implements a mailing list object which contains a set of
+ | email addresses, and procedures to store and retrieve it.
+ |#
+
 #lang racket
 
 (require racket/file
@@ -41,7 +50,8 @@
   (read-email-db-list)
   (read-email-db-id-file)
   (set! existing-email-db-ids (ids-in-email-db-list))
-  (when (<= min-id (argmax identity existing-email-db-ids))
+  (when (and (not (null? existing-email-db-ids)) 
+             (<= min-id (argmax identity existing-email-db-ids)))
     (set! min-id (+ 1 (argmax identity existing-email-db-ids)))
     (write-email-db-id-file)))
 

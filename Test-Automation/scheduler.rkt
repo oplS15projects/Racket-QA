@@ -1,84 +1,184 @@
+#||
+ | scheduler.rkt
+ | author: Yong Cho (Yong_Cho@student.uml.edu)
+ | Created on: 4/8/2015
+ |
+ | This file implements timer and runner threads which are used to
+ | keep track of current time and execute automated tests as they come due.
+ |#
+
 #lang racket
 
-;; needs a way for the manager thread to find a thread by
-;; some test information (test id? file path?)
+(require racket/date
+         rackunit
+         setup/dirs
+         2htdp/batch-io
+         "autotest.rkt"
+         "../Common/user-settings-directory.rkt"
+         "../QA-Email/email.rkt"
+         "../QA-Email/email-db.rkt"
+         "../Bottle-Racket/test-tracker.rkt")
 
-(provide (all-defined-out))
+(provide make-runner
+         make-timer
+         INIT-TIMER-MESSAGE)
 
-(define SECONDS-IN-A-DAY 86400)
+(define RUN-COMMAND 'Run!)
+(define INIT-TIMER-MESSAGE 'Set-timer)
+(define RACKET-COMMAND
+  (string-append
+   (whitespace-fix 
+    (string-append (path->string (find-console-bin-dir))
+                   (cond ((eq? (system-type) 'windows) "racket.exe")
+                         ((eq? (system-type) 'unix) "/racket")
+                         ((eq? (system-type) 'macosx) "/racket")
+                         (else (error "Platform not supported")))))
+   " "))
 
-(define test-queue '())
+(define (make-shell-command arg-file-path)
+  (string-append RACKET-COMMAND (whitespace-fix arg-file-path)))
+
+;; Executes racket executable with a .rkt file as argument. Returns the output as a string.
+(define (run-racket-file arg-file-path)
+  (call-with-output-string
+   (lambda (p) (parameterize ((current-error-port p)
+                              (current-output-port p))
+                 (system (make-shell-command arg-file-path))))))
+
+(define (attach-output-header at-name executed-time-in-sec output-string arg-file-path)
+  (string-append "################################################################################\n"
+                 "# Auto-test Name: " at-name "\n"
+                 "# RKT File Executed: " arg-file-path "\n"
+                 "# Executed on: " (date->string (seconds->date executed-time-in-sec) #t) "\n"
+                 "################################################################################\n\n"
+                 output-string))
+
+(define (save-result output-string arg-file-path file-exists-option)
+  (let ((output-directory
+         (cleanse-path-string
+          (string-append 
+           (get-dirpath-from-filepath arg-file-path) "/Racket-QA Auto-Test Result/"))))
+    (when (not (directory-exists? output-directory))
+      (make-directory* output-directory))
+    (call-with-output-file 
+        (cleanse-path-string 
+         (string-append output-directory 
+                        "result-"
+                        (get-filename-from-filepath arg-file-path)
+                        ".txt"))
+      (lambda (out)
+        (fprintf out "~a~n~n~n~n" output-string))
+      #:mode 'text
+      #:exists file-exists-option)))
 
 
-;; Queues a test suite.
-(define (add-to-queue queue-entry)
-  (set! test-queue (append test-queue (list queue-entry)))
-  (set! test-queue (sort test-queue (lambda (a b) (< a b)))))
-
-(define (make-test tid name path)
-  (define (change-name new-name)
-    (set! name new-name))
-  (define (change-path new-path)
-    (set! path new-path))
-  (define (dispatch m a)
-    (cond ((eq? m 'name) name)
-          ((eq? m 'tid) tid)
-          ((eq? m 'path) path)
-          ((eq? m 'set-name) (change-name a))
-          ((eq? m 'set-path) (change-path a))))
-  dispatch)
-
-(define (test-name test)
-  (test 'name ""))
-
-(define (make-timer-thread notify-at data parent)
+;; Timer thread - tracks current time and notifies runner thread when 
+;; a scheduled autotest comes due.
+(define (make-timer runner)
+  (define DEBUG #f)
   (thread
    (lambda ()
-     (let loop ((notify-at notify-at)
-                (data data)
-                (parent parent))
-       (define command #f)
-       (if (> (current-seconds) notify-at)
-           (begin
-             (thread-send parent (list 'Due! notify-at data))
-             (set! command (thread-receive)))
-           (set! command (thread-try-receive)))
-       (when (not (eq? command #f))
-         (cond ((and (pair? command) (eq? (car command) 'update))
-                (printf "Updating due time to ~a~n" (cadr command))
-                (set! notify-at (cadr command)))
-               ((eq? command 'print)
-                (printf "Due: ~a, Data: ~a~n" notify-at data))
+     (let loop ((at-list autotest-list))
+       (define active-at (filter autotest-active? at-list))
+       (define cs (current-seconds))
+       (for-each 
+        (lambda (at)
+          (when DEBUG
+            (printf "cs = ~a, due = ~a~n" cs (autotest-next-due at)))
+          (when (equal? cs (autotest-next-due at))
+            (when DEBUG
+              (printf "Timer: Sending a run command for ~a~n" (autotest-name at)))
+            (thread-send runner (list RUN-COMMAND (autotest-next-due at) at))))
+        active-at)
+       (define command (thread-try-receive))
+       (when (not (eq? #f command))
+         (cond ((eq? command 'print)
+                (printf "Current-seconds = ~a~nActive autotests:~n" cs) 
+                (for-each
+                 (lambda (at)
+                   (printf "~a due at ~a seconds (~a) on ~a~nFiles:~n" 
+                           (autotest-name at) 
+                           (autotest-next-due at) 
+                           (- (autotest-next-due at) cs)
+                           (date->string (seconds->date (autotest-next-due at)) #t))
+                   (for-each
+                    (lambda (file) (printf "~a~n" file))
+                    (autotest-files at))
+                   (printf "~n"))
+                 (sort active-at 
+                       (lambda (a b) (< (autotest-next-due a) (autotest-next-due b))))))
                (else
                 (void))))
-       (loop notify-at data parent)))))
+       (let hold ()
+         (when (equal? cs (current-seconds))
+           (sleep 0.3)
+           (hold)))
+       (loop autotest-list)))))
 
-
-(define (current-date) (date-day (seconds->date (current-seconds))))
-(define (current-month) (date-month (seconds->date (current-seconds))))
-(define (current-year) (date-year (seconds->date (current-seconds))))
-
-(define (leap-year? year)
-  (or (and (equal? 0 (modulo year 4))
-           (not (equal? 0 (modulo year 100))))
-      (equal? 0 (modulo year 400))))
-
-(define (days-in-month month year)
-  (cond ((or (equal? month 1)
-             (equal? month 3)
-             (equal? month 5)
-             (equal? month 7)
-             (equal? month 8)
-             (equal? month 10)
-             (equal? month 12))
-         31)
-        ((or (equal? month 4)
-             (equal? month 6)
-             (equal? month 9)
-             (equal? month 11))
-         30)
-        ((equal? month 2)
-         (if (leap-year? year)
-             29
-             28))
-        (else #f)))
+;; Runner thread - executes an autotest item when directed by timer thread.
+(define (make-runner)
+  (define DEBUG #f)
+  (define VERBOSE #t)
+  (thread
+   (lambda ()
+     (let loop ((timer #f))
+       (define command (thread-try-receive))
+       (when (not (eq? #f command))
+         (cond ((and (pair? command)
+                     (eq? INIT-TIMER-MESSAGE (car command)))
+                (set! timer (cadr command)))
+               ((and (pair? command)
+                     (eq? RUN-COMMAND (car command)))
+                (when DEBUG
+                  (printf "Test Runner: Received a run command~n"))
+                (let ((at (caddr command))
+                      (notify? (autotest-notify? (caddr command)))
+                      (test-name (autotest-name (caddr command)))
+                      (email-db (autotest-email-db (caddr command)))
+                      (files (autotest-files (caddr command)))
+                      (sec (current-seconds)))
+                  (autotest-set-last-run at sec)
+                  (write-autotest at)
+                  (for-each
+                   (lambda (file)
+                     (cond ((file-exists? file)
+                            (when (or DEBUG VERBOSE)
+                              (printf "Test Runner: Executing file ~a..." file))
+                            (define email-subject (string-append "Autotest Result - " (get-filename-from-filepath file)))
+                            (let ((file-contents (read-file file)))
+                              (if (regexp-match #px"\\(\\s*define\\s+test-list\\s+\\(\\s*list\\s+" file-contents)
+                                  (cond ((and notify? (not (equal? #f email-db)))  ; Bottle-Racket test suite file
+                                         (with-handlers 
+                                             ((exn:fail? 
+                                               (lambda (e) 
+                                                 (printf "~n** Error in (run-test-area-email ~v ~v email-db)! **~n~a~n"
+                                                         file
+                                                         email-subject
+                                                         (exn-message e)))))
+                                           (run-test-area-email file email-subject email-db)))
+                                        (else
+                                         (with-handlers 
+                                             ((exn:fail? (lambda (e) 
+                                                           (printf "~n** Error in (run-test-area ~v)! **~n~a~n"
+                                                                   file
+                                                                   (exn-message e)))))
+                                           (run-test-area file))))
+                                  (with-handlers  ; other .rkt file
+                                      ((exn:fail?
+                                        (lambda (e)
+                                          (printf "~n** Error in (run-racket-file ~v)! **~n~a~n" file (exn-message e)))))
+                                    (let ((output-string (string-append (run-racket-file file))))
+                                      (save-result (attach-output-header test-name sec output-string file) file 'append)
+                                      (when notify? 
+                                        (send-text (email-db-name email-db) 
+                                                   email-subject 
+                                                   (attach-output-header test-name sec output-string file)
+                                                   (email-db-addresses email-db))))))                     
+                              (when (or DEBUG VERBOSE)
+                                (printf "Complete~n"))))
+                           (else (printf "Test Runner: File does not exist - ~a~n" file))))
+                   files)))
+               ((eq? command 'print)
+                (thread-send timer 'print))))
+       (sleep 1.0)
+       (loop timer)))))
