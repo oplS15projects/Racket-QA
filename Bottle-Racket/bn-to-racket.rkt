@@ -1,7 +1,23 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+;; File: bn-to-racket.rkt
+;; Author: Roy Van Liew
+;; Email: roy_vanliew@student.uml.edu
+;; File Description: Procedures used in Bottle-Racket
+;;
+;; Last Modified 04/22/2015 2:43 pm
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 #lang racket/gui
 
 (require racket/file)
 (define nil '())
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Boolean checks for file lines in a Bottlenose Perl
+;; test file
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 #||
  | This function checks if a certain file line
@@ -16,6 +32,11 @@
  |#
 (define (is-test? line)
   (if (regexp-match #rx"^\\s*ok.*" line) #t #f))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; "get" functions for retrieving certain data from
+;; lines specifying test cases in the Bottlenose file
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 #||
  | This function checks if a certain file line
@@ -92,6 +113,11 @@
   (if (= (length all-parts) 3)
       (caddr all-parts)
       (cadddr all-parts)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; "find" functions that parse a given test case line
+;; from the Bottlenose file for certain information.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 #||
  | This function actually parses the loaded file
@@ -179,6 +205,11 @@
   (helper seq)
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; "get" functions for collectively retrieving all kinds
+;; of information regarding tests in the Bottlenose file.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 #||
  | This function retrieves all inputs of
  | the test cases to the racket interpreter
@@ -250,6 +281,10 @@
  |#
 (define (get-all-loaded-files all-lines)
   (remove-duplicates (map find-loaded-file (map get-loaded-file (filter is-test? all-lines)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Functions for writing the Test Suite File.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 #||
  | This function takes the loaded files
@@ -415,6 +450,10 @@
          (display-lines-to-file lines absolute-dir #:separator"\n"))
         (else "undefined"))
 )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; A few handy filepath utilities
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 #||
  | This function is used to get the
