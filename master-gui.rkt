@@ -1,3 +1,14 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+;; File: master-gui.rkt
+;; Author: Roy Van Liew
+;; Email: roy_vanliew@student.uml.edu
+;; File Description: GUI for all four components
+;;
+;; Last Modified 04/22/2015 2:55 pm
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 #lang racket/gui
 
 (require "Common/user-settings-directory.rkt") ; Filepath utilities
@@ -32,23 +43,21 @@ open-input-file: cannot open input file
          ((eq? (system-type) 'macosx) (valid-path-linux RACKET-PATH-UNFIXED))
          (else (error "Platform not supported"))))
 
-;; **********************************************************************
-;; * Main GUI window
-;; **********************************************************************
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Window Display - Description at the top
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-; Display simple message prompting user to enter input
 (define description (string-append "Welcome to Racket-QA."))
 
-; Create a dialog window
 (define main-window (new frame% (label "Racket-QA") (width 500)))
 
 (define user-prompt (new message% [parent main-window]
                          [auto-resize #t]
                           [label description]))
 
-;; **********************************************************************
-;; * GUI button for Bottle-Racket
-;; **********************************************************************
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Window Display - Button for launching Bottle-Racket
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (new button% [parent main-window] [label "Bottle-Racket"]
       [callback (lambda (button event)
@@ -79,11 +88,9 @@ open-input-file: cannot open input file
       ] ; end callback
 ) ;; end button
 
-
-
-;; **********************************************************************
-;; * GUI button for Test-Capture
-;; **********************************************************************
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Window Display - Button for launching Test-Capture
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (new button% [parent main-window] [label "Test-Capture"]
       [callback (lambda (button event)
@@ -114,11 +121,10 @@ open-input-file: cannot open input file
       ] ; end callback
 ) ;; end button
 
-
-
-;; **********************************************************************
-;; * GUI button for Scheduler
-;; **********************************************************************
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Window Display - Button for launching Scheduler
+;;                  Paths currently mixed on Windows
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (new button% [parent main-window] [label "Scheduler"]
       [callback (lambda (button event)
@@ -129,11 +135,10 @@ open-input-file: cannot open input file
       ] ; end callback
 ) ;; end button
 
-
-
-;; **********************************************************************
-;; * GUI button for Racket-Doc
-;; **********************************************************************
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Window Display - Button for launching Racket-Doc
+;;                  Paths currently mixed on Windows
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (new button% [parent main-window] [label "Racket-Doc"]
       [callback (lambda (button event)
@@ -145,10 +150,8 @@ open-input-file: cannot open input file
 ) ;; end button
 
 
-;; **********************************************************************
-;; * Display main window
-;; **********************************************************************
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Window Display - Displaying the Window
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (send main-window show #t)
-
-;

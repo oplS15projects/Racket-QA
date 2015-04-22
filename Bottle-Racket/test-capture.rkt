@@ -1,3 +1,14 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+;; File: test-capture.rkt
+;; Author: Roy Van Liew
+;; Email: roy_vanliew@student.uml.edu
+;; File Description: GUI for Test-Capture
+;;
+;; Last Modified 04/22/2015 2:55 pm
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 #lang racket/gui
 
 (require "test-tracker.rkt")
@@ -6,9 +17,9 @@
          "../QA-Email/email-db.rkt"
          "../QA-Email/email-db-ui.rkt") ; For mailing test results
 
-;; **********************************************************************
-;; * A couple handy functions from bn-to-racket
-;; **********************************************************************
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; A few handy filepath utilities
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (get-assn-from-filepath absolute-dir)
   (define separation-back-slash (string-split absolute-dir "\\"))
@@ -33,30 +44,32 @@
         (else "undefined"))
 )
 
-;; **********************************************************************
-;; * Information storing mailing information for the test script,
-;; * initialized to nothing but changed when script is running.
-;; **********************************************************************
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Information storing mailing information for the test
+;; script, initialized to nothing but changed when
+;; the script is running.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define original-script-dir (path->string (current-directory)))
 (define mailing-list '()) ;; Global-variable for passing to run-test-area-email
 
-;; **********************************************************************
-;; * GUI
-;; **********************************************************************
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Window Display - Description at the top
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-; Create a dialog window
 (define dialog (new frame%
                          (label "Test-Capture")))
 
-; Display simple message prompting user to enter input
 (define description (string-append "Select a Test Suites File and specify email fields."))
 
 (define user-prompt (new message% [parent dialog]
                          [auto-resize #t]
                           [label description]))
 
-; Test Suite Text Field and Button.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Window Display - Test Suite Text Field and Button
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (define suite-panel (new horizontal-panel%
                      (parent dialog)
                      (alignment '(left top))))
@@ -75,7 +88,10 @@
                  (define filepath (get-file))
                  (send suite-filepath set-value (path->string filepath)))))
 
-; The "To" Text Field and Button.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Window Display - To Text Field and Button
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (define to-panel (new horizontal-panel%
                      (parent dialog)
                      (alignment '(left top))))
@@ -87,7 +103,10 @@
 
 (send to-description set-value "< Specified by Mailing List >")
 
-; The "Subject" Text Field and Butsubjectn.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Window Display - Subject Text Field and Button
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (define subject-panel (new horizontal-panel%
                      (parent dialog)
                      (alignment '(left top))))
@@ -99,12 +118,10 @@
 
 (send subject-description set-value "Regression Statistics")
 
-;; **********************************************************************
-;; * FILE CREATION AND RUNNING BUTTON
-;; **********************************************************************
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Window Display - Email Configuration Button
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-; Create the button which opens an email managing dialog
-; Add click button to the horizontal panel
 (new button% [parent dialog] [label "Configure Emails"]
       [callback (lambda (button event)
                                    
@@ -123,7 +140,10 @@
       ] ; end callback
 ) ;; end button
 
-; Create the button which runs the test area, but doesn't send an email
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Window Display - Run Script Button, no emails sent
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (new button% [parent dialog] [label "Run Script"]
       [callback (lambda (button event)
 
@@ -140,7 +160,10 @@
       ] ; end callback
 ) ;; end button
 
-; Create the button which runs the test area and also sends an email
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Window Display - Run Script Button, send results email
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (new button% [parent dialog] [label "Run Script and Send Email"]
       [callback (lambda (button event)
 
@@ -160,7 +183,9 @@
                                     ) ; end lambda
       ] ; end callback
 ) ;; end button
-                  
 
-; Show the dialog
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Window Display - Displaying the Window
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (send dialog show #t)
