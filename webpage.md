@@ -2,7 +2,9 @@
 
 ##Authors
 Roy Van Liew
+
 James Kuczynski
+
 Yong Cho
 
 ##Overview
