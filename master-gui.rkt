@@ -12,7 +12,7 @@
 #lang racket/gui
 
 (require "Common/user-settings-directory.rkt") ; Filepath utilities
-;; (require "Test-Automation/scheduler_ui.rkt") ; For Scheduler GUI. But this breaks on Windows.
+(require "Test-Automation/scheduler_ui.rkt")
 ;; (require "Racket-Doc/src/MainGui.rkt") ; Racket-Doc GUI. Breaks on Windows.
 (require setup/dirs)
 
@@ -129,7 +129,7 @@ open-input-file: cannot open input file
 (new button% [parent main-window] [label "Scheduler"]
       [callback (lambda (button event)
 
-                  (display "Clicked Scheduler.\n")
+                  (launch-scheduler)
                   
                                     ) ; end lambda
       ] ; end callback
