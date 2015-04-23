@@ -1,21 +1,23 @@
-#lang racket/gui
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+;; File: bn-to-racket.rkt
+;; Author: Roy Van Liew
+;; Email: roy_vanliew@student.uml.edu
+;; File Description: Procedures used in Bottle-Racket
+;;
+;; Last Modified 04/22/2015 2:43 pm
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; **********************************************************************
-;; * - Name: Roy Van Liew
-;; * - Section: 91.301.201 - Organization of Programming Languages
-;; * - FP1: BOTTLENOSE PERL TESTS TO RACKET TEST CONVERTER
-;; *   This script takes in a perl bottlenose test script file, usually
-;; *   labeled test.t, and then changes the perl tests into Racket
-;; *   test cases to be run in either the RackUnit GUI or
-;; *   textual interface. That script must be run separately.
-;; **********************************************************************
+#lang racket/gui
 
 (require racket/file)
 (define nil '())
 
-;; **********************************************************************
-;; * Selectors for finding certain parts of the perl test case
-;; **********************************************************************
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Boolean checks for file lines in a Bottlenose Perl
+;; test file
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 #||
  | This function checks if a certain file line
@@ -30,6 +32,11 @@
  |#
 (define (is-test? line)
   (if (regexp-match #rx"^\\s*ok.*" line) #t #f))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; "get" functions for retrieving certain data from
+;; lines specifying test cases in the Bottlenose file
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 #||
  | This function checks if a certain file line
@@ -107,9 +114,10 @@
       (caddr all-parts)
       (cadddr all-parts)))
 
-;; **********************************************************************
-;; * Constructors for removing unnecessary parts of the perl test case
-;; **********************************************************************
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; "find" functions that parse a given test case line
+;; from the Bottlenose file for certain information.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 #||
  | This function actually parses the loaded file
@@ -142,10 +150,6 @@
  |         string.
  |#
 (define (find-test-input line)
-  ;; Opening parentheses, followed by zero or more whitespaces, followed by \ and ",
-  ;; followed by zero or more whitespaces, everything in between is the test input,
-  ;; followed by zero or more whitespaces, followed by \ and ", followed by zero or more
-  ;; whitespaces, followed by a closing parentheses.
   (define expected (regexp-match #rx"\\(\\s*\\\"\\s*(.*)\\s*\\\"\\s*\\)" line))
   (if (not (equal? expected #f))
       (string-trim (cadr expected))
@@ -178,19 +182,10 @@
  |         string.
  |#
 (define (find-test-name line)
-  ;; Zero or more whitespaces, followed by \ and ",
-  ;; followed by zero or more whitespaces, everything in between is the test input,
-  ;; followed by zero or more whitespaces, followed by \ and ", followed by zero or more
-  ;; whitespaces, followed by a closing parentheses.
   (define expected (regexp-match #rx"\\s*\\\"\\s*(.*)\\s*\\\"\\s*\\)" line))
   (if (not (equal? expected #f))
       (string-trim (cadr expected))
       #f))
-
-;; **********************************************************************
-;; * Procedures for retrieving all test inputs, expected values, and
-;; * test names in a bottlenose perl file.
-;; **********************************************************************
 
 #||
  | This function takes multiple lists and
@@ -209,6 +204,11 @@
         (cons (map car seq) (helper (map cdr seq)))))
   (helper seq)
 )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; "get" functions for collectively retrieving all kinds
+;; of information regarding tests in the Bottlenose file.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 #||
  | This function retrieves all inputs of
@@ -282,6 +282,10 @@
 (define (get-all-loaded-files all-lines)
   (remove-duplicates (map find-loaded-file (map get-loaded-file (filter is-test? all-lines)))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Functions for writing the Test Suite File.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 #||
  | This function takes the loaded files
  | retrieved from get-all-loaded-files
@@ -300,11 +304,6 @@
       nil
       (cons (string-append "(require \"" (car loaded-file-list) "\")") (create-requires-for-loads (cdr loaded-file-list))))
 )
-
-;; **********************************************************************
-;; * Procedures for creating strings representing what we want to write
-;; * out to our suite file for the test cases inside the test suite.
-;; **********************************************************************
 
 #||
  | This function takes a sublist from a
@@ -349,10 +348,6 @@
   (define suite-to-return (append header-with-tests (list ")\n;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;\n")))
   suite-to-return
 )
-
-;; **********************************************************************
-;; * Test Suite File Creation Procedures
-;; **********************************************************************
 
 #||
  | This function allows us to recreate
@@ -456,9 +451,9 @@
         (else "undefined"))
 )
 
-;; **********************************************************************
-;; * Windows/Unix Filepath Utilities
-;; **********************************************************************
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; A few handy filepath utilities
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 #||
  | This function is used to get the
