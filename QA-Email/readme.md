@@ -1,19 +1,11 @@
-### Racket QA Email Feature
+## Racket QA Email Feature
 
-Racket QA Email component provides functionality to send a text of html file, as well as plain strings to specified email addresses.
-
-There are 4 files that comprise the email component.
-* `email.rkt` contains procedures to construct and send an email message using SMTP and SSL libraries.
-* `email-db.rkt` implements procedures to store and retrieve the user's mailing lists from the user's disk storage.
-* `email-db-ui.rkt` implements GUI that allows the users to add or remove a mailing list, as well as manage email addresses for each mailing address.
-* `email-db-entry-ui.rkt` implements GUI that is used to add a new entry to a mailing list.
-
-Among the above files, `email.rkt` and `email-db-ui.rkt` are intended to be 'require'd by other components of the Racket QA application. The other files are to be used only by the email component and their contents are subject to change at any time to improve efficiency and reliability of the email component.
+Racket QA Email component provides functionality to send a text or html file, as well as plain strings to specified email addresses. It is intended to be used by other components of Racket-QA, such as Bottle-Racket and Test Scheduler, for the purpose of emailing a unit test result to a group of developers involved with the test. Since it was not meant to be a standalone component, it does not allow the end users to directly compose an email. Instead, it provides a graphical interface for them to configure mailing lists, as well as a set of APIs Bottle-Racket and Test Scheduler can use to send out an email to the user's mailing list.
 
 
 ### How to use email sender
 
-There are 3 interface procedures that are provided in `email.rkt` that can be used to send an email. In order to use them, an application needs to include `email.rkt` file in their source code. All procedures in `email.rkt` file other than these 3 procedures are subject to change at any time, so it is recommended that applications use only these 3 procedures. Here are the signatures and usage examples of the procedures.
+There are 3 interface procedures that are provided in `email.rkt` that can be used to send an email. In order to use them, an application needs to include `email.rkt` file in their source code. Here are the signatures and usage examples of the procedures.
 
 * send-text
 : sends a plain text string as the body of an email.
@@ -56,7 +48,7 @@ User interface for managing mailing list is implemented in `email-db-ui.rkt` fil
 
 The list box on the left side of the dialog contains the names of the existing mailing lists. It will be empty when the user first launches this dialog. The user can create a new mailing list by using the drop down control below the list box and selecting 'Add mailing list...'. The list box on the right side shows all the entries that are in the currently selected mailing list. A mailing list entry consists of a name and an email address. The user can use the 3 buttons (Edit, Add, Delete) on the right side to configure each entry.
 
-This UI is designed to completely separate the user experience in managing mailing lists from the internal implementations of how mailing lists are actually stored in the user's storage. The user will never have to "load a mailing list file" or "save the current addresses to a file" in order to manage mailing lists. All are done automatically by the UI when the user creates or deletes a mailing list, or adds or removes an entry in a mailing list.
+The mailing list UI is designed to completely separate the user experience in managing mailing lists from the internal implementations of how mailing lists are actually stored in the user's storage. The user will never have to "load a mailing list file" or "save the current addresses to a file" in order to manage mailing lists. All are done automatically by the UI when the user creates or deletes a mailing list, or adds or removes an entry in a mailing list.
 
 `open-manage-mailing-list-dialog-box` has optional argument `command` which allows returning the list of email addresses in the selected mailing list when the dialog is closed. This may be used to ask the user to select a mailing list for the purpose of sending a mass email. Here is the signature and usage example of `open-manage-mailing-list-dialog-box` procedure.
 
@@ -79,12 +71,12 @@ Example 1:
                 recipient-addresses)
 ```
 
-Below example script shows how to retrieve certain attributes of a mailing list selected from the UI - name, id, and database file path. The application can associate these information with the user's unit test suite and store them together.
+Below example script shows how to retrieve certain attributes of a mailing list selected from the UI - name, id, and database file path. Bottle-Racket or Test Scheduler can associate these information with the user's unit test suite and store them together.
 
 When it needs to retrieve the email addresses for a specific mailing list in the future for the purpose of mailing a test result, it can call the `db-id-to-addresses` procedure which will return the email addresses associated with a specific mailing list id.
 
-Note that procedures to retrieve email addresses by other attributes of a mailing list will not be implemented because ID is the only attribute that is guaranteed to be unique per each mailing list. For example, the user can create multiple mailing list with the same name, so it is not a good practice
-to identify mailing lists by their names. File path is not the best choice either because file names or paths may change as internal implementation of the email database changes. The ID is the only thing guaranteed not to change for a specific mailing list, and therefore, should be used to identify each mailing list.
+Note that procedures to retrieve email addresses by other attributes of a mailing list are not implemented because ID is the only attribute that is guaranteed to be unique per each mailing list. For example, the user can create multiple mailing list with the same name, so it is not a good practice
+to identify mailing lists by their names. File path is not the best choice either because file names or paths may change as internal implementation of the email database changes. The ID is the only thing guaranteed to be unique and permanent for a specific mailing list, and therefore, should be used to identify each mailing list.
 ```racket
 Example 2:
 
@@ -117,3 +109,13 @@ Example 2:
                 recipients)
 
 ```
+
+### Implementation
+
+There are 4 files that comprise the QA-Email component.
+* `email.rkt` contains procedures to construct and send an email message using SMTP and SSL libraries.
+* `email-db.rkt` implements procedures to store and retrieve the user's mailing lists from the user's disk storage.
+* `email-db-ui.rkt` implements GUI that allows the users to add or remove a mailing list, as well as manage email addresses for each mailing address.
+* `email-db-entry-ui.rkt` implements GUI that is used to add a new entry to a mailing list.
+
+Among the above files, `email.rkt` and `email-db-ui.rkt` are intended to be 'require'd by other components of the Racket QA application. The other files are to be used only by the email component and their contents are subject to change at any time to improve efficiency and reliability of the email component.
