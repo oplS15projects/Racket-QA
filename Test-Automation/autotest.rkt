@@ -1,12 +1,14 @@
-#||
- | autotest.rkt
- | author: Yong Cho (Yong_Cho@student.uml.edu)
- | Created on: 4/8/2015
- |
- | This file implements autotest object that stores all information
- | needed to execute automatically a set of racket source files specified 
- | by the user, as well as procedures to store and retrieve it.
- |#
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+;; File: autotest.rkt
+;; Author: Yong Cho 
+;; Email: Yong_Cho@student.uml.edu
+;; File Description:
+;; This file implements autotest object that stores all information
+;; needed to execute automatically a set of racket source files, 
+;; as well as procedures to store and retrieve it.
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 #lang racket
 
@@ -17,6 +19,9 @@
          "calendar.rkt")
 
 (provide (all-defined-out))
+
+
+
 
 (define AUTOTEST-DIRNAME (cond ((eq? (system-type) 'windows) "Autotest DB")
                                ((eq? (system-type) 'unix) "Autotest_DB")
@@ -156,9 +161,9 @@
 
 
 
-;; *******************************************************
-;; * autotest-list
-;; *******************************************************
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; autotest-list
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Returns the list of all the existing autotest ids.
 (define (ids-in-autotest-list)
@@ -218,7 +223,11 @@
       (set! autotest-list (map storage-form-to-at (read in))))
     #:mode 'binary))
 
-;; autotest object - contains all information needed to schedule an automatic test
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; autotest object
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (define (make-autotest id name active? files 
                        type  ; 'one-time or 'periodic                   
                        year month date 

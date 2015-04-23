@@ -1,11 +1,11 @@
-#||
- | email.rkt
- | author: Yong Cho (Yong_Cho@student.uml.edu)
- | Created on: 4/3/2015
- |
- | This file implements procedures to send an email and a UI to
- | configure smtp settings needed for sending an email.
- |#
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+;; File: email.rkt
+;; Author: Yong Cho 
+;; Email: Yong_Cho@student.uml.edu
+;; File Description: APIs to send an email
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 #lang racket
 
@@ -41,13 +41,10 @@
                  CRLF))
 
 
-#||
- | Returns #t if the argument is a valid email-address string
- | or an error message if it is not.
- |#
 (define (valid-address? something)
   (and (string? something)
        (regexp-match #rx"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9.-]+$" something)))
+
 
 
 ;; Sends an email with given parameters.
@@ -65,7 +62,6 @@
 ;;
 ;; list-of-recipients -> listof string?
 ;;  ex) (list "roy.racketscience@gmail.com" "racket.riot@gmail.com")
-;;
 (define (connect-and-send to subject body list-of-recipients text-type)
   (define (valid-recipients? a-list)
     (and (not (null? a-list))
@@ -96,49 +92,47 @@
                             #:tcp-connect ssl-connect))))
 
 
-#||
- | Sends a string in email.
- | 
- |@param to -> string?
- |          ex) "Team Racket Science"
- |       subject -> string?
- |          ex) "Lower your mortgage rate!"
- |       a-string-to-send -> string?
- |          ex) "Become an insider! Here are 5 quick tips for lowering your mortgage rate ..."
- |       list-of-recipients -> listof string?
- |          ex) (list "roy.racketscience@gmail.com" "racket.riot@gmail.com")
- |#
+
+;; Sends a string in email.
+;; 
+;;@param to -> string?
+;;          ex) "Team Racket Science"
+;;       subject -> string?
+;;          ex) "Lower your mortgage rate!"
+;;       a-string-to-send -> string?
+;;          ex) "Become an insider! Here are 5 quick tips for lowering your mortgage rate ..."
+;;       list-of-recipients -> listof string?
+;;          ex) (list "roy.racketscience@gmail.com" "racket.riot@gmail.com")
+;;
 (define (send-text to subject a-string-to-send list-of-recipients)
   (connect-and-send to subject a-string-to-send list-of-recipients 'text))
 
 
-#||
- | Sends an html-formatted text file as the email-body.
- |
- |@param to -> string?
- |          ex) "Team Racket Science"
- |       subject -> string?
- |          ex) "Autotest Result 4/9/2015"
- |       html-file-path -> string?
- |          ex) "D:\\Data\\online\\Development\\Git Clone\\FPX\\a-html-file.html"
- |       list-of-recipients -> listof string?
- |          ex) (list "roy.racketscience@gmail.com" "racket.riot@gmail.com")
- |#
+
+;; Sends an html-formatted text file as the email-body.
+;;
+;;@param to -> string?
+;;          ex) "Team Racket Science"
+;;       subject -> string?
+;;          ex) "Autotest Result 4/9/2015"
+;;       html-file-path -> string?
+;;          ex) "D:\\Data\\online\\Development\\Git Clone\\FPX\\a-html-file.html"
+;;       list-of-recipients -> listof string?
+;;          ex) (list "roy.racketscience@gmail.com" "racket.riot@gmail.com")
 (define (send-html-file to subject html-file-path list-of-recipients)
   (connect-and-send to subject (read-file html-file-path) list-of-recipients 'html))
 
 
-#||
- | Sends a text file as the email-body.
- |
- |@param to -> string?
- |          ex) "Team Racket Science"
- |       subject -> string?
- |          ex) "Autotest Result 4/9/2015"
- |       text-file-path -> string?
- |          ex) "D:\\Data\\online\\Development\\Git Clone\\FPX\\a-text-file.txt"
- |       list-of-recipients -> listof string?
- |          ex) (list "roy.racketscience@gmail.com" "racket.riot@gmail.com")
- |#
+
+;; Sends a text file as the email-body.
+;;
+;;@param to -> string?
+;;          ex) "Team Racket Science"
+;;       subject -> string?
+;;          ex) "Autotest Result 4/9/2015"
+;;       text-file-path -> string?
+;;          ex) "D:\\Data\\online\\Development\\Git Clone\\FPX\\a-text-file.txt"
+;;       list-of-recipients -> listof string?
+;;          ex) (list "roy.racketscience@gmail.com" "racket.riot@gmail.com")
 (define (send-text-file to subject text-file-path list-of-recipients)
   (connect-and-send to subject (read-file text-file-path) list-of-recipients 'text))

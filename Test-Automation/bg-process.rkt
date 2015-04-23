@@ -1,8 +1,11 @@
-#||
- | bg-process.rkt
- | author: Yong Cho (Yong_Cho@student.uml.edu)
- | Created on: 4/17/2015
- |#
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+;; File: bg-process.rkt
+;; Author: Yong Cho 
+;; Email: Yong_Cho@student.uml.edu
+;; File Description: Executes timer and runner threads
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 #lang racket
 

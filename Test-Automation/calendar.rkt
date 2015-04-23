@@ -1,16 +1,22 @@
-#||
- | calendar.rkt
- | author: Yong Cho (Yong_Cho@student.uml.edu)
- | Created on: 4/10/2015
- |
- | This file implements procedures to retrieve date information.
- |#
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+;; File: calendar.rkt
+;; Author: Yong Cho
+;; Email: Yong_Cho@student.uml.edu
+;; File Description: 
+;; procedures to retrieve date information based on
+;; gregorian calendar
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 #lang racket
 
 (require racket/date)
 
 (provide (all-defined-out))
+
+
+
 
 (define cumulative-days '((0 . 0) (1 . 31)  (2 . 59)   (3 . 90)   (4 . 120)
                                   (5 . 151) (6 . 181)  (7 . 212)  (8 . 243)
