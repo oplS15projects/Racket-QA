@@ -17,7 +17,7 @@ There are 3 interface procedures that are provided in `email.rkt` that can be us
 
 * send-text
 : sends a plain text string as the body of an email.
-```
+```racket
 (send-text to subject a-string-to-send list-of-recipients)
 
 (send-text "Project Dev Team A"
@@ -28,7 +28,7 @@ There are 3 interface procedures that are provided in `email.rkt` that can be us
 
 * send-text-file
 : sends the entire contents of a text file as the body of an email.
-```
+```racket
 (send-text-file to subject a-text-file-to-send list-of-recipients)
 
 (send-text-file "Project Dev Team B"
@@ -39,7 +39,7 @@ There are 3 interface procedures that are provided in `email.rkt` that can be us
 
 * send-html-file
 : sends the entire contents of an html file as the body of an email.
-```
+```racket
 (send-html-file to subject a-html-file-to-send list-of-recipients)
 
 (send-html-file "Project Dev Team C"
@@ -52,7 +52,7 @@ There are 3 interface procedures that are provided in `email.rkt` that can be us
 
 User interface for managing mailing list is implemented in `email-db-ui.rkt` file. In order to launch the UI, an application needs to 'require' `email-db-ui.rkt` file and call `open-manage-mailing-list-dialog` procedure. Calling this procedure will launch a dialog box shown below.
 
-![Mailing List UI](https://github.com/oplS15projects/Racket-QA/blob/master/QA-Email/images/db-ui.png)
+![Mailing List UI](images/db-ui.png)
 
 The list box on the left side of the dialog contains the names of the existing mailing lists. It will be empty when the user first launches this dialog. The user can create a new mailing list by using the drop down control below the list box and selecting 'Add mailing list...'. The list box on the right side shows all the entries that are in the currently selected mailing list. A mailing list entry consists of a name and an email address. The user can use the 3 buttons (Edit, Add, Delete) on the right side to configure each entry.
 
@@ -66,7 +66,7 @@ Signature:
 (open-manage-mailing-list-dialog (command #f))
 ```
 
-```
+```racket
 Example 1:
 
 (require "../QA-Email/email.rkt"
@@ -85,7 +85,7 @@ When it needs to retrieve the email addresses for a specific mailing list in the
 
 Note that procedures to retrieve email addresses by other attributes of a mailing list will not be implemented because ID is the only attribute that is guaranteed to be unique per each mailing list. For example, the user can create multiple mailing list with the same name, so it is not a good practice
 to identify mailing lists by their names. File path is not the best choice either because file names or paths may change as internal implementation of the email database changes. The ID is the only thing guaranteed not to change for a specific mailing list, and therefore, should be used to identify each mailing list.
-```
+```racket
 Example 2:
 
 #lang racket
@@ -99,17 +99,17 @@ Example 2:
 (define mailing-list-name (email-db-name mailing-list))
 (define mailing-list-addresses (email-db-addresses mailing-list))
 
-mailing-list-id
-> 1
-mailing-list-name
-> "Team Racket Science"
-mailing-list-addresses
-> '("yong_cho@student.uml.edu" "yongjec@gmail.com" "racket.riot@gmail.com")
+> mailing-list-id
+1
+> mailing-list-name
+"Team Racket Science"
+> mailing-list-addresses
+'("yong_cho@student.uml.edu" "yongjec@gmail.com" "racket.riot@gmail.com")
 
 (define recipients (db-id-to-addresses mailing-list-id))
 
-recipients
-> '("yong_cho@student.uml.edu" "yongjec@gmail.com" "racket.riot@gmail.com")
+> recipients
+'("yong_cho@student.uml.edu" "yongjec@gmail.com" "racket.riot@gmail.com")
 
 (send-text-file "Project Dev Team A"
                 "Test Result 4/9"

@@ -1,11 +1,13 @@
-#||
- | input-validation.rkt
- | author: Yong Cho (Yong_Cho@student.uml.edu)
- | Created on: 4/15/2015
- |
- | This file implements procedures to validate user-input strings
- | for time and date entry.
- |#
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+;; File: input-validation.rkt
+;; Author: Yong Cho
+;; Email: Yong_Cho@student.uml.edu
+;; File Description:
+;; This file implements procedures to validate user-input strings
+;; for time and date entries.
+;; 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 #lang racket
 
