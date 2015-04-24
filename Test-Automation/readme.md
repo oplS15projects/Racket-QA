@@ -65,7 +65,7 @@ If you want to activate, deactivate or delete an autotest item you have created,
 
 
 
-When an active autotest comes due, the Racket source files associated with it will be executed by <a href="https://github.com/oplS15projects/Racket-QA/blob/master/Bottle-Racket/README.md" target="_blank">**Bottle-Racket**</a> APIs. This will execute the test files the same way you would do it manually with Bottle-Racket, and generate the exact same result. During the test execution of a file, the scheduler will output to the Dr.Racket REPL console which files are currently being executed.
+When an active autotest comes due, the Racket source files associated with it will be executed by <a href="https://github.com/oplS15projects/Racket-QA/blob/master/Bottle-Racket/README.md" target="_blank">**Bottle-Racket**</a> APIs. This will execute the test files the same way you would do it manually with Bottle-Racket, and generate the exact same result. During the execution of a file, the scheduler will output to the Dr.Racket REPL console which files are currently being executed.
 
 ![UI_run_test](images/documentation/ui_run_test.png)
 
@@ -125,7 +125,7 @@ Finished Test Suite 'ps1'
 ```
 
 
-Although Bottle-Racket's test suite file format is easy to follow, You may want the scheduler to execute some RackUnit test files that are not formatted for the Bottle-Racket and collect the results. If the scheduler encounters a source file that it does not recognize as Bottle-Racket test-suite format, it will fall back to executing it directly with the Racket executable present on your machine (i.e. racket.exe). This will work same as you would execute the file in the terminal by typing "racket.exe <yourfile.rkt>". The result collected by this way of execution will be every text captured in the file's output and error port (the same output texts you would see in the console). The result will be saved in "Racket-QA Auto-Test Result" directory created under where your source file is located.
+Although Bottle-Racket's test suite file format is easy to follow, you may want the scheduler to execute some RackUnit test files that are not formatted for the Bottle-Racket and collect the results. If the scheduler encounters a source file that it does not recognize as Bottle-Racket test-suite format, it will execute it directly with the Racket executable present on your machine (i.e. racket.exe). This will work same as you would execute the file in the terminal by typing "racket.exe <yourfile.rkt>". The result collected this way will be the same output text you would see in the terminal window. The result will be saved in "Racket-QA Auto-Test Result" directory created under where your source file is located.
 
 ![result_file_non_bottleracket](images/documentation/result_file.png)
 
@@ -163,7 +163,7 @@ Check failure
 
 ```
 
-Once the test execution is complete, a repeating test will wait until the next due day and execute at the same time. One-time test will not execute again, although it will stay in the scheduler UI so you can run it again any time you wish by moving its due time forward.
+Once all files are run, an autotest is finished. A repeating autotest will wait until the next due day and execute at the same time. One-time test will not execute again, although it will stay in the scheduler UI so you can run it again any time you wish by moving its due time forward.
 
 
 
