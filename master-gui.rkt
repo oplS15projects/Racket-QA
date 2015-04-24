@@ -17,16 +17,11 @@
 (require setup/dirs)
 
 #|
-Doing Bottle-Racket and Test-Capture for the time being. The other two parts break on Windows.
+Doing Bottle-Racket, Test-Capture, and Racket-Doc for the time being.
 
 For Racket-Doc:
 open-output-file: cannot open output file
   path: C:\OPL\Racket-QA\Racket-QA\./../output/WebPage.rkt
-  system error: The system cannot find the path specified.; errno=3
-
-For Scheduler:
-open-input-file: cannot open input file
-  path: C:\OPL\Racket-QA\Racket-QA\images/add-file-1.png
   system error: The system cannot find the path specified.; errno=3
 |#
 
@@ -47,13 +42,11 @@ open-input-file: cannot open input file
 ;; Window Display - Description at the top
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define description (string-append "Welcome to Racket-QA."))
+(define main-window (new frame% (label "Racket-QA") (width 600)))
 
-(define main-window (new frame% (label "Racket-QA") (width 500)))
+(define background (read-bitmap "racketqa-logo.png"))
 
-(define user-prompt (new message% [parent main-window]
-                         [auto-resize #t]
-                          [label description]))
+(define image-loaded (new message% [parent main-window] [label background]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Window Display - Button for launching Bottle-Racket
@@ -127,13 +120,7 @@ open-input-file: cannot open input file
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (new button% [parent main-window] [label "Scheduler"]
-      [callback (lambda (button event)
-
-                  (launch-scheduler)
-                  
-                                    ) ; end lambda
-      ] ; end callback
-) ;; end button
+      [callback (lambda (button event) (launch-scheduler))])
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Window Display - Button for launching Racket-Doc
