@@ -16,6 +16,16 @@
 ;; (require "Racket-Doc/src/MainGui.rkt") ; Racket-Doc GUI. Breaks on Windows.
 (require setup/dirs)
 
+
+(define bottle-racket-icon (read-bitmap "demo/bottle-racket.png"))
+(define test-capture-icon (read-bitmap "demo/test-capture.png"))
+(define scheduler-icon (read-bitmap "demo/clock-icon-4.png"))
+(define racket-doc-icon (read-bitmap "demo/racket-doc.png"))
+;; Icon used on for racket-doc button was created by Yereverluvinunclebert
+;; http://rocketdock.com/addon/icons/43519
+
+(define caption-width 150)
+
 #|
 Doing Bottle-Racket, Test-Capture, and Racket-Doc for the time being.
 
@@ -48,11 +58,20 @@ open-output-file: cannot open output file
 
 (define image-loaded (new message% [parent main-window] [label background]))
 
+(define buttons-v-pane (new vertical-pane% [parent main-window] [alignment '(center center)]
+                            [vert-margin 5] [spacing 5] [border 10]))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Window Display - Button for launching Bottle-Racket
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(new button% [parent main-window] [label "Bottle-Racket"]
+(define bottle-racket-h-pane
+  (new horizontal-pane%
+       (parent buttons-v-pane)
+       (spacing 10)
+       (alignment '(left center))))
+
+(new button% [parent bottle-racket-h-pane] [label bottle-racket-icon]
       [callback (lambda (button event)
                   
                   ;; Configure necessary paths to call the Bottle-Racket script
@@ -81,11 +100,16 @@ open-output-file: cannot open output file
       ] ; end callback
 ) ;; end button
 
+(new message%
+     (parent bottle-racket-h-pane)
+     (min-width caption-width)
+     (stretchable-width #f)
+     (label "Bottle-Racket  "))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Window Display - Button for launching Test-Capture
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(new button% [parent main-window] [label "Test-Capture"]
+(new button% [parent bottle-racket-h-pane] [label test-capture-icon]
       [callback (lambda (button event)
 
                   ;; Configure necessary paths to call the test-capture script
@@ -114,20 +138,38 @@ open-output-file: cannot open output file
       ] ; end callback
 ) ;; end button
 
+(new message%
+     (parent bottle-racket-h-pane)
+     (min-width caption-width)
+     (stretchable-width #f)
+     (label "Test-Capture  "))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Window Display - Button for launching Scheduler
 ;;                  Paths currently mixed on Windows
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(new button% [parent main-window] [label "Scheduler"]
+(define scheduler-h-pane
+  (new horizontal-pane%
+       (parent buttons-v-pane)
+       (spacing 10)
+       (alignment '(left center))))
+
+(new button% [parent scheduler-h-pane] [label scheduler-icon]
       [callback (lambda (button event) (launch-scheduler))])
+
+(new message%
+     (parent scheduler-h-pane)
+     (min-width caption-width)
+     (stretchable-width #f)
+     (label "Test Scheduler  "))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Window Display - Button for launching Racket-Doc
 ;;                  Paths currently mixed on Windows
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(new button% [parent main-window] [label "Racket-Doc"]
+(new button% [parent scheduler-h-pane] [label racket-doc-icon]
       [callback (lambda (button event)
 
                   (display "Clicked Racket-Doc.\n")
@@ -136,6 +178,11 @@ open-output-file: cannot open output file
       ] ; end callback
 ) ;; end button
 
+(new message%
+     (parent scheduler-h-pane)
+     (min-width caption-width)
+     (stretchable-width #f)
+     (label "Racket-Doc  "))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Window Display - Displaying the Window
