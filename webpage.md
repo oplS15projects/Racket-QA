@@ -7,7 +7,7 @@
 * Yong Cho
 
 ##Overview
-Racket-QA is a set of utilities that expand on RackUnit to provide a Regression Harness that QA Engineers could potentially use if coding in Racket. Along with automated testing, Racket-QA also provides a means of standardizing documentation in code so it can also be displayed properly in web pages.
+Racket-QA is a set of utilities that expand on RackUnit to provide a Regression Harness that QA Engineers could potentially use if coding in Racket. Along with automated testing, Racket-QA also provides a means of standardizing documentation in code so it can also be processed and displayed in web pages.
 
 ##Screenshot
 ![master-gui-page.png](https://raw.githubusercontent.com/oplS15projects/Racket-QA/master/demo/master-gui-page.png)
@@ -47,9 +47,14 @@ These lines conveniently disables all children elements in a GUI area container.
 (define (send-disable control) (send control enable #f))
 ```
 ####James
-Description of procedure or other piece of code
+This code segment generates Racket code for a web server and static web pages, inserting into them data parsed from the user's *.rkt files.  I like it because although I--like every other cs student--have written text to files, this is the first time I'm writing code which in turn writes code of its own! *(add what OPL concepts it demonstrates)*
 ```scheme
-(define stuff 1)
+(write-string "\n                     (a ((href, (embed/url codeblock" output)
+         (write-string (number->string count) output)
+         (write-string "-page))) \"Code\")\n" output)
+         (write-string "                             (br) (br) (br)\n" output)
+         (set! count (+ count 1))
+         (procLooper (cdr pLst) (cdr dLst) count)
 ```
 
 ##Additional Remarks
