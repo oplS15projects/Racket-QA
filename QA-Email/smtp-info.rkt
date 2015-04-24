@@ -1,15 +1,11 @@
-#||
- | smtp-info.rkt
- | author: Yong Cho (Yong_Cho@student.uml.edu)
- | Created on: 4/20/2015
- |
- | This file implements UI to configure SMTP log-in information.
- | The SMPT log-in information need to be supplied by the user once 
- | per machine/user to be able to send emails. If this information
- | has not yet been provided, (smtp-info-available?) will return #f.
- | Once the user enters the information, it will be stored in the
- | hard drive and used for the subsequent executions. 
- |#
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; 
+;; File: smtp-info.rkt
+;; Author: Yong Cho 
+;; Email: Yong_Cho@student.uml.edu
+;; File Description: UI for saving SMTP log-in info
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 #lang racket
 
@@ -37,10 +33,10 @@
     (full-path-in-settings-directory SMTP-PROFILE-DIRNAME) "/" SMTP-PROFILE-FILENAME)))
 
 
-#||
- |@return #t if user has provided smtp log-in info
- |        #f otherwise
- |#
+
+;;@return #t if user has provided smtp log-in info
+;;        #f otherwise
+;;
 (define (smtp-info-available?)
   (cond (DEMO? #t)
         (else
@@ -130,12 +126,12 @@
     #:mode 'binary #:exists 'truncate/replace))
 
 
-#||
- | Reads smtp log-in information from the user's storage.
- |
- |@return (values servername username password portnumber) if the information exists.
- |        (values #f #f #f #f) if it does not.
- |#
+
+;; Reads smtp log-in information from the user's storage.
+;;
+;;@return (values servername username password portnumber) if the information exists.
+;;        (values #f #f #f #f) if it does not.
+;;
 (define (read-smtp-info)
   (cond (DEMO? (values SMTP-SERVER-ADDR SMTP-USER SMTP-PASSWORD SMTP-PORT))
         ((file-exists? SMTP-PROFILE-FILE)
@@ -153,10 +149,9 @@
         (else (values #f #f #f #f))))
 
 
-#||
- | Opens a dialog box to configure smtp information.
- | The user must supply server name, user name, and password.
- |#
+
+;; Opens a dialog box to configure smtp information.
+;; The user must supply server name, user name, and password.
 (define (open-smtp-config)
   (cond ((or DEMO? (file-exists? SMTP-PROFILE-FILE))
          (define-values (server username password port) (read-smtp-info))

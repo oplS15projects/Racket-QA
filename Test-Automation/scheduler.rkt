@@ -1,11 +1,13 @@
-#||
- | scheduler.rkt
- | author: Yong Cho (Yong_Cho@student.uml.edu)
- | Created on: 4/8/2015
- |
- | This file implements timer and runner threads which are used to
- | keep track of current time and execute automated tests as they come due.
- |#
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+;; File: scheduler.rkt
+;; author: Yong Cho
+;; Email: Yong_Cho@student.uml.edu
+;; File Description:
+;; This file implements timer and runner threads which are used to
+;; keep track of current time and execute automated tests as they come due.
+;; 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 #lang racket
 

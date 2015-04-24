@@ -1,10 +1,11 @@
-#||
- | email-db-ui.rkt
- | author: Yong Cho (Yong_Cho@student.uml.edu)
- | Created on: 4/3/2015
- |
- | This file implements user interface to manage multiple mailing lists.
- |#
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; 
+;; File: email-db-ui.rkt
+;; Author: Yong Cho 
+;; Email: Yong_Cho@student.uml.edu
+;; File Description: UI for mailing list
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 #lang racket/gui
 
@@ -292,21 +293,21 @@
   (send bottom-buttons-pane change-children reverse))
 
 
-#||
- | Opens the main dialog. Upon exit from the dialog, this procedure can return
- | a list of email addresses for the selected mailing list, or the raw
- | email-db object based on the optional 'command' argument.
- | 
- | Example:
- | > (open-manage-mailing-list-dialog 'return-addresses)
- | > (open-manage-mailing-list-dialog 'return-db)
- | > (open-manage-mailing-list-dialog)
- |
- |@param command 'return-addresses
- |       Returns the list of email addresses for the chosen mailing list.
- |       command 'return-db
- |       Returns the raw email-db object.
- |#
+
+;; Opens the main dialog. Upon exit from the dialog, this procedure can return
+;; a list of email addresses for the selected mailing list, or the raw
+;; email-db object based on the optional 'command' argument.
+;; 
+;; Example:
+;; > (open-manage-mailing-list-dialog 'return-addresses)
+;; > (open-manage-mailing-list-dialog 'return-db)
+;; > (open-manage-mailing-list-dialog)
+;;
+;;@param command 'return-addresses
+;;       Returns the list of email addresses for the chosen mailing list.
+;;       command 'return-db
+;;       Returns the raw email-db object.
+;;
 (define (open-manage-mailing-list-dialog (command #f))
   (populate-email-db-list-box)
   (populate-email-address-list-box)

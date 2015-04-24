@@ -1,12 +1,14 @@
-#||
- | autotest.rkt
- | author: Yong Cho (Yong_Cho@student.uml.edu)
- | Created on: 4/8/2015
- |
- | This file implements autotest object that stores all information
- | needed to execute automatically a set of racket source files specified 
- | by the user, as well as procedures to store and retrieve it.
- |#
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+;; File: autotest.rkt
+;; Author: Yong Cho 
+;; Email: Yong_Cho@student.uml.edu
+;; File Description:
+;; This file implements autotest object that stores all information
+;; needed to execute automatically a set of racket source files, 
+;; as well as procedures to store and retrieve it.
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 #lang racket
 
@@ -17,6 +19,9 @@
          "calendar.rkt")
 
 (provide (all-defined-out))
+
+
+
 
 (define AUTOTEST-DIRNAME (cond ((eq? (system-type) 'windows) "Autotest DB")
                                ((eq? (system-type) 'unix) "Autotest_DB")
@@ -39,7 +44,7 @@
 ;; Creates necessary files and initializes global variables
 ;; to get the autotest database functioning.
 (define (init-autotest)
-  (when (not (directory-exists? AUTOTEST-DIRPATH))    
+  (when (not (directory-exists? AUTOTEST-DIRPATH))
     (create-autotest-directory))
   (when (not (file-exists? AUTOTEST-LIST-FILE))
     (create-autotest-list-file)
@@ -127,13 +132,15 @@
               (lambda (entry)
                 (equal? id entry))))
 
-;; Generates a new autotest id.
-;; TODO: change this to resemble the mailing list id generator.
+;; Generates a new autotest id. ID is unique for all autotest object.
 (define generate-autotest-id
-  (let ((try-this-id 0))
+  (let ((try-this-id autotest-min-id))
     (lambda ()
-      (cond ((not (autotest-id-exists? try-this-id)) 
+      (cond ((or (null? existing-autotest-ids)
+                 (< (argmax identity existing-autotest-ids) try-this-id))
              (set! existing-autotest-ids (append existing-autotest-ids (list try-this-id)))
+             (set! autotest-min-id (+ 1 try-this-id))
+             (write-autotest-id-file)
              try-this-id)
             (else (set! try-this-id (+ 1 try-this-id))
                   (generate-autotest-id))))))
@@ -154,9 +161,9 @@
 
 
 
-;; *******************************************************
-;; * autotest-list
-;; *******************************************************
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; autotest-list
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Returns the list of all the existing autotest ids.
 (define (ids-in-autotest-list)
@@ -216,7 +223,11 @@
       (set! autotest-list (map storage-form-to-at (read in))))
     #:mode 'binary))
 
-;; autotest object - contains all information needed to schedule an automatic test
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; autotest object
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (define (make-autotest id name active? files 
                        type  ; 'one-time or 'periodic                   
                        year month date 

@@ -1,31 +1,28 @@
-#lang racket/gui
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+;; File: bottle-racket.rkt
+;; Author: Roy Van Liew
+;; Email: roy_vanliew@student.uml.edu
+;; File Description: GUI for Bottle-Racket
+;;
+;; Last Modified 04/22/2015 2:36 pm
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; **********************************************************************
-;; * - Name: Roy Van Liew
-;; * - Section: 91.301.201 - Organization of Programming Languages
-;; * - FP2: USING THE GUI RACKET LIBRARY TO MAKE A USER-FRIENDLY WINDOW
-;; *   This converter is now user-friendly with this GUI implementation.
-;; *   Now the user can browse for the files on their filesystem.
-;; **********************************************************************
+#lang racket/gui
 
 (require rackunit)
 (require "../Common/user-settings-directory.rkt") ; For writing out test results
 (require "bn-to-racket.rkt")
 
-;; **********************************************************************
-;; * WINDOW DISPLAY - TOP TEXT FIELDS
-;; **********************************************************************
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Window Display - Description at the top
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-; Display simple message prompting user to enter input
 (define description (string-append "Awaiting an assignment to create a test suite and area."))
 
-; Create a dialog window
 (define dialog (new frame%
                          (label "Bottle-Racket")))
-
-; Load in the bottlenose to racket image
-;(define background
-;  (read-bitmap "images/bottleracket.png"))
 
 (define background
   (read-bitmap (cond ((eq? (system-type) 'windows) "images\\bottleracket.png")
@@ -40,7 +37,10 @@
                          [auto-resize #t]
                           [label description]))
 
-; Assignment Source File Text Field and Button.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Window Display - Assignment Text Field and Button
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (define assn-panel (new horizontal-panel%
                      (parent dialog)
                      (alignment '(left top))))
@@ -59,7 +59,10 @@
                  (define filepath (get-file))
                  (send assn-filepath set-value (path->string filepath)))))
 
-; Bottlenose Perl Test File Text Field and Button.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Window Display - Bottlenose File Text Field and Button
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (define bn-panel (new horizontal-panel%
                      (parent dialog)
                      (alignment '(left top))))
@@ -78,12 +81,10 @@
                  (define filepath (get-file))
                  (send bn-filepath set-value (path->string filepath)))))
 
-;; **********************************************************************
-;; * FILE CREATION CONVERT BUTTON
-;; **********************************************************************
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Window Display - Convert Button for Test Suite File
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-; Create the convert button
-; Add click button to the horizontal panel
 (new button% [parent dialog] [label "Convert"]
       [callback (lambda (button event)
 
@@ -115,11 +116,10 @@
       ] ; end callback
 ) ;; end button
 
-;; **********************************************************************
-;; * OUTPUT FILE TEXT FIELDS
-;; **********************************************************************
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Window Display - Text field for Test Suite File Path
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-; Output textbox that will show the resulting test suite file path.
 (define suite-out-panel (new horizontal-panel%
                      (parent dialog)
                      (alignment '(left top))))
@@ -131,5 +131,8 @@
 
 (send suite-out-field set-value "The Test Suite path will be shown here after Convert is clicked.")
 
-; Show the dialog
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Window Display - Displaying the Window
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (send dialog show #t)

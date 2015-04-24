@@ -5,15 +5,24 @@ Racket QA Test Scheduler provides functionality to schedule an execution of Rack
 
 ### How to use the Scheduler
 
-In order to start the scheduler, load (require) `scheduler_ui.rkt` and run `(launch-scheduler)` procedure. On the left side of the scheduler window are two list boxes containing active and inactive 'autotest' items. An autotest is a kind of a container scheduler uses to identify multiple Racket source files that are to be handled together and executed at a same time. The purpose of 'inactive' autotest is to allow users to temporarily disable a periodic autotest from running instead of having to delete it altogether. When the UI is first launched and there is no autotest configured, the list boxes will be empty.
+In order to start the scheduler, click 'Test Scheduler' icon button from the main UI.
 
-![UI_empty](https://github.com/oplS15projects/Racket-QA/blob/master/Test-Automation/images/documentation/ui_empty.png)
+![scheduler_launcher]()
 
-User can click the "Create A New Autotest" button on the top right corner to schedule a new autotest. Clicking this button will enable the input fields on the right side of the window so they can be filled out. Some of the input fields will be disabled based on whether the user has selected 'one-time' or 'repeat' radio button. For one-time test, a date of execution must be provided. For repeating test, at least one day of week must be checked. When the user enters an invalid entry or omits a required field, the background color of that field will change to red to signal it needs correction.
 
-![UI_create](https://github.com/oplS15projects/Racket-QA/blob/master/Test-Automation/images/documentation/ui_create.png)
+On the left side of the scheduler window are two list boxes containing active and inactive 'autotest' items. An autotest is a kind of a container the scheduler uses to identify a group of racket source files to execute together. You can deactivate an autotest item to temporarily stop a periodic autotest item from executing on its due time. 
 
-The input form collects all the information necessary to manage an autotest item and execute the test files associated with it without user's presence. Here are the information required from the user to schedule an autotest.
+When the UI is first launched and there is no autotest configured, you will see empty list boxes.
+
+![UI_empty](images/documentation/ui_empty.png)
+
+
+You can click the "Create A New Autotest" button on the top right corner to schedule a new autotest. Clicking this button will enable the input fields on the right side of the window so you can fill them out. Some of the input fields will be disabled based on whether you have selected 'one-time' or 'repeat' radio button. To schedule a one-time test, you need to provide the time and date to run the test. For repeating test, you need to provide which days of week to run the test.
+
+![UI_create](images/documentation/ui_create.png)
+
+
+Here are the list of all the information the scheduler needs from you to scheduler an autotest.
 * Name of the autotest item
 * Files to execute - one or more files can be associated with an autotest item
 * Time of day to execute the test
@@ -23,23 +32,35 @@ The input form collects all the information necessary to manage an autotest item
 * Whether to notify the result via email
 * Mailing list to be used for e-mail notification
 
-The information filled out by the user can be reviewed after the test has been created by clicking the test name shown on either active or inactive test list box. User can also modify the configuration of an autotest item after creating it by editing the input fields and clicking "Save Changes" button.
+Once you finish filling out the form, you can click either "Schedule and Activate" or "Schedule as Inactivate" button. Clicking "Schedule as Inactive" button will save all information you entered but will not actually cause the test to execute when it comes due. The inactive autotest item will be there for you so you can activate it any time later. You can modify the configuration of the autotest items you have created simply by changing the values you want and clicking "Save Changes" button. The changes will apply immediately.
 
-![UI_browse](https://github.com/oplS15projects/Racket-QA/blob/master/Test-Automation/images/documentation/ui_browse.png)
+![UI_browse](images/documentation/ui_browse.png)
 
-Clicking "Select Mailing List..." button launches QA-Email UI which allows configuring and selecting a mailing list to associate it with the autotest item if the user wants the result to be mailed.
 
-![UI_email](https://github.com/oplS15projects/Racket-QA/blob/master/Test-Automation/images/documentation/ui_email.png)
+If you want the test result to be emailed, you can check the "Notify?" check box and configure a mailing list by clicking "Select Mailing List..." button. After the execution of each file, an email will containing the test result will be sent out to the addresses in the mailing list.
 
-"Autotest Actions" choice field below the test list boxes allows user to activate, deactivate, duplicate, or delete an autotest item.
+![UI_email](images/documentation/ui_email.png)
 
-![UI_actions](https://github.com/oplS15projects/Racket-QA/blob/master/Test-Automation/images/documentation/ui_actions.png)
 
-When an active autotest comes due, the Racket source files associated with it will be executed by <a href="https://github.com/oplS15projects/Racket-QA/blob/master/Bottle-Racket/README.md" target="_blank">**Bottle-Racket**</a> APIs. If the source file is not configured for the Bottle-Racket APIs, the scheduler will fall back to executing it with the Racket executable (i.e. racket.exe). During the test execution, the scheduler will output to the Dr.Racket REPL console which files are currently being executed.
+If you want to activate, deactivate or delete an autotest item you have created, you can use "Autotest Actions" choice field below the test list boxes. You can also duplicate an autotest item if you want to execute the same files multiple times a day. You can do this by duplicating an autotest item and make it run at different time. It is also ok to make them run at the same time if for any reason you wish to do so. They will run one right after the other in this case.
 
-![UI_run_test](https://github.com/oplS15projects/Racket-QA/blob/master/Test-Automation/images/documentation/ui_run_test.png)
+![UI_actions](images/documentation/ui_actions.png)
 
-Once the test is complete, the result files will be generated and placed in locations specified when the test was created through <a href="https://github.com/oplS15projects/Racket-QA/blob/master/Bottle-Racket/README.md" target="_blank">**Bottle-Racket**</a>. For non-Bottle-Racket source files, the output and error ports will be captured and saved in the same directory as the source file executed. If the user had checked the Notify? option and configured a mailing list in the scheduler UI, the result will be mailed to the mailing list. If the test is a repeating test, it will automatically execute again at the next due time. Although a one-time test will only run once, it will stay in the scheduler UI, so the user can run it again by changing its due time.
+
+When an active autotest comes due, the Racket source files associated with it will be executed by <a href="https://github.com/oplS15projects/Racket-QA/blob/master/Bottle-Racket/README.md" target="_blank">**Bottle-Racket**</a> APIs. This will execute the test files the same way you would do it manually with Bottle-Racket, and generate the exact same result. The result file will also be placed where Bottle-Racket would normally place it - same directory as the executed test suite file.
+
+###TODO: have a sample output picture
+
+If the source file is not configured for the Bottle-Racket's test suite file format, the scheduler will fall back to executing it with the Racket executable present on your machine (i.e. racket.exe). This will work same as you would execute the file in the terminal by typing "racket.exe <yourfile.rkt>". The result generated by this way of execution will be every text captured in the file's output and error port (the same output texts you would see in the console). The result file will be saved in "Racket-QA Auto-Test Result" directory created under where the source file was located.
+
+###TODO: have a sample output picture
+
+During the test execution of a file, the scheduler will output to the Dr.Racket REPL console which files are currently being executed.
+
+![UI_run_test](images/documentation/ui_run_test.png)
+
+
+Once the test execution is complete, a repeating test will wait until the next due day and execute at the same time. One-time test will not execute again, although it will stay in the scheduler UI so you can run it again any time you wish by moving its due time forward.
 
 
 ### Implementation
@@ -47,15 +68,15 @@ Once the test is complete, the result files will be generated and placed in loca
 Here are the files that comprise the test scheduler.
 * `autotest.rkt` implements an autotest object that contains all the information necessary to execute a set of racket source files without user intervention, such as the execution time, list of files to execute, whether to notify the results through email, and so on.
 * `scheduler.rkt` implements threads to keep track of current time and calls Bottle-Racket APIs to execute autotests as they come due.
-* `bg-process.rkt` initializes threads defined in `scheduler.rkt`.
+* `bg-process.rkt` starts the timer and runner threads defined in `scheduler.rkt`.
 * `scheduler-ui.rkt` implements the user interface to schedule an automated test. Information gathered through the UI is saved as an autotest object implemented in the `autotest.rkt`.
 * `input-validation.rkt` provides procedures to validate user entries in the scheduler UI.
 * `calendar.rkt` provides utility procedures for the autotest object to calculate the correct due time when requested by the scheduler threads.
 
 
 ### Limitation
-* The periodic test functionality currently supports automatic execution of a same test as often as daily. It does not support running the same test automatically more than once a day. However, users can easily work around this by creating more than one autotest items with same files and making each test run at different hours. The UI provides 'duplicate test' option for this.
-* The scheduled tests will run automatically only when scheduler_ui.rkt file stays loaded in the Dr.Racket framework. Once Dr.Racket closes, scheduler threads are terminated and the scheduled tests will not run automatically anymore. The scheduler window can be closed as long as Dr.Racket stays open. Enabling the scheduler threads to stay active without the presence of Dr.Racket requires the scheduler component to be a standalone executable, and may be implemented some time in the future.
+* The periodic test functionality currently supports automatic execution of a same test as often as daily. It does not support running the same test automatically more than once a day. However, users can easily work around this by creating more than one autotest items with same files and making each autotest run at different hours. The UI provides 'duplicate test' option to make this easy.
+* The scheduled tests will run automatically only when bg-process.rkt file stays loaded in the Dr.Racket framework. Once Dr.Racket closes, scheduler threads are terminated and the scheduled tests will not run automatically anymore. The scheduler window can be closed as long as Dr.Racket stays open. Enabling the scheduler threads to stay active without the presence of Dr.Racket requires the scheduler component to be a standalone executable, and may be implemented some time in the future.
 
 
 <!-- Links -->
