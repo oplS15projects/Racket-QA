@@ -14,14 +14,15 @@ Racket-QA is a set of utilities that expand on RackUnit to provide a Regression 
 
 ##Concepts Demonstrated
 Identify the OPL concepts demonstrated in your project. Be brief. A simple list and example is sufficient. 
-* Scheduler took advantage of threads. More input can be given on this by Yong.
+* Mailing list and automated test database used object with local variables and procedures.
 * Using Higher Order Procedures (HOP) such as zip and map to organize information together into a nicely formatted list structure.
 * Symbolic language processing in determining operating systems to allow for cross-platform compatibility in paths
 
 ##External Technology and Libraries
 Briefly describe the existing technology you utilized, and how you used it. Provide a link to that technology(ies).
 * [**RackUnit**][RackUnit] is an API that provides a way to create test cases, include them in test suites, and run a procedure on these test suites. The textual interface was used, and it provides detailed information on which test cases failed and the test results when the output is redirected to an output file to parse for analysis.
-* List more libraries here such as GUI, setup/dirs, whatever
+* [Email][QA-Email] functionality was implemented using [**NET/SMTP**][net/smtp] library. It is used by Bottle-Racket and test scheduler components to email unit test results.
+* [**GUI library**][GUI] was used throughout the project to implement user interfaces. Example usages include [Bottle-Racket][Bottle-Racket] and [Test Scheduler][Scheduler] UIs.
 
 ##Favorite Lines of Code
 ####Mark (a team member)
@@ -39,9 +40,11 @@ This procedure is an example of not only using HOP, but also abstracting the pro
        (get-all-test-names all-lines)))
 ```
 ####Yong
-Description of procedure or other piece of code
+These lines conveniently disables all children elements in a GUI area container. I used it in the test scheduler UI where a group of the UI elements becomes irrelevant when user makes certain selections.
 ```scheme
-(define stuff 1)
+(define (disable-all-children area-container)
+  (for-each send-disable (send area-container get-children)))
+(define (send-disable control) (send control enable #f))
 ```
 ####James
 Description of procedure or other piece of code
@@ -58,4 +61,10 @@ You may want to link to your latest release for easy downloading by people (such
 Include what file to run, what to do with that file, how to interact with the app when its running, etc. 
 
 <!-- Links -->
+[QA-Email]: https://github.com/oplS15projects/Racket-QA/blob/master/QA-Email/readme.md
+[Scheduler]: https://github.com/oplS15projects/Racket-QA/blob/master/Test-Automation/readme.md
+[Bottle-Racket]: https://github.com/oplS15projects/Racket-QA/blob/master/Bottle-Racket/README.md
+[Scheduler]: https://github.com/oplS15projects/Racket-QA/blob/master/Test-Automation/readme.md
 [RackUnit]: http://docs.racket-lang.org/rackunit/index.html
+[net/SMTP]: http://docs.racket-lang.org/net/smtp.html
+[GUI]: http://docs.racket-lang.org/gui/
