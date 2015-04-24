@@ -20,8 +20,10 @@
 (require "AdvancedGui.rkt")
 (require "ProcessingGui.rkt")
 
+(provide frame)
+
 (define background
-  (read-bitmap "./../share/racket1.jpg"))
+  (read-bitmap "./Racket-Doc/share/racket1.jpg"))
 
 (define frame (new frame%
                    (label "Racket-Doc")
@@ -281,4 +283,4 @@
 
 
 
-(send frame show #t)
+(send frame show #f)

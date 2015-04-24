@@ -12,6 +12,7 @@
 #lang racket/gui
 
 (require "Common/user-settings-directory.rkt") ; Filepath utilities
+(require "./Racket-Doc/src/MainGui.rkt")
 (require "Test-Automation/scheduler_ui.rkt")
 (require "QA-Email/email-db-ui.rkt")
 ;; (require "Racket-Doc/src/MainGui.rkt") ; Racket-Doc GUI. Breaks on Windows.
@@ -175,8 +176,8 @@ open-output-file: cannot open output file
 
 (new button% [parent scheduler-h-pane] [label racket-doc-icon]
       [callback (lambda (button event)
-
                   (display "Clicked Racket-Doc.\n")
+                  (send frame show #t)
                   
                                     ) ; end lambda
       ] ; end callback
