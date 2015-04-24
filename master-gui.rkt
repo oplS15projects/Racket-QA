@@ -210,7 +210,7 @@ open-output-file: cannot open output file
      (parent mailing-list-h-pane)
      (min-width caption-width)
      (stretchable-width #f)
-     (label "Mailing List  "))
+     (label "Manage Mailing List  "))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Window Display - Displaying the Window
