@@ -13,6 +13,7 @@
 
 (require "Common/user-settings-directory.rkt") ; Filepath utilities
 (require "Test-Automation/scheduler_ui.rkt")
+(require "QA-Email/email-db-ui.rkt")
 ;; (require "Racket-Doc/src/MainGui.rkt") ; Racket-Doc GUI. Breaks on Windows.
 (require setup/dirs)
 
@@ -21,6 +22,7 @@
 (define test-capture-icon (read-bitmap "demo/test-capture.png"))
 (define scheduler-icon (read-bitmap "demo/clock-icon-4.png"))
 (define racket-doc-icon (read-bitmap "demo/racket-doc.png"))
+(define mailing-list-icon (read-bitmap "demo/mailing-list.png"))
 ;; Icon used on for racket-doc button was created by Yereverluvinunclebert
 ;; http://rocketdock.com/addon/icons/43519
 
@@ -183,6 +185,32 @@ open-output-file: cannot open output file
      (min-width caption-width)
      (stretchable-width #f)
      (label "Racket-Doc  "))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Window Display - Button for launching Racket-Doc
+;;                  Paths currently mixed on Windows
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define mailing-list-h-pane
+  (new horizontal-pane%
+       (parent buttons-v-pane)
+       (spacing 10)
+       (alignment '(left center))))
+
+(new button% [parent mailing-list-h-pane] [label mailing-list-icon]
+      [callback (lambda (button event)
+
+                  (open-manage-mailing-list-dialog)
+                  
+                                    ) ; end lambda
+      ] ; end callback
+) ;; end button
+
+(new message%
+     (parent mailing-list-h-pane)
+     (min-width caption-width)
+     (stretchable-width #f)
+     (label "Mailing List  "))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Window Display - Displaying the Window
