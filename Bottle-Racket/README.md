@@ -1,8 +1,6 @@
 #Bottle-Racket and Test-Capture
 
-## DISCLAIMER:
-
-These scripts are not meant to be run directly by the user. Use the Main GUI to run these applications.
+### DISCLAIMER: These scripts are not meant to be run directly by the user. Use the Main GUI to run these applications.
 
 ##Table of Contents
 
