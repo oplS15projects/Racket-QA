@@ -1,8 +1,8 @@
 #Bottle-Racket and Test-Capture
 
-##DISCLAIMER
+## DISCLAIMER:
 
-### These scripts are not meant to be run directly by the user. Use the Main GUI to run these applications.
+These scripts are not meant to be run directly by the user. Use the Main GUI to run these applications.
 
 ##Table of Contents
 
@@ -17,7 +17,7 @@ I've split up this README into four parts:
 * Text and Picture Demonstration of using `Test-Capture`
 
 
-### The Structure of a Test Suite File
+###The Structure of a Test Suite File
 
 The test suites to run with this application are meant to be minimalistic and easy to follow. Test Suites in this context contain the following:
 * Top: `require` statements for RackUnit, along with the necessary source files with procedure definitions for testing
@@ -25,7 +25,7 @@ The test suites to run with this application are meant to be minimalistic and ea
 * Bottom: `test-list`, a list containing the test suites to run
 
 For an example, the following is a test suite generated from ps1.
-```
+```scheme
 #lang racket
 
 (require rackunit)
@@ -53,13 +53,13 @@ For an example, the following is a test suite generated from ps1.
 ```
 
 
-### Video Demonstration
+###Video Demonstration
 
 The following YouTube video link demonstrates how to use `Bottle-Racket` to convert Bottlenose test files into Racket files, and then use `Test-Capture` to run a test suite file both without and with sending an email.
 [**Video Demonstration**][Bottle-Video]
 
 
-### Bottle-Racket GUI
+###Bottle-Racket GUI
 
 File: `bottle-racket.rkt`
 
@@ -76,7 +76,7 @@ This is what the window will look like when you click the `Convert` button after
 
 ![bottle2.png](https://raw.githubusercontent.com/oplS15projects/Racket-QA/master/Bottle-Racket/documentation/bottle-racket/v3/bottle2.png)
 
-### Test-Capture GUI
+###Test-Capture GUI
 
 File: `test-capture.rkt`
 
