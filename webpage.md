@@ -10,10 +10,7 @@
 Racket-QA is a set of utilities that expand on RackUnit to provide a Regression Harness that QA Engineers could potentially use if coding in Racket. Along with automated testing, Racket-QA also provides a means of standardizing documentation in code so it can also be displayed properly in web pages.
 
 ##Screenshot
-(insert a screenshot here. You may opt to get rid of the title for it. You need at least one screenshot. Make it actually appear here, don't just add a link.)
-
-Here's a demonstration of how to display an image that's uploaded to this repo:
-![screenshot showing env diagram](withdraw.png)
+![master-gui-page.png](https://raw.githubusercontent.com/oplS15projects/Racket-QA/master/demo/master-gui-page.png)
 
 ##Concepts Demonstrated
 Identify the OPL concepts demonstrated in your project. Be brief. A simple list and example is sufficient. 
