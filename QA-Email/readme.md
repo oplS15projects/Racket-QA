@@ -1,4 +1,4 @@
-### DISCLAIMER: This component of Racket-QA is not intended to be run directly by the end user. It is an API used internally by other components of Racket-QA for the purpose of mailing a unit test result.
+### DISCLAIMER: This component of Racket-QA is not intended to be run directly by the end user. It is an API used internally by other components of Racket-QA for the purpose of mailing a unit test result. Only thing here that the user will be directly using is the mailing list UI which is simple enough to not require a separate readme.
 
 ## Racket QA Email Feature
 
