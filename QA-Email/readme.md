@@ -1,3 +1,5 @@
+### DISCLAIMER: This component of Racket-QA is not intended to be run directly by the end user. It is an API used internally by other components of Racket-QA for the purpose of mailing a unit test result.
+
 ## Racket QA Email Feature
 
 Racket QA Email component provides functionality to send a text or html file, as well as plain strings to specified email addresses. It is intended to be used by other components of Racket-QA, such as Bottle-Racket and Test Scheduler, for the purpose of emailing a unit test result to a group of developers involved with the test. Since it was not meant to be a standalone component, it does not allow the end users to directly compose an email. Instead, it provides a graphical interface for them to configure mailing lists, as well as a set of APIs Bottle-Racket and Test Scheduler can use to send out an email to the user's mailing list.
