@@ -75,7 +75,8 @@
   )
 )
 
-(define output (open-output-file "./../output/WebPage.rkt"
+;;(define output (open-output-file "./../output/WebPage.rkt"
+(define output (open-output-file "./Racket-Doc/output/WebPage.rkt"
                                  #:mode 'text
                                  #:exists 'replace))
 
@@ -130,10 +131,10 @@
   (write-string "\n" output)
   (write-string ";(define generat\n" output)
   (write-string "\n" output)
-  (write-string ";(play-sound \"./share/rach.wav\" #f)\n" output)
+  (write-string ";(play-sound \"./Racket-Doc/share/rach.wav\" #f)\n" output)
   (write-string "\n" output)
   (write-string ";(define logo\n" output)
-  (write-string ";  (read-bitmap \"./../share/button.jpg\"))\n" output)
+  (write-string ";  (read-bitmap \"./Racket-Doc/share/button.jpg\"))\n" output)
   (write-string "\n" output)
   (write-string "(define (start request)\n" output)
   (write-string "  (main-page request))\n" output)
