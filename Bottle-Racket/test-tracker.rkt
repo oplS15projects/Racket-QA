@@ -1,3 +1,14 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+;; File: test-tracker.rkt
+;; Author: Roy Van Liew
+;; Email: roy_vanliew@student.uml.edu
+;; File Description: Procedures used in Test-Capture
+;;
+;; Last Modified 04/22/2015 2:51 pm
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 #lang racket
 
 (require "../Common/user-settings-directory.rkt") ; For writing out test results
@@ -11,6 +22,11 @@
 (require rackunit/gui)
 (require setup/dirs)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Global variable RACKET-PATH used for the full path to
+;; the Racket executable during system calls.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (define RACKET-PATH-UNFIXED
    (string-append (path->string (find-console-bin-dir))
                   (cond ((eq? (system-type) 'windows) "racket.exe")
@@ -23,6 +39,11 @@
          ((eq? (system-type) 'unix) (valid-path-linux RACKET-PATH-UNFIXED))
          ((eq? (system-type) 'macosx) (valid-path-linux RACKET-PATH-UNFIXED))
          (else (error "Platform not supported"))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Procedures for making a system call to run a Test
+;; Suite File.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 #||
  | This function allows us to recreate
@@ -123,6 +144,11 @@
         (else "An email list was not selected."))
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Boolean checks for file lines in test results to
+;; identify certain information.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 #||
  | This function determines if a certain line in
  | the output test results file specifies test
@@ -193,6 +219,11 @@
 (define (is-expected? line)
   (if (regexp-match #rx"^\\s*expected:.*" line) #t #f))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; "parse" functions which extract certain information
+;; from lines in the test results file.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 #||
  | This function extracts the test case name
  | from the test case results file. e.g.
@@ -249,23 +280,10 @@
   (define parse-result (regexp-match #rx"^\\s*expected:(.*)" line))
   (if (not (equal? parse-result #f)) (string-trim (cadr parse-result)) #f))
 
-#||
- | This function takes multiple lists and
- | creates sublists which are composed of
- | the list elements in parallel.
- | @param seq Lists to zip up in parallel.
- |          
- | @return The zipped list, containing
- |         sublists in parallel of the
- |         lists passed.
- |#
-(define (zip . seq)
-  (define (helper seq)
-    (if (equal? '() (car seq))
-        '()
-        (cons (map car seq) (helper (map cdr seq)))))
-  (helper seq)
-)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; "get" functions that collectively retrieve several
+;; pieces of information from the test results file.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 #||
  | The classic map from SICP.
@@ -283,6 +301,24 @@
       '() ;; This means we reached the end of the list
       (cons (proc (car items)) ;; Apply the procedure to the first item in the pair
             (map proc (cdr items))))) ;; Go down the sublists with "cdr"
+
+#||
+ | This function takes multiple lists and
+ | creates sublists which are composed of
+ | the list elements in parallel.
+ | @param seq Lists to zip up in parallel.
+ |          
+ | @return The zipped list, containing
+ |         sublists in parallel of the
+ |         lists passed.
+ |#
+(define (zip . seq)
+  (define (helper seq)
+    (if (equal? '() (car seq))
+        '()
+        (cons (map car seq) (helper (map cdr seq)))))
+  (helper seq)
+)
 
 #||
  | This function retrieves all the names
@@ -353,6 +389,10 @@
        (get-all-suite-locations all-lines)
        (get-all-actual-values all-lines)
        (get-all-expected-values all-lines)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Functions for analyzing test results.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 #||
  | This function retrieves the lines from the test
@@ -478,6 +518,12 @@
  |#
 (define (add-list-of-string-nums passed-list)
   (accumulate (strings-to-nums passed-list) 0 + (lambda (x) x)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Functions that generate strings to write out to an
+;; email file, along with appending to a Test Suite File
+;; to allow running of the test cases.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 #||
  | This function is used to create a string

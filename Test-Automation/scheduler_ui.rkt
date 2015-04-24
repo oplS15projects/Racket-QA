@@ -1,16 +1,17 @@
-#||
- | scheduler_ui.rkt
- | author: Yong Cho (Yong_Cho@student.uml.edu)
- | Created on: 4/8/2015
- |
- | This file implements user interface to schedule and manage automated
- | tests.
- |#
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+;; File: scheduler_ui.rkt
+;; Author: Yong Cho
+;; Email: Yong_Cho@student.uml.edu
+;; File Description: UI for test scheduler
+;; 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 #lang racket
 
 (require racket/date
          racket/gui/base
+         racket/runtime-path
          "autotest.rkt"
          "bg-process.rkt"
          "calendar.rkt"
@@ -28,10 +29,14 @@
 (define NO-AUTOTEST-SCHEDULED-MESSAGE "No autotest scheduled  ")
 (define VALID-FIELD-COLOR (make-object color% "White"))
 (define INVALID-FIELD-COLOR (make-object color% "Red"))
-(define ADD-FILE-ICON (read-bitmap "images/add-file-1.png"))
-(define REMOVE-FILE-ICON (read-bitmap "images/remove-file-1.png"))
-(define OK-ICON (read-bitmap "images/ok-1.png"))
-(define WARNING-ICON (read-bitmap "images/warning-1.png"))
+(define-runtime-path ADD-FILE-1-PNG "images/add-file-1.png")
+(define ADD-FILE-ICON (read-bitmap ADD-FILE-1-PNG))
+(define-runtime-path REMOVE-FILE-1-PNG "images/remove-file-1.png")
+(define REMOVE-FILE-ICON (read-bitmap REMOVE-FILE-1-PNG))
+(define-runtime-path OK-1-PNG "images/ok-1.png")
+(define OK-ICON (read-bitmap OK-1-PNG))
+(define-runtime-path WARNING-1-PNG "images/warning-1.png")
+(define WARNING-ICON (read-bitmap WARNING-1-PNG))
 
 (define selected-email-db #f)
 
@@ -62,9 +67,9 @@
        (spacing 4)
        (alignment '(left top))))
 
-;; **********************************************************************
-;; * Left Side
-;; **********************************************************************
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Left Side
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; List box containing active tests (top left).
 (define active-tests-list-box
@@ -231,9 +236,9 @@
             (setup-ui))))))
 
 
-;; **********************************************************************
-;; * Right Side
-;; **********************************************************************
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Right Side
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define top-right-h-pane
   (new horizontal-pane%
@@ -1009,9 +1014,9 @@
   (send saved-changes-label show #f))
 
 
-;; **********************************************************************
-;; * Helpers to enable/disable UI controls based on user move
-;; **********************************************************************
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Helpers to enable/disable UI controls based on user move
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; helpers for change-children method for selected-test-name-box
 (define (name-field-create-mode arg-not-used)
@@ -1062,9 +1067,9 @@
 (define (send-disable control) (send control enable #f))
 
 
-;; **********************************************************************
-;; * Helpers to show a different field background color for invalid input.
-;; **********************************************************************
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Helpers to show a different field background color for invalid input.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (set-autotest-name-text-field-background)
   (if (valid-autotest-name-string? (send autotest-name-text-field get-value))

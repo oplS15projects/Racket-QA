@@ -1,11 +1,11 @@
-#||
- | email-db.rkt
- | author: Yong Cho (Yong_Cho@student.uml.edu)
- | Created on: 4/3/2015
- |
- | This file implements a mailing list object which contains a set of
- | email addresses, and procedures to store and retrieve it.
- |#
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+;; File: email-db.rkt
+;; Author: Yong Cho 
+;; Email: Yong_Cho@student.uml.edu
+;; File Description: mailing list database
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 #lang racket
 
@@ -46,7 +46,6 @@
   (when (not (file-exists? EMAIL-DB-ID-FILE))
     (create-email-db-id-file)
     (write-email-db-id-file))
-  (validate-and-correct-email-db-list-file)
   (read-email-db-list)
   (read-email-db-id-file)
   (set! existing-email-db-ids (ids-in-email-db-list))
@@ -94,9 +93,9 @@
     #:mode 'binary))
 
 
-;; *******************************************************
-;; * email-db-entry object
-;; *******************************************************
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; email-db-entry object
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (define (make-email-db-entry name address)
   (define (change-name new-name)
     (set! name new-name))
@@ -138,14 +137,13 @@
 
 
 
-;; *******************************************************
-;; * email-db object
-;; *******************************************************
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; email-db object
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (define (make-email-db db-id db-name email-db-entries)
   (let ((db-file-path (db-id-to-file-path db-id)))
     (define (change-db-name new-db-name)
       (set! db-name new-db-name))
-    ;; TODO: check for duplicate address
     (define (add-entry new-entry)
       (set! email-db-entries (append email-db-entries (list new-entry))))
     (define (remove-entry an-entry)
@@ -291,9 +289,9 @@
 
 
 
-;; *******************************************************
-;; * email-db list
-;; *******************************************************
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; email-db list
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Returns the list of all the email-db-ids in the current email-db-list.
 (define (ids-in-email-db-list)
@@ -353,11 +351,6 @@
     (lambda (in)
       (set! email-db-list (map storage-form-to-db (read in))))
     #:mode 'binary))
-
-;; Checks the integrity of the contents in the EMAIL-DB-LIST-FILE and removes invalid 
-;; entries. Leaves a valid email-db-list which can be used throughout the program run.
-(define (validate-and-correct-email-db-list-file)
-  (void))
 
 ;; good-o accumulate helper
 (define (accumulate sequence init op term)

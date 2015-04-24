@@ -1,11 +1,11 @@
-#||
- | email-db-entry-edit.rkt
- | author: Yong Cho (Yong_Cho@student.uml.edu)
- | Created on: 4/3/2015
- |
- | This file implements user interface to create or edit a
- | mailing list entry.
- |#
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; 
+;; File: email-db-entry-edit.rkt
+;; Author: Yong Cho 
+;; Email: Yong_Cho@student.uml.edu
+;; File Description: UI for entering a new email address
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 #lang racket/gui
 
@@ -13,6 +13,9 @@
          "email-db.rkt")
 
 (provide open-email-db-entry-edit)
+
+
+
 
 (define title "")
 (define new-entry '())
