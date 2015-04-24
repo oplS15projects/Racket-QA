@@ -53,8 +53,7 @@ For an example, the following is a test suite generated from ps1.
 
 ###Video Demonstration
 
-The following YouTube video link demonstrates how to use `Bottle-Racket` to convert Bottlenose test files into Racket files, and then use `Test-Capture` to run a test suite file both without and with sending an email.
-[**Video Demonstration**][Bottle-Video]
+[**Video Demonstration**][Bottle-Video]. Note that the main GUI is used here.
 
 
 ###Bottle-Racket GUI
@@ -107,4 +106,4 @@ Now that we have the mailing list to send results to, it's time to run the test 
 
 
 <!-- Links -->
-[Bottle-Video]: https://www.youtube.com/watch?v=gEtNu75CSl4
+[Bottle-Video]: https://www.youtube.com/watch?v=j7H6NJPb1zM

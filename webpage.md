@@ -20,6 +20,8 @@ Racket-QA is a set of utilities that expand on RackUnit to provide a Regression 
 
 ![racket-doc-gui.png](https://raw.githubusercontent.com/oplS15projects/Racket-QA/master/demo/racket-doc-gui.png)
 
+![mail-list.png](https://raw.githubusercontent.com/oplS15projects/Racket-QA/master/demo/mail-list.png)
+
 ##Concepts Demonstrated
 Identify the OPL concepts demonstrated in your project. Be brief. A simple list and example is sufficient. 
 * Mailing list and automated test database used an object with local variables and procedures, reinforcing use of classes to keep track of state.
