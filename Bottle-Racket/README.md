@@ -1,4 +1,10 @@
-# Bottle-Racket and Test-Capture
+#Bottle-Racket and Test-Capture
+
+##DISCLAIMER
+
+### These scripts are not meant to be run directly by the user. Use the Main GUI to run these applications.
+
+##Table of Contents
 
 This portion of Racket-QA deals with two components:
 * `Bottle-Racket` is just a converter. It converts a Bottlenose Perl test file from the OPL course into Racket test cases. This is intended to be used on Problem Sets 1, 2, 3, and 5 which are provided in the testing directory. For our purposes this is all we need for test suites.
