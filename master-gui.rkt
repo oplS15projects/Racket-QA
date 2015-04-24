@@ -23,8 +23,10 @@
 (define scheduler-icon (read-bitmap "demo/clock-icon-4.png"))
 (define racket-doc-icon (read-bitmap "demo/racket-doc.png"))
 (define mailing-list-icon (read-bitmap "demo/mailing-list.png"))
+(define about-me-icon (read-bitmap "demo/question.png"))
 ;; Icon used on for racket-doc button was created by Yereverluvinunclebert
 ;; http://rocketdock.com/addon/icons/43519
+;; Icon for question mark is Simple Question Mark Icon #069497
 
 (define caption-width 150)
 
@@ -187,8 +189,7 @@ open-output-file: cannot open output file
      (label "Racket-Doc  "))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Window Display - Button for launching Racket-Doc
-;;                  Paths currently mixed on Windows
+;; Window Display - Button for Mailing List Configuration
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define mailing-list-h-pane
@@ -198,9 +199,74 @@ open-output-file: cannot open output file
        (alignment '(left center))))
 
 (new button% [parent mailing-list-h-pane] [label mailing-list-icon]
+      [callback (lambda (button event) (open-manage-mailing-list-dialog))])
+
+(new message%
+     (parent mailing-list-h-pane)
+     (min-width caption-width)
+     (stretchable-width #f)
+     (label "Manage Mailing List  "))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Window Display - Button for "About Me" Section
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(new button% [parent mailing-list-h-pane] [label about-me-icon]
       [callback (lambda (button event)
 
-                  (open-manage-mailing-list-dialog)
+                  (define description_1 (string-append "Welcome to Racket-QA. The main page has five components:\n"))
+                  (define description_2 (string-append "1.) Bottle-Racket\n"
+                                                     "\tThis utility is used to convert Bottlenose test files "
+                                                     "into racket test suite files.\t\t\t\n"))
+                  (define description_3 (string-append "2.) Test-Capture\n"
+                                                     "\tThis utility can run a specified test suite, with or "
+                                                     "without sending an email of the test results to a "
+                                                     "specified emailing list.\t\n"))
+                  (define description_4 (string-append "3.) Test Scheduler\n"
+                                                     "\tThis utility can run test suites in specified time "
+                                                     "intervals. It also has the option of sending the "
+                                                     "results of each timed run to a mailing list.\t\t\n"))
+                  (define description_5 (string-append "4.) Racket-Doc\n"
+                                                     "\tThis utility extracts attributes from source .rkt "
+                                                     "files and embeds them in generated web pages.\t\t\n "))
+                  (define description_6 (string-append "5.) Manage Mailing List\n"
+                                                     "\tConfigure Email Database for recipients of test "
+                                                     "results.\t\t\n"))
+                  (define description_7 (string-append "Development Team\n"
+                                                       "\tRoy Van Liew: https://github.com/Dossar\t\t\n"
+                                                       "\tYong Cho: https://github.com/YongCho\t\t\n"
+                                                       "\tJames Kuczynski: https://github.com/DeepBlue14\t\t\t\n"
+                                                       ))
+                  (define dialog (new frame% (label "About-Me") [min-width 500] [alignment '(left top)]))
+                  (define desc_1 (new message% [parent dialog]
+                         [auto-resize #t]
+                         [horiz-margin 50]
+                          [label description_1]))
+                  (define desc_2 (new message% [parent dialog]
+                         [auto-resize #t]
+                         [horiz-margin 50]
+                          [label description_2]))
+                  (define desc_3 (new message% [parent dialog]
+                         [auto-resize #t]
+                         [horiz-margin 50]
+                          [label description_3]))
+                  (define desc_4 (new message% [parent dialog]
+                         [auto-resize #t]
+                         [horiz-margin 50]
+                         [label description_4]))
+                  (define desc_5 (new message% [parent dialog]
+                         [auto-resize #t]
+                         [horiz-margin 50]
+                         [label description_5]))
+                  (define desc_6 (new message% [parent dialog]
+                         [auto-resize #t]
+                         [horiz-margin 50]
+                         [label description_6]))
+                  (define desc_7 (new message% [parent dialog]
+                         [auto-resize #t]
+                         [horiz-margin 50]
+                         [label description_7]))
+                  (send dialog show #t)
                   
                                     ) ; end lambda
       ] ; end callback
@@ -210,7 +276,7 @@ open-output-file: cannot open output file
      (parent mailing-list-h-pane)
      (min-width caption-width)
      (stretchable-width #f)
-     (label "Manage Mailing List  "))
+     (label "About-Me  "))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Window Display - Displaying the Window

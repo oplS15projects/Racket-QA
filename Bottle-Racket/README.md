@@ -1,4 +1,8 @@
-# Bottle-Racket and Test-Capture
+#Bottle-Racket and Test-Capture
+
+### DISCLAIMER: These scripts are not meant to be run directly by the user. Use the Main GUI to run these applications.
+
+##Table of Contents
 
 This portion of Racket-QA deals with two components:
 * `Bottle-Racket` is just a converter. It converts a Bottlenose Perl test file from the OPL course into Racket test cases. This is intended to be used on Problem Sets 1, 2, 3, and 5 which are provided in the testing directory. For our purposes this is all we need for test suites.
@@ -11,7 +15,7 @@ I've split up this README into four parts:
 * Text and Picture Demonstration of using `Test-Capture`
 
 
-### The Structure of a Test Suite File
+###The Structure of a Test Suite File
 
 The test suites to run with this application are meant to be minimalistic and easy to follow. Test Suites in this context contain the following:
 * Top: `require` statements for RackUnit, along with the necessary source files with procedure definitions for testing
@@ -19,7 +23,7 @@ The test suites to run with this application are meant to be minimalistic and ea
 * Bottom: `test-list`, a list containing the test suites to run
 
 For an example, the following is a test suite generated from ps1.
-```
+```scheme
 #lang racket
 
 (require rackunit)
@@ -47,13 +51,12 @@ For an example, the following is a test suite generated from ps1.
 ```
 
 
-### Video Demonstration
+###Video Demonstration
 
-The following YouTube video link demonstrates how to use `Bottle-Racket` to convert Bottlenose test files into Racket files, and then use `Test-Capture` to run a test suite file both without and with sending an email.
-[**Video Demonstration**][Bottle-Video]
+[**Video Demonstration**][Bottle-Video]. Note that the main GUI is used here.
 
 
-### Bottle-Racket GUI
+###Bottle-Racket GUI
 
 File: `bottle-racket.rkt`
 
@@ -70,7 +73,7 @@ This is what the window will look like when you click the `Convert` button after
 
 ![bottle2.png](https://raw.githubusercontent.com/oplS15projects/Racket-QA/master/Bottle-Racket/documentation/bottle-racket/v3/bottle2.png)
 
-### Test-Capture GUI
+###Test-Capture GUI
 
 File: `test-capture.rkt`
 
@@ -103,4 +106,4 @@ Now that we have the mailing list to send results to, it's time to run the test 
 
 
 <!-- Links -->
-[Bottle-Video]: https://www.youtube.com/watch?v=gEtNu75CSl4
+[Bottle-Video]: https://www.youtube.com/watch?v=j7H6NJPb1zM
