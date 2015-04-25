@@ -5,6 +5,13 @@ Racket-QA Email component provides functionality to send out a unit test result 
 
 ### How to use mailing list UI
 
+Here is a quick demo video on how to use Racket-QA's mailing feature.
+
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=jTNaCMzuZeQ
+" target="_blank"><img src="http://img.youtube.com/vi/jTNaCMzuZeQ/0.jpg"
+alt="Racket-QA Email Demo" width="240" height="180" border="10" /></a>
+
+
 There are 3 different ways you can start the mailing list UI.
 
 1. It can be launched from the [Test-Capture utility][Test-Capture Document] when you manually execute a unit test and want to send out the test result to a mailing list.
