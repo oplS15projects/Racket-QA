@@ -233,4 +233,5 @@
 ;; Window Display - Displaying the Window
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(send main-window center)
 (send main-window show #t)
