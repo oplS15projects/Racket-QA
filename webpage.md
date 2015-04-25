@@ -73,9 +73,30 @@ Anything else you want to say in your report. Can rename or remove this section.
 #How to Download and Run
 Note: After the main gui page has all four working buttons, we could provide a demo video. But we definitely want the user to run the main gui page, not individual components separately in four scripts open.
 
-You may want to link to your latest release for easy downloading by people (such as Mark).
+There are 4 main components to Racket-QA, with a 5th helper component.
+1. Bottle-Racket
+  2. This utility is used to convert Bottlenose test fiels into Racket test suite files.
+1. Test-Capture
+  2. This utility can run a specified test suite, with or without sending an email of the test results to a specified emailing list.
+1. Test Scheduler
+  2. This utility can run test suites at specified time intervals. It also has the option of sending the results of each timed run to a mailing list.
+1. Racket-Doc
+  2. This utility extracts attributes and documentation form source *.rkt fiels and embeds them in generated web pages.
+1. Manage Mailing List
+  2. Configure email database for recipients of test results.
 
-Include what file to run, what to do with that file, how to interact with the app when its running, etc. 
+The script you want to run is `master-gui.rkt`, which is found in the Racket-QA parent directory.
+1. When you run `master-gui.rkt`
+  2. You will be presented with a GUI that has 6 buttons.
+  3. The top-left button is `Bottle-Racket`. See the [**Bottle-Racket Demo Video**][Bottle-Demo] and the [**Bottle-Racket README**][Bottle-Readme].
+  4. The top-right button is `Test-Capture`. See the [**Test-Capture Demo Video**][Bottle-Demo] and the [**Test-Capture README**][Bottle-Readme].
+  5. The middle-left button is `Test-Scheduler`. See [**Scheduler Demo Video**][Scheduler-Demo] and the [**Scheduler README**][Scheduler-Readme].
+  6. The middle-right button is `Racket-Doc`. See the [**Racket-Doc README**][Racket-Doc-Readme].
+  7. The bottom-left button is `QA-Email`, labeled as `Manage Mailing List`. See the [**QA-Email Demo Video**][QA-Email-Demo] and the [**QA-Email README**][QA-Email-Readme]
+  8. The bottom-right button is `About-Me`, which opens up a web page giving a brief description of each Racket-QA component and lists contact information for the development team.
+
+Latest release link to come. 
+
 
 <!-- Links -->
 [QA-Email]: https://github.com/oplS15projects/Racket-QA/blob/master/QA-Email/readme.md
@@ -85,3 +106,10 @@ Include what file to run, what to do with that file, how to interact with the ap
 [RackUnit]: http://docs.racket-lang.org/rackunit/index.html
 [net/SMTP]: http://docs.racket-lang.org/net/smtp.html
 [GUI]: http://docs.racket-lang.org/gui/
+[Bottle-Demo]: https://www.youtube.com/watch?v=Ws2mMMBFns4
+[Scheduler-Demo]: https://www.youtube.com/watch?v=JqngnONV9ks
+[QA-Email-Demo]: https://www.youtube.com/watch?v=jTNaCMzuZeQ
+[Bottle-Readme]: https://github.com/Dossar/Racket-QA/blob/master/Bottle-Racket/README.md
+[Scheduler-Readme]: https://github.com/Dossar/Racket-QA/blob/master/Test-Automation/readme.md
+[Racket-Doc-Readme]: https://github.com/Dossar/Racket-QA/blob/master/Racket-Doc/README.md
+[QA-Email-Readme]: https://github.com/Dossar/Racket-QA/blob/master/QA-Email/readme.md
