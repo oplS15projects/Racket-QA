@@ -1,16 +1,16 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;                                                              ;;
-;; File: PageGenerator.rkt                                      ;;
-;; Author: James Kuczynski                                      ;;
-;; Email: jkuczyns@cs.uml.edu                                   ;;
-;; File Description: This file compares the tokenized elements  ;;
-;;                   of the source files of a given package     ;;
-;;                   to ensure not specifing duplacates.  This  ;;
-;;                   is only nessisary if there are at least 2  ;;
-;;                   source files in the given package.         ;;
-;;Created 04/14/2015                                            ;;
-;;                                                              ;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;                                                              
+;; File: PageGenerator.rkt                                      
+;; Author: James Kuczynski                                      
+;; Email: jkuczyns@cs.uml.edu                                   
+;; File Description: This file compares the tokenized elements  
+;;                   of the source files of a given package     
+;;                   to ensure not specifing duplacates.  This  
+;;                   is only nessisary if there are at least 2  
+;;                   source files in the given package.         
+;;Created 04/14/2015                                            
+;;                                                              
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 #lang racket
 
