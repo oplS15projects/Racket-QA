@@ -34,7 +34,7 @@ You have created a new mailing list. Let's add some email addresses to it.
 ![New entry created](images/documentation/ui_new_address_created.png)
 
 QA-Email does not have its own mail server. In order to send out an email, it relies on your own email account. You can click the "SMTP Config" button to provide an SMTP information for your email account. This is the same information you would normally need on email clients like Thunderbird or Outlook. Here, we have created a gmail account for demo.
-![SMTP Config](images/documentation/ui_smtp_config)
+![SMTP Config](images/documentation/ui_smtp_config.png)
 Note: Enter the SMTP information only on a trusted computer because it will be stored on the machine.
 
 If you have opened the mailing list UI through either Test-Capture or Test Scheduler utility, you will see an Ok and Cancel button in the bottom. When you select one of the mailing lists on the left side and click Ok, the Test-Capture or Test Scheduler utility will use the that mailing list to send out the test results.
