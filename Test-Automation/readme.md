@@ -5,6 +5,13 @@ Racket QA Test Scheduler provides functionality to schedule an execution of Rack
 
 ### How to use the Scheduler
 
+Here is a quick demo video on how to use the test scheduler.
+
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=JqngnONV9ks
+" target="_blank"><img src="http://img.youtube.com/vi/JqngnONV9ks/0.jpg"
+alt="Test Scheduler Demo" width="240" height="180" border="10" /></a>
+
+
 In order to start the scheduler, click 'Test Scheduler' icon button from the main UI.
 
 ![scheduler_launcher](images/documentation/ui_launcher.png)
