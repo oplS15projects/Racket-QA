@@ -5,17 +5,22 @@
 ;; Email: roy_vanliew@student.uml.edu
 ;; File Description: GUI for all four components
 ;;
-;; Last Modified 04/22/2015 2:55 pm
+;; Last Modified 04/25/2015 2:15 am by James Kuczynski
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 #lang racket/gui
 
 (require "Common/user-settings-directory.rkt") ; Filepath utilities
+(require "./Racket-Doc/src/MainGui.rkt")
 (require "Test-Automation/scheduler_ui.rkt")
 (require "QA-Email/email-db-ui.rkt")
-;; (require "Racket-Doc/src/MainGui.rkt") ; Racket-Doc GUI. Breaks on Windows.
+(require "Racket-Doc/src/MainGui.rkt")
+(require "about-me.rkt")
 (require setup/dirs)
+(require web-server/servlet web-server/servlet-env)
+(require xrepl)
+(require racket/enter)
 
 
 (define bottle-racket-icon (read-bitmap "demo/bottle-racket.png"))
@@ -30,14 +35,6 @@
 
 (define caption-width 150)
 
-#|
-Doing Bottle-Racket, Test-Capture, and Racket-Doc for the time being.
-
-For Racket-Doc:
-open-output-file: cannot open output file
-  path: C:\OPL\Racket-QA\Racket-QA\./../output/WebPage.rkt
-  system error: The system cannot find the path specified.; errno=3
-|#
 
 (define RACKET-PATH-UNFIXED
    (string-append (path->string (find-console-bin-dir))
@@ -108,7 +105,8 @@ open-output-file: cannot open output file
      (parent bottle-racket-h-pane)
      (min-width caption-width)
      (stretchable-width #f)
-     (label "Bottle-Racket  "))
+     (label "Bottle-Racket  ")
+)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Window Display - Button for launching Test-Capture
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -175,8 +173,8 @@ open-output-file: cannot open output file
 
 (new button% [parent scheduler-h-pane] [label racket-doc-icon]
       [callback (lambda (button event)
-
                   (display "Clicked Racket-Doc.\n")
+                  (send frame show #t)
                   
                                     ) ; end lambda
       ] ; end callback
@@ -211,66 +209,21 @@ open-output-file: cannot open output file
 ;; Window Display - Button for "About Me" Section
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(new button% [parent mailing-list-h-pane] [label about-me-icon]
-      [callback (lambda (button event)
+(define (aboutMeCallback button event)
+  (display "in callback")
+(serve/servlet start-about-me-web-page
+               #:quit? #t
+               #:listen-ip "127.0.0.1"
+               ;#:port 8080
+               #:servlet-path "/")
+  (display (current-thread))
+  ;(kill-thread (current-thread))
+)
 
-                  (define description_1 (string-append "Welcome to Racket-QA. The main page has five components:\n"))
-                  (define description_2 (string-append "1.) Bottle-Racket\n"
-                                                     "\tThis utility is used to convert Bottlenose test files "
-                                                     "into racket test suite files.\t\t\t\n"))
-                  (define description_3 (string-append "2.) Test-Capture\n"
-                                                     "\tThis utility can run a specified test suite, with or "
-                                                     "without sending an email of the test results to a "
-                                                     "specified emailing list.\t\n"))
-                  (define description_4 (string-append "3.) Test Scheduler\n"
-                                                     "\tThis utility can run test suites in specified time "
-                                                     "intervals. It also has the option of sending the "
-                                                     "results of each timed run to a mailing list.\t\t\n"))
-                  (define description_5 (string-append "4.) Racket-Doc\n"
-                                                     "\tThis utility extracts attributes from source .rkt "
-                                                     "files and embeds them in generated web pages.\t\t\n "))
-                  (define description_6 (string-append "5.) Manage Mailing List\n"
-                                                     "\tConfigure Email Database for recipients of test "
-                                                     "results.\t\t\n"))
-                  (define description_7 (string-append "Development Team\n"
-                                                       "\tRoy Van Liew: https://github.com/Dossar\t\t\n"
-                                                       "\tYong Cho: https://github.com/YongCho\t\t\n"
-                                                       "\tJames Kuczynski: https://github.com/DeepBlue14\t\t\t\n"
-                                                       ))
-                  (define dialog (new frame% (label "About-Me") [min-width 500] [alignment '(left top)]))
-                  (define desc_1 (new message% [parent dialog]
-                         [auto-resize #t]
-                         [horiz-margin 50]
-                          [label description_1]))
-                  (define desc_2 (new message% [parent dialog]
-                         [auto-resize #t]
-                         [horiz-margin 50]
-                          [label description_2]))
-                  (define desc_3 (new message% [parent dialog]
-                         [auto-resize #t]
-                         [horiz-margin 50]
-                          [label description_3]))
-                  (define desc_4 (new message% [parent dialog]
-                         [auto-resize #t]
-                         [horiz-margin 50]
-                         [label description_4]))
-                  (define desc_5 (new message% [parent dialog]
-                         [auto-resize #t]
-                         [horiz-margin 50]
-                         [label description_5]))
-                  (define desc_6 (new message% [parent dialog]
-                         [auto-resize #t]
-                         [horiz-margin 50]
-                         [label description_6]))
-                  (define desc_7 (new message% [parent dialog]
-                         [auto-resize #t]
-                         [horiz-margin 50]
-                         [label description_7]))
-                  (send dialog show #t)
-                  
-                                    ) ; end lambda
-      ] ; end callback
+(new button% [parent mailing-list-h-pane] [label about-me-icon]
+     [callback aboutMeCallback] ; end callback
 ) ;; end button
+
 
 (new message%
      (parent mailing-list-h-pane)

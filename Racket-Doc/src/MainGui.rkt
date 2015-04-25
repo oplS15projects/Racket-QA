@@ -19,9 +19,12 @@
 (require "PageGenerator.rkt")
 (require "AdvancedGui.rkt")
 (require "ProcessingGui.rkt")
+(require "NotificationGui.rkt")
+
+(provide frame)
 
 (define background
-  (read-bitmap "./../share/racket1.jpg"))
+  (read-bitmap "./Racket-Doc/share/racket1.jpg"))
 
 (define frame (new frame%
                    (label "Racket-Doc")
@@ -127,7 +130,8 @@
             ;;bundle
             ;;pass to generationMaster
         )
-   )
+   ) ;; end of cond
+  (send dialog show #t)
 )
 
 
@@ -281,4 +285,4 @@
 
 
 
-(send frame show #t)
+(send frame show #f)

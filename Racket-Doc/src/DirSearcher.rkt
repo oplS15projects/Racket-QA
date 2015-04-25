@@ -1,3 +1,16 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; File: DirSearcher.rkt 
+;; Author: James Kucyznski
+;; Email: jkuczyns@cs.uml.edu
+;; File Description: This file recursively searches for *.rkt files
+;;                   under a given user specified directory.  It
+;;                   then returns a list of paths to those files.
+;;
+;; Last Modified 04/16/2015 12:00mp
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
 #lang racket
 
 (provide search)
