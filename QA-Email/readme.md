@@ -51,7 +51,7 @@ If you have opened the UI from the main Racket-QA UI, you won't see the Ok and C
 
 Now you know how to manage mailing lists on Racket-QA. You can go ahead and run a unit test with Test-Capture utility or schedule an overnight test with Test Scheduler and have the results mailed to your dev team (or yourself). You can click the links below to learn how to use Test-Capture and Test Scheduler.
 
-[Test-Capture utility][Test-Capture Document]
+[Test-Capture utility][Test-Capture Document] <br />
 [Test Scheduler utility][Scheduler Document]
 
 
