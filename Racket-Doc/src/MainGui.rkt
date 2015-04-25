@@ -19,6 +19,7 @@
 (require "PageGenerator.rkt")
 (require "AdvancedGui.rkt")
 (require "ProcessingGui.rkt")
+(require "NotificationGui.rkt")
 
 (provide frame)
 
@@ -129,7 +130,8 @@
             ;;bundle
             ;;pass to generationMaster
         )
-   )
+   ) ;; end of cond
+  (send dialog show #t)
 )
 
 
