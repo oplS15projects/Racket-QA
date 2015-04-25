@@ -5,12 +5,18 @@ Racket-QA Email component provides functionality to send out a unit test result 
 
 ### How to use mailing list UI
 
+Here is a quick demo video on how to use Racket-QA's mailing feature.
+
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=jTNaCMzuZeQ
+" target="_blank"><img src="http://img.youtube.com/vi/jTNaCMzuZeQ/0.jpg"
+alt="Racket-QA Email Demo" width="240" height="180" border="10" /></a>
+
+
 There are 3 different ways you can start the mailing list UI.
 
 1. It can be launched from the [Test-Capture utility][Test-Capture Document] when you manually execute a unit test and want to send out the test result to a mailing list.
 2. It can be launched from the [Test Scheduler utility][Scheduler Document] when you schedule an automated test and wish the test result to be sent out to a mailing list at the time of the scheduled run-up.
-3. It can be launched from the main Racket-QA UI to create, delete, or modify a mailing list for a later use in the above two cases.
-
+3. It can be launched from the main Racket-QA UI to create, delete, or modify a mailing list for a later use for the above two cases.
 
 
 Mailing list UI launched from Test-Capture utility
@@ -26,25 +32,34 @@ Mailing list UI launched from the main Racket-QA UI
 You can use the drop-down box on the bottom left corner to create a new mailing list or delete an existing one.
 ![Mailing list actions](images/documentation/ui_add_mailing_list.png)
 
+
 Provide a name for the new mailing list.
 ![New mailing list name](images/documentation/ui_new_mailing_list_name.png)
+
 
 You have created a new mailing list. Let's add some email addresses to it.
 ![New mailing list created](images/documentation/ui_new_mailing_list_created.png)
 ![New mailing list entry](images/documentation/ui_new_mailist_list_entry.png)
 ![New entry created](images/documentation/ui_new_address_created.png)
 
-QA-Email does not have its own mail server. In order to send out an email, it relies on your own email account. You can click the "SMTP Config" button to provide an SMTP information for your email account. This is the same information you would normally need on email clients like Thunderbird or Outlook. Here, we have created a gmail account for demo.
+Racket-QA does not have its own mail server. In order to send out an email, it relies on your own email account. You can click the "SMTP Config" button to provide an SMTP information for your email account. This is the same information you would normally need on email clients like Thunderbird or Outlook. Here, we have created a gmail account for demo.
 ![SMTP Config](images/documentation/ui_smtp_config.png)
 Note: Enter the SMTP information only on a trusted computer because it will be stored on the machine.
 
+
 If you have opened the mailing list UI through either Test-Capture or Test Scheduler utility, you will see an Ok and Cancel button in the bottom. When you select one of the mailing lists on the left side and click Ok, the Test-Capture or Test Scheduler utility will see this mailing list and use it to send out the test results.
 ![opened_from_scheduler](images/documentation/ui_with_scheduler.png)
+
 
 If you have opened the UI from the main Racket-QA UI, you won't see the Ok and Cancel buttons. You can use this to pre-configure your mailing lists so you can use them later with Test-Capture or Test Scheduler.
 
 ![UI no buttons](images/documentation/ui_no_buttons.png)
 
+
+Now you know how to manage mailing lists on Racket-QA. You can go ahead and run a unit test with Test-Capture utility or schedule an overnight test with Test Scheduler and have the results mailed to your dev team (or yourself). You can click the links below to learn how to use Test-Capture and Test Scheduler.
+
+[Test-Capture utility][Test-Capture Document] <br />
+[Test Scheduler utility][Scheduler Document]
 
 
 <!-- Links -->
