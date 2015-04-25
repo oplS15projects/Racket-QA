@@ -11,16 +11,21 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-#lang racket
+
+
+#lang web-server
 
 (require web-server/servlet web-server/servlet-env)
 
 
-(define (start request)
+(provide start-about-me-web-page)
+
+(define (start-about-me-web-page request)
   (about-me-page request))
 
 
 (define (about-me-page request)
+    (display "Death to boat robbers!")
   (local ((define (response-generator embed/url)
             (response/xexpr
              `(html (head (title "Racket-Doc"))
@@ -28,6 +33,9 @@
                      (br)
                      (center (i "The leading toolkit for Racket quality assurance standards"))
                      (br)
+                     ;;-------
+                     (center '(a ((href "/quit")) "Exit"))
+                     ;;-------
                      (p (b "Project Overview"))
                      (i "1) Bottle-Racket")
                      (br)(html nbsp nbsp nbsp nbsp)   
@@ -63,9 +71,11 @@
                      (html "However, we will accept monotary donations, hardware, or other tokens of gratitude.") 
                          )))))
     (send/suspend/dispatch response-generator)))
-                          
 
-(serve/servlet start
-               #:listen-ip "127.0.0.1"
-               ;#:port 8080
-               #:servlet-path "/")
+
+
+;(serve/servlet start-about-me-web-page
+;               #:quit? #t
+;               #:listen-ip "127.0.0.1"
+;               ;#:port 8080
+;               #:servlet-path "/")
