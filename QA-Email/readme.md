@@ -9,7 +9,7 @@ There are 3 different ways you can start the mailing list UI.
 
 1. It can be launched from the [Test-Capture utility][Test-Capture Document] when you manually execute a unit test and want to send out the test result to a mailing list.
 2. It can be launched from the [Test Scheduler utility][Scheduler Document] when you schedule an automated test and wish the test result to be sent out to a mailing list at the time of the scheduled run-up.
-3. It can be launched from the main Racket-QA UI to create, delete, or modify a mailing list for a later use in the above two cases.
+3. It can be launched from the main Racket-QA UI to create, delete, or modify a mailing list for a later use for the above two cases.
 
 
 Mailing list UI launched from Test-Capture utility
@@ -35,7 +35,7 @@ You have created a new mailing list. Let's add some email addresses to it.
 ![New mailing list entry](images/documentation/ui_new_mailist_list_entry.png)
 ![New entry created](images/documentation/ui_new_address_created.png)
 
-QA-Email does not have its own mail server. In order to send out an email, it relies on your own email account. You can click the "SMTP Config" button to provide an SMTP information for your email account. This is the same information you would normally need on email clients like Thunderbird or Outlook. Here, we have created a gmail account for demo.
+Racket-QA does not have its own mail server. In order to send out an email, it relies on your own email account. You can click the "SMTP Config" button to provide an SMTP information for your email account. This is the same information you would normally need on email clients like Thunderbird or Outlook. Here, we have created a gmail account for demo.
 ![SMTP Config](images/documentation/ui_smtp_config.png)
 Note: Enter the SMTP information only on a trusted computer because it will be stored on the machine.
 
