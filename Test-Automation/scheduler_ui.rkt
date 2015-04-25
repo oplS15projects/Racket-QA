@@ -767,7 +767,7 @@
 (define create-active-button
   (new button%
        (parent activate-buttons-pane)
-       (label "Create and Activate")
+       (label "Schedule and Activate")
        (min-height 30)
        (callback
         (lambda (b e)
@@ -783,7 +783,7 @@
 (define create-inactive-button
   (new button%
        (parent activate-buttons-pane)
-       (label "Create as Inactive")
+       (label "Schedule as Inactive")
        (min-height 30)
        (callback
         (lambda (b e)
