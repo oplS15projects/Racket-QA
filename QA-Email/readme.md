@@ -12,13 +12,13 @@ There are 3 different ways you can start the mailing list UI.
 3. It can be launched from the main Racket-QA UI to create, delete, or modify a mailing list for a later use in the above two cases.
 
 
-1. Mailing list UI launched from Test-Capture utility
+* Mailing list UI launched from Test-Capture utility
 ![launched_from_test_capture](images/documentation/launched_from_test_capture.png)
 
-2. Mailing list UI launched from Test Scheduler utility
+* Mailing list UI launched from Test Scheduler utility
 ![launched_from_test_scheduler](images/documentation/launched_from_test_scheduler.png)
 
-3. Mailing list UI launched from the main Racket-QA UI
+* Mailing list UI launched from the main Racket-QA UI
 ![launched_from_main_ui](images/documentation/launched_from_main_ui.png)
 
 
