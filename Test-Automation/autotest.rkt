@@ -326,7 +326,7 @@
                                         (set! due-year (+ 1 due-year))
                                         (set! due-date (- due-date 31)))
                                  (begin (set! due-month (+ 1 due-month))
-                                        (set! due-date (- due-date (days-in-month current-month))))))
+                                        (set! due-date (- due-date (days-in-month current-month current-year))))))
                             (else (void)))
                       
                       (define due-at
