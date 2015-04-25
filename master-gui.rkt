@@ -230,8 +230,8 @@ open-output-file: cannot open output file
                                                      "\tThis utility extracts attributes from source .rkt "
                                                      "files and embeds them in generated web pages.\t\t\n "))
                   (define description_6 (string-append "5.) Manage Mailing List\n"
-                                                     "\tConfigure Email Database for recipients of test "
-                                                     "results.\t\t\n"))
+                                                     "\tYou can use this utility to configure mailing lists  "
+                                                     "for recipients of test results.\t\t\n"))
                   (define description_7 (string-append "Development Team\n"
                                                        "\tRoy Van Liew: https://github.com/Dossar\t\t\n"
                                                        "\tYong Cho: https://github.com/YongCho\t\t\n"
