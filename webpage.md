@@ -74,15 +74,16 @@ Anything else you want to say in your report. Can rename or remove this section.
 Note: After the main gui page has all four working buttons, we could provide a demo video. But we definitely want the user to run the main gui page, not individual components separately in four scripts open.
 
 There are 4 main components to Racket-QA, with a 5th helper component.
+
 1. Bottle-Racket
   * This utility is used to convert Bottlenose test fiels into Racket test suite files.
-1. Test-Capture
+2. Test-Capture
   * This utility can run a specified test suite, with or without sending an email of the test results to a specified emailing list.
-1. Test Scheduler
+3. Test Scheduler
   * This utility can run test suites at specified time intervals. It also has the option of sending the results of each timed run to a mailing list.
-1. Racket-Doc
+4. Racket-Doc
   * This utility extracts attributes and documentation form source *.rkt fiels and embeds them in generated web pages.
-1. Manage Mailing List
+5. Manage Mailing List
   * Configure email database for recipients of test results.
 
 The script you want to run is `master-gui.rkt`, which is found in the Racket-QA parent directory.
