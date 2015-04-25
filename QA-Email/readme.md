@@ -12,7 +12,6 @@ There are 3 different ways you can start the mailing list UI.
 3. It can be launched from the main Racket-QA UI to create, delete, or modify a mailing list for a later use in the above two cases.
 
 
-
 Mailing list UI launched from Test-Capture utility
 ![launched_from_test_capture](images/documentation/launched_from_test_capture.png)
 
@@ -26,8 +25,10 @@ Mailing list UI launched from the main Racket-QA UI
 You can use the drop-down box on the bottom left corner to create a new mailing list or delete an existing one.
 ![Mailing list actions](images/documentation/ui_add_mailing_list.png)
 
+
 Provide a name for the new mailing list.
 ![New mailing list name](images/documentation/ui_new_mailing_list_name.png)
+
 
 You have created a new mailing list. Let's add some email addresses to it.
 ![New mailing list created](images/documentation/ui_new_mailing_list_created.png)
@@ -38,13 +39,20 @@ QA-Email does not have its own mail server. In order to send out an email, it re
 ![SMTP Config](images/documentation/ui_smtp_config.png)
 Note: Enter the SMTP information only on a trusted computer because it will be stored on the machine.
 
+
 If you have opened the mailing list UI through either Test-Capture or Test Scheduler utility, you will see an Ok and Cancel button in the bottom. When you select one of the mailing lists on the left side and click Ok, the Test-Capture or Test Scheduler utility will see this mailing list and use it to send out the test results.
 ![opened_from_scheduler](images/documentation/ui_with_scheduler.png)
+
 
 If you have opened the UI from the main Racket-QA UI, you won't see the Ok and Cancel buttons. You can use this to pre-configure your mailing lists so you can use them later with Test-Capture or Test Scheduler.
 
 ![UI no buttons](images/documentation/ui_no_buttons.png)
 
+
+Now you know how to manage mailing lists on Racket-QA. You can go ahead and run a unit test with Test-Capture utility or schedule an overnight test with Test Scheduler and have the results mailed to your dev team (or yourself). You can click the links below to learn how to use Test-Capture and Test Scheduler.
+
+[Test-Capture utility][Test-Capture Document]
+[Test Scheduler utility][Scheduler Document]
 
 
 <!-- Links -->
