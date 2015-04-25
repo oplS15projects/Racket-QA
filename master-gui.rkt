@@ -31,14 +31,6 @@
 
 (define caption-width 150)
 
-#|
-Doing Bottle-Racket, Test-Capture, and Racket-Doc for the time being.
-
-For Racket-Doc:
-open-output-file: cannot open output file
-  path: C:\OPL\Racket-QA\Racket-QA\./../output/WebPage.rkt
-  system error: The system cannot find the path specified.; errno=3
-|#
 
 (define RACKET-PATH-UNFIXED
    (string-append (path->string (find-console-bin-dir))
@@ -109,7 +101,8 @@ open-output-file: cannot open output file
      (parent bottle-racket-h-pane)
      (min-width caption-width)
      (stretchable-width #f)
-     (label "Bottle-Racket  "))
+     (label "Bottle-Racket  ")
+)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Window Display - Button for launching Test-Capture
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
