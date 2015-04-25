@@ -29,8 +29,6 @@
 (define racket-doc-icon (read-bitmap "demo/racket-doc.png"))
 (define mailing-list-icon (read-bitmap "demo/mailing-list.png"))
 (define about-me-icon (read-bitmap "demo/question.png"))
-;; Icon used on for racket-doc button was created by Yereverluvinunclebert
-;; http://rocketdock.com/addon/icons/43519
 ;; Icon for question mark is Simple Question Mark Icon #069497
 
 (define caption-width 150)
