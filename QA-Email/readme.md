@@ -1,123 +1,45 @@
-### DISCLAIMER: This document is intended for the developers of Racket-QA. End users will use main UI to manage mailing lists.
-
 ## Racket QA Email Feature
 
-Racket QA Email component provides functionality to send a text or html file, as well as plain strings to specified email addresses. It is intended to be used by other components of Racket-QA, such as Bottle-Racket and Test Scheduler, for the purpose of emailing a unit test result to a group of developers involved with the test. Since it was not meant to be a standalone component, it does not allow the end users to directly compose an email. Instead, it provides a graphical interface for them to configure mailing lists, as well as a set of APIs Bottle-Racket and Test Scheduler can use to send out an email to the user's mailing list.
+Racket-QA Email component provides functionality to send out a unit test result to a mailing list. It is best used when combined with the test scheduler to notify the result of a scheduled test run-up to a group of developers involved. You can also use it with the Test-Capture utility to send out the result of a manual test run-up. It does not provide an option for you to directly compose an email of your own. Instead, you can create mailing lists using its UI and associate it with the test suite when you run or schedule a unit test.
 
 
-### How to use email sender
+### How to use mailing list UI
 
-There are 3 interface procedures that are provided in `email.rkt` that can be used to send an email. In order to use them, an application needs to include `email.rkt` file in their source code. Here are the signatures and usage examples of the procedures.
+There are 3 different ways you can configure a mailing list.
+1. It can be launched from the Test-Capture utility when you manually execute a unit test and want to send out the test result to a mailing list.
+2. It can be launched from the Test Scheduler utility when you schedule an automated test and wish the test result to be sent out to a mailing list at the time of the scheduled run-up.
+3. It can be launched from the main Racket-QA UI to create, delete, or modify an existing mailing list for a later use in the above two cases.
 
-* send-text
-: sends a plain text string as the body of an email.
-```racket
-(send-text to subject a-string-to-send list-of-recipients)
 
-(send-text "Project Dev Team A"
-           "Test email"
-           "Hi, team. Ignore this email. It's for test."
-           (list "test.racketscience@gmail.com" "test2.racketscience@gmail.com"))
-```
+1. Mailing list UI launched from Test-Capture utility
+![launched_from_test_capture](images/documentation/launched_from_test_capture.png)
 
-* send-text-file
-: sends the entire contents of a text file as the body of an email.
-```racket
-(send-text-file to subject a-text-file-to-send list-of-recipients)
+2. Mailint list UI launched from Test Scheduler utility
+![launched_from_test_scheduler](images/documentation/launched_from_test_scheduler.png)
 
-(send-text-file "Project Dev Team B"
-                "Autotest Result 4/12"
-                "D:\\Data\\Racket QA\\Autotest\\test-result.txt"
-                (list "test.racketscience@gmail.com" "test2.racketscience@gmail.com"))
-```
+3. Mailist list UI launched from the main Racket-QA UI
+![launched_from_main_ui](images/documentation/launched_from_main_ui.png)
 
-* send-html-file
-: sends the entire contents of an html file as the body of an email.
-```racket
-(send-html-file to subject a-html-file-to-send list-of-recipients)
 
-(send-html-file "Project Dev Team C"
-                "Autotest Result 5/2"
-                "D:\\Data\\Racket QA\\Autotest\\test-result.html"
-                (list "test.racketscience@gmail.com" "test2.racketscience@gmail.com"))
-```
+You can use the drop-down box on the bottom left corner to create a new mailing list or delete an existing one.
+![Mailing list actions](images/documentation/ui_add_mailing_list.png)
 
-### Mailing List UI
 
-User interface for managing mailing list is implemented in `email-db-ui.rkt` file. In order to launch the UI, an application needs to 'require' `email-db-ui.rkt` file and call `open-manage-mailing-list-dialog` procedure. Calling this procedure will launch a dialog box shown below.
+Provide a name for the new mailing list.
+![New mailing list name](images/documentation/ui_new_mailing_list_name.png)
 
-![Mailing List UI](images/db-ui.png)
+You have created a new mailing list. Let's add some email addresses to it.
+![New mailing list created](images/documentation/ui_new_mailing_list_created.png)
+![New mailing list entry](images/documentation/ui_new_mailist_list_entry.png)
+![New entry created](images/documentation/ui_new_address_created.png)
 
-The list box on the left side of the dialog contains the names of the existing mailing lists. It will be empty when the user first launches this dialog. The user can create a new mailing list by using the drop down control below the list box and selecting 'Add mailing list...'. The list box on the right side shows all the entries that are in the currently selected mailing list. A mailing list entry consists of a name and an email address. The user can use the 3 buttons (Edit, Add, Delete) on the right side to configure each entry.
+QA-Email does not have its own mail server. In order to send out an email, it relies on your own email account. You can click the "SMTP Config" button to provide an SMTP information for your email account. This is the same information you would normally need on email clients like Thunderbird or Outlook. Here, we have created a gmail account for demo.
+![SMTP Config](images/documentation/ui_smtp_config)
+Note: Enter the SMTP information only on a trusted computer because it will be stored on the machine.
 
-The mailing list UI is designed to completely separate the user experience in managing mailing lists from the internal implementations of how mailing lists are actually stored in the user's storage. The user will never have to "load a mailing list file" or "save the current addresses to a file" in order to manage mailing lists. All are done automatically by the UI when the user creates or deletes a mailing list, or adds or removes an entry in a mailing list.
+If you have opened the mailing list UI through either Test-Capture or Test Scheduler utility, you will see an Ok and Cancel button in the bottom. When you select one of the mailing lists on the left side and click Ok, the Test-Capture or Test Scheduler utility will use the that mailing list to send out the test results.
+![opened_from_scheduler](images/documentation/ui_with_scheduler.png)
 
-`open-manage-mailing-list-dialog-box` has optional argument `command` which allows returning the list of email addresses in the selected mailing list when the dialog is closed. This may be used to ask the user to select a mailing list for the purpose of sending a mass email. Here is the signature and usage example of `open-manage-mailing-list-dialog-box` procedure.
+If you have opened the UI from the main Racket-QA UI, you won't see the Ok and Cancel buttons. You can use this to pre-configure your mailing lists so you can use them later with Test-Capture or Test Scheduler.
 
-```
-Signature:
-
-(open-manage-mailing-list-dialog (command #f))
-```
-
-```racket
-Example 1:
-
-(require "../QA-Email/email.rkt"
-         "../QA-Email/email-db-ui.rkt")
-
-(define recipient-addresses (open-manage-mailing-list-dialog 'return-addresses))
-(send-text-file "Project Dev Team A"
-                "Test Result 4/9"
-                "D:\\Data\\Racket QA\\Autotest\\test-result.txt"
-                recipient-addresses)
-```
-
-Below example script shows how to retrieve certain attributes of a mailing list selected from the UI - name, id, and database file path. Bottle-Racket or Test Scheduler can associate these information with the user's unit test suite and store them together.
-
-When it needs to retrieve the email addresses for a specific mailing list in the future for the purpose of mailing a test result, it can call the `db-id-to-addresses` procedure which will return the email addresses associated with a specific mailing list id.
-
-Note that procedures to retrieve email addresses by other attributes of a mailing list are not implemented because ID is the only attribute that is guaranteed to be unique per each mailing list. For example, the user can create multiple mailing list with the same name, so it is not a good practice
-to identify mailing lists by their names. File path is not the best choice either because file names or paths may change as internal implementation of the email database changes. The ID is the only thing guaranteed to be unique and permanent for a specific mailing list, and therefore, should be used to identify each mailing list.
-```racket
-Example 2:
-
-#lang racket
-
-(require "../QA-Email/email.rkt"
-         "../QA-Email/email-db.rkt"
-         "../QA-Email/email-db-ui.rkt")
-
-(define mailing-list (open-manage-mailing-list-dialog 'return-db))
-(define mailing-list-id (email-db-id mailing-list))
-(define mailing-list-name (email-db-name mailing-list))
-(define mailing-list-addresses (email-db-addresses mailing-list))
-
-> mailing-list-id
-1
-> mailing-list-name
-"Team Racket Science"
-> mailing-list-addresses
-'("yong_cho@student.uml.edu" "yongjec@gmail.com" "racket.riot@gmail.com")
-
-(define recipients (db-id-to-addresses mailing-list-id))
-
-> recipients
-'("yong_cho@student.uml.edu" "yongjec@gmail.com" "racket.riot@gmail.com")
-
-(send-text-file "Project Dev Team A"
-                "Test Result 4/9"
-                "D:\\Data\\Racket QA\\Autotest\\test-result.txt"
-                recipients)
-
-```
-
-### Implementation
-
-There are 4 files that comprise the QA-Email component.
-* `email.rkt` contains procedures to construct and send an email message using SMTP and SSL libraries.
-* `email-db.rkt` implements procedures to store and retrieve the user's mailing lists from the user's disk storage.
-* `email-db-ui.rkt` implements GUI that allows the users to add or remove a mailing list, as well as manage email addresses for each mailing address.
-* `email-db-entry-ui.rkt` implements GUI that is used to add a new entry to a mailing list.
-
-Among the above files, `email.rkt` and `email-db-ui.rkt` are intended to be 'require'd by other components of the Racket QA application. The other files are to be used only by the email component and their contents are subject to change at any time to improve efficiency and reliability of the email component.
+![UI no buttons](images/documentation/ui_no_buttons.png)
