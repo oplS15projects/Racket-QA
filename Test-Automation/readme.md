@@ -41,7 +41,7 @@ In order to select the files you want the scheduler to execute, you can use the 
 
 
 
-Once you finish filling out the form, you can click either "Schedule and Activate" or "Schedule as Inactive" button. Clicking "Schedule as Inactive" button will save all information you entered but will not actually cause the autotest to run when it comes due. This autotest item will stay in the "Inactive tests" list so you can activate it any time later.
+Once you have finished filling out the form, you can click either "Schedule and Activate" or "Schedule as Inactive" button. Clicking "Schedule as Inactive" button will save all information you entered but will not actually cause the autotest to run when it comes due. This autotest item will stay in the "Inactive tests" list so you can activate it any time later.
 
 ![UI_create](images/documentation/ui_create_activate.png)
 
@@ -53,7 +53,7 @@ You can modify the configuration of the autotest items you have created simply b
 
 
 
-If you want the test results to be emailed, you can check the "Notify?" check box and configure a mailing list by clicking "Select Mailing List..." button. After the execution of each file, an email containing the test result will be sent out to the addresses in the mailing list you have chosen.
+If you want the results to be emailed after the execution of an auto-test, you can check the "Notify?" check box and configure a mailing list by clicking "Select Mailing List..." button. After the execution of each file, an email containing the test result will be sent out to the addresses in the mailing list you have chosen.
 
 ![UI_email](images/documentation/ui_email.png)
 
@@ -125,7 +125,7 @@ Finished Test Suite 'ps1'
 ```
 
 
-Although Bottle-Racket's test suite file format is easy to follow, you may want the scheduler to execute some RackUnit test files that are not formatted for the Bottle-Racket. If the scheduler encounters a source file that it does not recognize as Bottle-Racket test-suite format, it will execute it directly with the "racket" command. This will work same as you would execute the file in the terminal by typing "racket.exe \<yourfile.rkt\>". The result collected this way will be the same as what you would see in the terminal window when you execute the file manually. The result will be saved in "Racket-QA Auto-Test Result" directory created under where the executed source file is located.
+Although Bottle-Racket's test suite file format is easy to follow, you may want the scheduler to execute some RackUnit test files that are not formatted for the Bottle-Racket. If the scheduler encounters a racket source file that it does not recognize as Bottle-Racket test-suite format, it will execute it directly with the "racket" command. This will work same as you would execute the file in terminal by typing "racket.exe \<yourfile.rkt\>". The result collected this way will be the same as what you would see in the terminal window when you execute the file manually. The result will be saved in "Racket-QA Auto-Test Result" directory created under where the executed source file is located.
 
 ![result_file_non_bottleracket](images/documentation/result_file.png)
 
