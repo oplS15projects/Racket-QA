@@ -106,8 +106,8 @@ The script you want to run is `master-gui.rkt`, which is found in the Racket-QA 
 [Bottle-Demo]: https://www.youtube.com/watch?v=Ws2mMMBFns4
 [Scheduler-Demo]: https://www.youtube.com/watch?v=JqngnONV9ks
 [QA-Email-Demo]: https://www.youtube.com/watch?v=jTNaCMzuZeQ
-[Bottle-Readme]: https://github.com/Dossar/Racket-QA/blob/master/Bottle-Racket/README.md
+[Bottle-Readme]: https://github.com/oplS15projects/Racket-QA/blob/master/Bottle-Racket/README.md
 [Scheduler-Readme]: https://github.com/oplS15projects/Racket-QA/blob/master/Test-Automation/readme.md
-[Racket-Doc-Readme]: https://github.com/Dossar/Racket-QA/blob/master/Racket-Doc/README.md
+[Racket-Doc-Readme]: https://github.com/oplS15projects/Racket-QA/blob/master/Racket-Doc/README.md
 [QA-Email-Readme]: https://github.com/oplS15projects/Racket-QA/blob/master/QA-Email/readme.md
 [WebPageRelease]: https://github.com/oplS15projects/Racket-QA/releases/tag/v0.3.0
