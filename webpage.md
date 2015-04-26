@@ -57,12 +57,12 @@ These lines conveniently disable all children elements in a GUI area container. 
 ####James
 File: `PageGenerator.rkt` line 475
 
-This code segment generates Racket code for a web server and static web pages, inserting into them data parsed from the user's *.rkt files.  I like it because although I--like every other cs student--have written text to files, this is the first time I'm writing code which in turn writes code of its own! *(add what OPL concepts it demonstrates)*
+This code segment generates Racket code for a web server and static web pages, inserting into them data parsed from the user's *.rkt files.  I like it because although I--like every other cs student--have written text to files, this is the first time I'm writing code which in turn writes code of its own! Also, this is the first time I have ever done web development.  This code uses abstraction and HOP: I have literaly no idea how the Racket's internal procedures actually link the web pages, but since I am on the higher side of the abstraction barrior, I don't need to.
 ```scheme
-(write-string "\n                     (a ((href, (embed/url codeblock" output)
+(write-string "\n(a ((href, (embed/url codeblock" output)
          (write-string (number->string count) output)
          (write-string "-page))) \"Code\")\n" output)
-         (write-string "                             (br) (br) (br)\n" output)
+         (write-string "(br) (br) (br)\n" output)
          (set! count (+ count 1))
          (procLooper (cdr pLst) (cdr dLst) count)
 ```
