@@ -385,6 +385,7 @@
   (write-string ";               #:listen-ip \"127.0.0.1\"\n" output)
   (write-string ";               ;#:port 8080\n" output)
   (write-string ";               #:servlet-path \"/\")\n" output)
+  (close-output-port output)
 )
 
 ;;-------------------------------------------------------------------------------------------
