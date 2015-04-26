@@ -119,12 +119,12 @@
 
 <p>File: <code>PageGenerator.rkt</code> line 475</p>
 
-<p>This code segment generates Racket code for a web server and static web pages, inserting into them data parsed from the user's <em>.rkt files.  I like it because although I--like every other cs student--have written text to files, this is the first time I'm writing code which in turn writes code of its own! *(add what OPL concepts it demonstrates)</em></p>
+<p>This code segment generates Racket code for a web server and static web pages, inserting into them data parsed from the user's *.rkt files.  I like it because although I--like every other CS student--have written text to files, this is the first time I'm writing code which in turn writes code of its own! Also, this is the first time I have ever done web development.  This code uses abstraction and HOP: I have literally no idea how the Racket's internal procedures actually link the web pages, but since I am on the higher side of the abstraction barrier, I don't need to.</p>
 
-<div class="highlight highlight-scheme"><pre>(write-string <span class="pl-s"><span class="pl-pds">"</span><span class="pl-cce">\n</span>                     (a ((href, (embed/url codeblock<span class="pl-pds">"</span></span> output)
+<div class="highlight highlight-scheme"><pre>(write-string <span class="pl-s"><span class="pl-pds">"</span><span class="pl-cce">\n</span>(a ((href, (embed/url codeblock<span class="pl-pds">"</span></span> output)
          (write-string (<span class="pl-c1">number-&gt;string</span> count) output)
          (write-string <span class="pl-s"><span class="pl-pds">"</span>-page))) <span class="pl-cce">\"</span>Code<span class="pl-cce">\"</span>)<span class="pl-cce">\n</span><span class="pl-pds">"</span></span> output)
-         (write-string <span class="pl-s"><span class="pl-pds">"</span>                             (br) (br) (br)<span class="pl-cce">\n</span><span class="pl-pds">"</span></span> output)
+         (write-string <span class="pl-s"><span class="pl-pds">"</span>(br) (br) (br)<span class="pl-cce">\n</span><span class="pl-pds">"</span></span> output)
          (<span class="pl-k">set!</span> count (<span class="pl-k">+</span> count <span class="pl-c1">1</span>))
          (procLooper (<span class="pl-c1">cdr</span> pLst) (<span class="pl-c1">cdr</span> dLst) count)</pre></div>
 
