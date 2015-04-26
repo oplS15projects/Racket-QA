@@ -43,8 +43,17 @@ is **not ok**.
 
 
 ####**Build & Run**
-Run "MainGui.rkt".  Select a *.rkt source file or directory.  Do NOT select an output destination.  The output will be stored to ~/Racket-QA/Racket-Doc/output/WebPage.rkt.  Run that file with the command ```racket WebPage.rkt``` to view documentation.
-*Note: This program has only been tested in a Linux environment.  It might not work with Windows, because of the different filesystem path conventions.*
+
+**Optional**:
+This package includes a css file if you would like more elegent web pages to
+be generated.  If so, copy and past the directory **httdocs** *(found in Racket-QA/Racket-Doc/ )*
+into one of your output destinations *(see below)*.
+
+**Required**:
+Run "MainGui.rkt".  Select a *.rkt source file or directory.
+Select an output destination.
+The output will be stored to in the location in a file named ```racketDocOutput.rkt```.
+Run this file.
 
 
 
