@@ -23,13 +23,11 @@ Racket-QA is a set of utilities that expand on RackUnit to provide a Regression 
 ![mail-list.png](https://raw.githubusercontent.com/oplS15projects/Racket-QA/master/demo/mail-list.png)
 
 ##Concepts Demonstrated
-Identify the OPL concepts demonstrated in your project. Be brief. A simple list and example is sufficient. 
 * Mailing list and automated test database used an object with local variables and procedures, reinforcing use of classes to keep track of state.
 * Using Higher Order Procedures (HOP) such as zip and map to organize information together into a nicely formatted list structure.
 * Symbolic language processing for determining operating systems to allow for cross-platform compatibility in paths.
 
 ##External Technology and Libraries
-Briefly describe the existing technology you utilized, and how you used it. Provide a link to that technology(ies).
 * [**RackUnit**][RackUnit] is an API that provides a way to create test cases, include them in test suites, and run a procedure on these test suites. The textual interface was used, and it provides detailed information on which test cases failed and the test results when the output is redirected to an output file to parse for analysis.
 * [**Email**][QA-Email] functionality was implemented using [**NET/SMTP**][net/smtp] library. It is used by Bottle-Racket and test scheduler components to email unit test results.
 * [**GUI library**][GUI] was used throughout the project to implement user interfaces. Example usages include [**Bottle-Racket**][Bottle-Racket] and [**Test Scheduler**][Scheduler] UIs.
@@ -57,7 +55,7 @@ These lines conveniently disable all children elements in a GUI area container. 
 ####James
 File: `PageGenerator.rkt` line 475
 
-This code segment generates Racket code for a web server and static web pages, inserting into them data parsed from the user's *.rkt files.  I like it because although I--like every other cs student--have written text to files, this is the first time I'm writing code which in turn writes code of its own! Also, this is the first time I have ever done web development.  This code uses abstraction and HOP: I have literaly no idea how the Racket's internal procedures actually link the web pages, but since I am on the higher side of the abstraction barrior, I don't need to.
+This code segment generates Racket code for a web server and static web pages, inserting into them data parsed from the user's *.rkt files.  I like it because although I--like every other CS student--have written text to files, this is the first time I'm writing code which in turn writes code of its own! Also, this is the first time I have ever done web development.  This code uses abstraction and HOP: I have literally no idea how the Racket's internal procedures actually link the web pages, but since I am on the higher side of the abstraction barrier, I don't need to.
 ```scheme
 (write-string "\n(a ((href, (embed/url codeblock" output)
          (write-string (number->string count) output)
@@ -69,7 +67,8 @@ This code segment generates Racket code for a web server and static web pages, i
 
 #How to Download and Run
 
-Latest release is [**Racket-QA v0.3.0**][WebPageRelease]
+Latest release is [**Racket-QA v0.3.0**][WebPageRelease].
+Repository can be found [**here**][repo].
 
 There are 4 main components to Racket-QA, with a 5th helper component.
 
@@ -96,6 +95,7 @@ The script you want to run is `master-gui.rkt`, which is found in the Racket-QA 
 
 
 <!-- Links -->
+[repo]: https://github.com/oplS15projects/Racket-QA
 [QA-Email]: https://github.com/oplS15projects/Racket-QA/blob/master/QA-Email/readme.md
 [Scheduler]: https://github.com/oplS15projects/Racket-QA/blob/master/Test-Automation/readme.md
 [Bottle-Racket]: https://github.com/oplS15projects/Racket-QA/blob/master/Bottle-Racket/README.md
