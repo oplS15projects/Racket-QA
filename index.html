@@ -32,29 +32,36 @@
     <div id="main_content_wrap" class="outer">
       <section id="main_content" class="inner">
         <h1>
-<a id="racket-qa" class="anchor" href="#racket-qa" aria-hidden="true"><span class="octicon octicon-link"></span></a>Racket QA</h1>
+<a id="racket-qa" class="anchor" href="#racket-qa" aria-hidden="true"><span class="octicon octicon-link"></span></a>Racket-QA</h1>
 
 <h2>
 <a id="authors" class="anchor" href="#authors" aria-hidden="true"><span class="octicon octicon-link"></span></a>Authors</h2>
 
-<p>Roy Van Liew</p>
-
-<p>James Kuczynski</p>
-
-<p>Yong Cho</p>
+<ul>
+<li>Roy Van Liew</li>
+<li>James Kuczynski</li>
+<li>Yong Cho</li>
+</ul>
 
 <h2>
 <a id="overview" class="anchor" href="#overview" aria-hidden="true"><span class="octicon octicon-link"></span></a>Overview</h2>
 
-<p>A brief description of the project is given here.  The description is 1 to 3 sentences long.  Be concise and clear.</p>
+<p>Racket-QA is a set of utilities that expand on RackUnit to provide a Regression Harness that QA Engineers could potentially use if coding in Racket. Along with automated testing, Racket-QA also provides a means of standardizing documentation in code so it can also be processed and displayed in web pages.</p>
 
 <h2>
-<a id="screenshot" class="anchor" href="#screenshot" aria-hidden="true"><span class="octicon octicon-link"></span></a>Screenshot</h2>
+<a id="screenshots" class="anchor" href="#screenshots" aria-hidden="true"><span class="octicon octicon-link"></span></a>Screenshots</h2>
 
-<p>(insert a screenshot here. You may opt to get rid of the title for it. You need at least one screenshot. Make it actually appear here, don't just add a link.)</p>
+<p><img src="https://raw.githubusercontent.com/oplS15projects/Racket-QA/master/demo/master-gui-page.png" alt="master-gui-page.png"></p>
 
-<p>Here's a demonstration of how to display an image that's uploaded to this repo:
-<img src="withdraw.png" alt="screenshot showing env diagram"></p>
+<p><img src="https://raw.githubusercontent.com/oplS15projects/Racket-QA/master/demo/bottle-racket-gui.png" alt="bottle-racket-gui.png"></p>
+
+<p><img src="https://raw.githubusercontent.com/oplS15projects/Racket-QA/master/demo/test-capture-gui.png" alt="test-capture-gui.png"></p>
+
+<p><img src="https://raw.githubusercontent.com/oplS15projects/Racket-QA/master/demo/scheduler-gui.png" alt="scheduler-gui.png"></p>
+
+<p><img src="https://raw.githubusercontent.com/oplS15projects/Racket-QA/master/demo/racket-doc-gui.png" alt="racket-doc-gui.png"></p>
+
+<p><img src="https://raw.githubusercontent.com/oplS15projects/Racket-QA/master/demo/mail-list.png" alt="mail-list.png"></p>
 
 <h2>
 <a id="concepts-demonstrated" class="anchor" href="#concepts-demonstrated" aria-hidden="true"><span class="octicon octicon-link"></span></a>Concepts Demonstrated</h2>
@@ -62,12 +69,9 @@
 <p>Identify the OPL concepts demonstrated in your project. Be brief. A simple list and example is sufficient. </p>
 
 <ul>
-<li>
-<strong>Data abstraction</strong> is used to provide access to the elements of the RSS feed.</li>
-<li>The objects in the OpenGL world are represented with <strong>recursive data structures.</strong>
-</li>
-<li>
-<strong>Symbolic language processing techniques</strong> are used in the parser.</li>
+<li>Mailing list and automated test database used an object with local variables and procedures, reinforcing use of classes to keep track of state.</li>
+<li>Using Higher Order Procedures (HOP) such as zip and map to organize information together into a nicely formatted list structure.</li>
+<li>Symbolic language processing for determining operating systems to allow for cross-platform compatibility in paths.</li>
 </ul>
 
 <h2>
@@ -75,68 +79,111 @@
 
 <p>Briefly describe the existing technology you utilized, and how you used it. Provide a link to that technology(ies).</p>
 
+<ul>
+<li>
+<a href="http://docs.racket-lang.org/rackunit/index.html"><strong>RackUnit</strong></a> is an API that provides a way to create test cases, include them in test suites, and run a procedure on these test suites. The textual interface was used, and it provides detailed information on which test cases failed and the test results when the output is redirected to an output file to parse for analysis.</li>
+<li>
+<a href="https://github.com/oplS15projects/Racket-QA/blob/master/QA-Email/readme.md"><strong>Email</strong></a> functionality was implemented using <a href="http://docs.racket-lang.org/net/smtp.html"><strong>NET/SMTP</strong></a> library. It is used by Bottle-Racket and test scheduler components to email unit test results.</li>
+<li>
+<a href="http://docs.racket-lang.org/gui/"><strong>GUI library</strong></a> was used throughout the project to implement user interfaces. Example usages include <a href="https://github.com/oplS15projects/Racket-QA/blob/master/Bottle-Racket/README.md"><strong>Bottle-Racket</strong></a> and <a href="https://github.com/oplS15projects/Racket-QA/blob/master/Test-Automation/readme.md"><strong>Test Scheduler</strong></a> UIs.</li>
+</ul>
+
 <h2>
 <a id="favorite-lines-of-code" class="anchor" href="#favorite-lines-of-code" aria-hidden="true"><span class="octicon octicon-link"></span></a>Favorite Lines of Code</h2>
 
 <h4>
-<a id="mark-a-team-member" class="anchor" href="#mark-a-team-member" aria-hidden="true"><span class="octicon octicon-link"></span></a>Mark (a team member)</h4>
+<a id="roy" class="anchor" href="#roy" aria-hidden="true"><span class="octicon octicon-link"></span></a>Roy</h4>
 
-<p>Each team member should identify a favorite line of code, expression, or procedure written by them, and explain what it does. Why is it your favorite? What OPL philosophy does it embody?
-Remember code looks something like this:</p>
+<p>File: <code>bn-to-racket.rkt</code> line 266</p>
 
-<div class="highlight highlight-scheme"><pre>(<span class="pl-c1">map</span> (<span class="pl-k">lambda</span> (<span class="pl-v">x</span>) (foldr compose functions)) data)</pre></div>
+<p>This procedure is an example of not only using HOP, but also abstracting the procedures called within such that the person doesn't have to know how any of the other procedures are implemented to see what this procedure is doing. You call <code>get-all-test-information</code> and it retrieves all the important test case information needed to generate a test suite file, and the implementations can be changed if the user is trying to convert a different kind of test file (in our case, the Bottlenose files).</p>
+
+<div class="highlight highlight-scheme"><pre>(<span class="pl-k">define</span> (<span class="pl-en">get-all-test-information</span><span class="pl-smi"> all-lines</span>)
+  (zip (get-all-test-inputs all-lines)
+       (get-all-expected-values all-lines)
+       (get-all-test-names all-lines)))</pre></div>
 
 <h4>
-<a id="lillian-another-team-member" class="anchor" href="#lillian-another-team-member" aria-hidden="true"><span class="octicon octicon-link"></span></a>Lillian (another team member)</h4>
+<a id="yong" class="anchor" href="#yong" aria-hidden="true"><span class="octicon octicon-link"></span></a>Yong</h4>
 
-<p>This expression reads in a regular expression and elegantly matches it against a pre-existing hashmap....</p>
+<p>File: <code>scheduler_ui.rkt</code> line 1038, 1067</p>
 
-<div class="highlight highlight-scheme"><pre>(<span class="pl-k">let*</span> ((expr (convert-to-regexp (read-line my-in-port)))
-             (matches (flatten
-                       (hash-map *words*
-                                 (<span class="pl-k">lambda</span> (<span class="pl-v">key value</span>)
-                                   (<span class="pl-k">if</span> (regexp-match expr key) key <span class="pl-c1">'()</span>))))))
-  matches)</pre></div>
+<p>These lines conveniently disable all children elements in a GUI area container. I used it in the test scheduler UI where a group of the UI elements becomes irrelevant when user makes certain selections.</p>
 
-<h2>
-<a id="additional-remarks" class="anchor" href="#additional-remarks" aria-hidden="true"><span class="octicon octicon-link"></span></a>Additional Remarks</h2>
+<div class="highlight highlight-scheme"><pre>(<span class="pl-k">define</span> (<span class="pl-en">disable-all-children</span><span class="pl-smi"> area-container</span>)
+  (<span class="pl-c1">for-each</span> send-disable (send area-container get-children)))
+(<span class="pl-k">define</span> (<span class="pl-en">send-disable</span><span class="pl-smi"> control</span>) (send control enable <span class="pl-c1">#f</span>))</pre></div>
 
-<p>Anything else you want to say in your report. Can rename or remove this section.</p>
+<h4>
+<a id="james" class="anchor" href="#james" aria-hidden="true"><span class="octicon octicon-link"></span></a>James</h4>
+
+<p>File: <code>PageGenerator.rkt</code> line 475</p>
+
+<p>This code segment generates Racket code for a web server and static web pages, inserting into them data parsed from the user's <em>.rkt files.  I like it because although I--like every other cs student--have written text to files, this is the first time I'm writing code which in turn writes code of its own! *(add what OPL concepts it demonstrates)</em></p>
+
+<div class="highlight highlight-scheme"><pre>(write-string <span class="pl-s"><span class="pl-pds">"</span><span class="pl-cce">\n</span>                     (a ((href, (embed/url codeblock<span class="pl-pds">"</span></span> output)
+         (write-string (<span class="pl-c1">number-&gt;string</span> count) output)
+         (write-string <span class="pl-s"><span class="pl-pds">"</span>-page))) <span class="pl-cce">\"</span>Code<span class="pl-cce">\"</span>)<span class="pl-cce">\n</span><span class="pl-pds">"</span></span> output)
+         (write-string <span class="pl-s"><span class="pl-pds">"</span>                             (br) (br) (br)<span class="pl-cce">\n</span><span class="pl-pds">"</span></span> output)
+         (<span class="pl-k">set!</span> count (<span class="pl-k">+</span> count <span class="pl-c1">1</span>))
+         (procLooper (<span class="pl-c1">cdr</span> pLst) (<span class="pl-c1">cdr</span> dLst) count)</pre></div>
 
 <h1>
 <a id="how-to-download-and-run" class="anchor" href="#how-to-download-and-run" aria-hidden="true"><span class="octicon octicon-link"></span></a>How to Download and Run</h1>
 
-<p>You may want to link to your latest release for easy downloading by people (such as Mark).</p>
+<p>Latest release is <a href="https://github.com/oplS15projects/Racket-QA/releases/tag/v0.3.0"><strong>Racket-QA v0.3.0</strong></a></p>
 
-<p>Include what file to run, what to do with that file, how to interact with the app when its running, etc. </p>
+<p>There are 4 main components to Racket-QA, with a 5th helper component.</p>
 
-<h3>
-<a id="versions" class="anchor" href="#versions" aria-hidden="true"><span class="octicon octicon-link"></span></a>Versions</h3>
-
-<ul>
-<li><a href="https://github.com/oplS15projects/Racket-QA/releases/tag/v0.2.0"><strong>Racket-QA v0.2.0</strong></a></li>
-<li><a href="https://github.com/oplS15projects/Racket-QA/releases/tag/v0.1.0"><strong>Racket-QA v0.1.0</strong></a></li>
-</ul>
-
-<h5>
-<a id="project-information" class="anchor" href="#project-information" aria-hidden="true"><span class="octicon octicon-link"></span></a>Project Information</h5>
+<ol>
+<li>Bottle-Racket
 
 <ul>
-<li><a href="https://github.com/Dossar/FP4-proposal" target="_blank"><strong>Racket QA Project Proposal</strong></a></li>
-<li><a href="https://docs.google.com/spreadsheets/d/1FT8ZNomihkExBPH3syUVGtOUYCphharifb_k9nDoNv0/edit#gid=0" target="_blank"><strong>Project Calendar</strong></a></li>
-<li><a href="https://docs.google.com/presentation/d/1Ff5LjW92cEDqhPJGla6IjBosKEh1DuKNqqaBsNtIqRg/edit#slide=id.p" target="_blank"><strong>Presentation Slides</strong></a></li>
-<li><a href="https://www.youtube.com/watch?v=gEtNu75CSl4" target="_blank"><strong>Bottle-Racket Demo Video v0.2.0</strong></a></li>
+<li>This utility is used to convert Bottlenose test fiels into Racket test suite files.</li>
 </ul>
-
-<h5>
-<a id="documentation" class="anchor" href="#documentation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Documentation</h5>
+</li>
+<li>Test-Capture
 
 <ul>
-<li><a href="https://github.com/oplS15projects/Racket-QA/blob/master/QA-Email/readme.md"><strong>Racket QA Email</strong></a></li>
-<li><a href="https://github.com/oplS15projects/Racket-QA/blob/master/Racket-Doc/README.md"><strong>Racket-Doc</strong></a></li>
-<li><a href="https://github.com/oplS15projects/Racket-QA/blob/master/Bottle-Racket/README.md"><strong>Bottle-Racket and Test-Capture</strong></a></li>
-<li><a href="https://github.com/oplS15projects/Racket-QA/blob/master/Test-Automation/readme.md"><strong>Test Scheduler</strong></a></li>
+<li>This utility can run a specified test suite, with or without sending an email of the test results to a specified emailing list.</li>
 </ul>
+</li>
+<li>Test Scheduler
+
+<ul>
+<li>This utility can run test suites at specified time intervals. It also has the option of sending the results of each timed run to a mailing list.</li>
+</ul>
+</li>
+<li>Racket-Doc
+
+<ul>
+<li>This utility extracts attributes and documentation form source *.rkt fiels and embeds them in generated web pages.</li>
+</ul>
+</li>
+<li>Manage Mailing List
+
+<ul>
+<li>Configure email database for recipients of test results.</li>
+</ul>
+</li>
+</ol>
+
+<p>The script you want to run is <code>master-gui.rkt</code>, which is found in the Racket-QA parent directory.</p>
+
+<ol>
+<li>When you run <code>master-gui.rkt</code> you will be presented with a GUI that has 6 buttons.
+
+<ul>
+<li>The top-left button is <code>Bottle-Racket</code>. See the <a href="https://www.youtube.com/watch?v=Ws2mMMBFns4"><strong>Bottle-Racket Demo Video</strong></a> and the <a href="https://github.com/Dossar/Racket-QA/blob/master/Bottle-Racket/README.md"><strong>Bottle-Racket README</strong></a>.</li>
+<li>The top-right button is <code>Test-Capture</code>. See the <a href="https://www.youtube.com/watch?v=Ws2mMMBFns4"><strong>Test-Capture Demo Video</strong></a> and the <a href="https://github.com/Dossar/Racket-QA/blob/master/Bottle-Racket/README.md"><strong>Test-Capture README</strong></a>.</li>
+<li>The middle-left button is <code>Test-Scheduler</code>. See <a href="https://www.youtube.com/watch?v=JqngnONV9ks"><strong>Scheduler Demo Video</strong></a> and the <a href="https://github.com/Dossar/Racket-QA/blob/master/Test-Automation/readme.md"><strong>Scheduler README</strong></a>.</li>
+<li>The middle-right button is <code>Racket-Doc</code>. See the <a href="https://github.com/Dossar/Racket-QA/blob/master/Racket-Doc/README.md"><strong>Racket-Doc README</strong></a>.</li>
+<li>The bottom-left button is <code>QA-Email</code>, labeled as <code>Manage Mailing List</code>. See the <a href="https://www.youtube.com/watch?v=jTNaCMzuZeQ"><strong>QA-Email Demo Video</strong></a> and the <a href="https://github.com/Dossar/Racket-QA/blob/master/QA-Email/readme.md"><strong>QA-Email README</strong></a>
+</li>
+<li>The bottom-right button is <code>About-Me</code>, which opens up a web page giving a brief description of each Racket-QA component and lists contact information for the development team.</li>
+</ul>
+</li>
+</ol>
 
 
       </section>
