@@ -67,10 +67,9 @@ This code segment generates Racket code for a web server and static web pages, i
          (procLooper (cdr pLst) (cdr dLst) count)
 ```
 
-##Additional Remarks
-Anything else you want to say in your report. Can rename or remove this section.
-
 #How to Download and Run
+
+Latest release is [**Racket-QA v0.3.0**][WebPageRelease]
 
 There are 4 main components to Racket-QA, with a 5th helper component.
 
@@ -95,8 +94,6 @@ The script you want to run is `master-gui.rkt`, which is found in the Racket-QA 
   * The bottom-left button is `QA-Email`, labeled as `Manage Mailing List`. See the [**QA-Email Demo Video**][QA-Email-Demo] and the [**QA-Email README**][QA-Email-Readme]
   * The bottom-right button is `About-Me`, which opens up a web page giving a brief description of each Racket-QA component and lists contact information for the development team.
 
-Latest release link to come. 
-
 
 <!-- Links -->
 [QA-Email]: https://github.com/oplS15projects/Racket-QA/blob/master/QA-Email/readme.md
@@ -113,3 +110,4 @@ Latest release link to come.
 [Scheduler-Readme]: https://github.com/Dossar/Racket-QA/blob/master/Test-Automation/readme.md
 [Racket-Doc-Readme]: https://github.com/Dossar/Racket-QA/blob/master/Racket-Doc/README.md
 [QA-Email-Readme]: https://github.com/Dossar/Racket-QA/blob/master/QA-Email/readme.md
+[WebPageRelease]: https://github.com/oplS15projects/Racket-QA/releases/tag/v0.3.0
