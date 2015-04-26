@@ -56,4 +56,4 @@ The output will be stored to in the location in a file named ```racketDocOutput.
 Run this file.
 
 
-
+*Warning: This application is intended primarily for a IOSX/Linux operating system.  It does work with Windows, but you **must** re-start the entire application after converting a file/project if you wish to convert another file/project (i.e. in Windows you cannot run Racket-Doc multiple times without terminating the application in between runs).*
