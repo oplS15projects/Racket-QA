@@ -13,6 +13,7 @@
 
 (require racket/gui)
 
+(require "../../Common/user-settings-directory.rkt")
 (require "DirSearcher.rkt")
 (require "ElementOrganizer.rkt")
 (require "Parser.rkt")
@@ -51,21 +52,18 @@
            (send inputTextField set-value (path->string dirpath))
           )))
 
+;;select output directory
+(define outputDir "")
+
 (define (selectOutCallback button event)
   (display "\n\"Select (out)\" button pressed\n")
-    (cond ( (= (send fileOrDirRBtn get-selection) 0)
-            (display "selecting file")
-            (define filepath (get-file))
-            (if (equal? (path->string filepath) #f)
-                (display "Invalid path selected")
-                (send outputTextField set-value (path->string filepath))
-            )
-          )
-          (else
-           (display "selecting directory")
-           (define dirpath (get-directory))
-           (send outputTextField set-value (path->string dirpath))
-          )))
+  (display "selecting directory")
+  (define dirpath (get-directory))
+  (set! outputDir (cleanse-path-string (string-append (path->string dirpath) "/racketDocOutput.rkt")))
+  (display "- - -\n")
+  (display outputDir)
+  (display "- - -\n")
+  (send outputTextField set-value (path->string dirpath)))
 
 
 (define (okBtnCallback button event)
@@ -78,8 +76,12 @@
             ;(display "\nHERE!\n")
             ;(display (car (cdr (cdr (cdr (cdr (cdr (cdr aFileStruct))))))))
             ;(display "\n\n")
-            (generationMaster (list aFileStruct) ;;list of file structures (i.e. "objects")
-                              (list (car aFileStruct)) ;;list of file names
+            ;(display "\nDang-didde-dang-dang-dang!\n")
+            ;(display (list (car aFileStruct)))
+            ;(display "\nDang-didde-dang-dang-dang!\n")
+            (generationMaster outputDir
+                              (list aFileStruct) ;;list of file structures (i.e. "objects")
+                              (cons "PLACE_HOLDER" (list (car aFileStruct))) ;;list of file names
                               (car (cdr (cdr aFileStruct))) ;;list of "requires"
                               (car (cdr (cdr (cdr aFileStruct)))) ;;list of "includes"
                               (car (cdr (cdr (cdr (cdr aFileStruct))))) ;;list of "provides"
@@ -111,8 +113,9 @@
                       (display "\n---------------------------\n")
                       (display (getRequiresLooper finalList '()) )
                       (display "\n---------------------------\n")
-                      (generationMaster finalList
-                                        (getFileNameLooper finalList '())
+                      (generationMaster outputDir
+                                        finalList
+                                        (cons "PLACE_HOLDER" (getFileNameLooper finalList '()))
                                         (catWithoutDuplLst (getRequiresLooper finalList '()) )
                                         (catWithoutDuplLst (getIncludesLooper finalList '()) )
                                         (getProvidesLooper finalList '())

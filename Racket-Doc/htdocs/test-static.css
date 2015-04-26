@@ -1,6 +1,6 @@
-body {
-  margin-left: 10%;
-  margin-right: 10%;
+body
+{
+  background-color: rgb(204, 229, 255)
 }
 p { font-family: sans-serif }
 h1 { color: green }

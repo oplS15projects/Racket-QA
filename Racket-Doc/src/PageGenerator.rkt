@@ -15,51 +15,7 @@
 (require racket/date)
 
 (provide generationMaster)
-;;begin test---------------
 
-
-#|
-(define file1 (list "file_name_1"
-                    #t ;;has corrisponding documentation block?
-                    '("req_1" "req_3" "req_5" "req_7")
-                    '("incl_1" "incl_3" "incl_5" "incl_7")
-                    '("prov_1" "prov_3" "prov_5" "prov_7")
-                    '("proc_1" "proc_3" "proc_5" "proc_7")
-                    '("procBody_1" "procBody_3" "procBody_5" "procBody_7")
-                    '("blockComment_1" "blockComment_3" "blockComment_5" "procBody_7"))
-)
-
-(define file2 (list "file_name_2"
-                    #t ;;has corrisponding documentation block?
-                    '("req_2" "req_4" "req_6" "req_8")
-                    '("incl_2" "incl_4" "incl_6" "incl_8")
-                    '("prov_2" "prov_4" "prov_6" "prov_8")
-                    '("proc_2" "proc_4" "proc_6" "proc_8")
-                    '("procBody_2" "procBody_4" "procBody_6" "procBody_8")
-                    '("blockComment_2" "blockComment_4" "blockComment_6" "procBody_8")))
-  
-  
-(define file3 (list "file_name_3"
-                    #t ;;has corrisponding documentation block?
-                    '("req_11" "req_33" "req_55" "req_77")
-                    '("incl_11" "incl_33" "incl_55" "incl_77")
-                    '("prov_11" "prov_33" "prov_55" "prov_77")
-                    '("proc_11" "proc_33" "proc_55" "proc_77")
-                    '("procBody_11" "procBody_33" "procBody_55" "procBody_77")
-                    '("blockComment_11" "blockComment_33" "blockComment_55" "procBody_77")))
-  
-
-(define file4 (list "file_name_4" 
-                    #t ;;has corrisponding documentation block?
-                    '("req_22" "req_44" "req_66" "req_88")
-                    '("incl_22" "incl_44" "incl_66" "incl_88")
-                    '("prov_22" "prov_44" "prov_66" "prov_88")
-                    '("proc_22" "proc_44" "proc_66" "proc_88")
-                    '("procBody_22" "procBody_44" "procBody_66" "procBody_88")
-                    '("blockComment_22" "blockComment_44" "blockComment_66" "procBody_88")))
-|#
-
-;;end test-----------------
 (define currentDateStr "")
 
 (let ((date (seconds->date (current-seconds))))
@@ -75,20 +31,27 @@
   )
 )
 
-;;(define output (open-output-file "./../output/WebPage.rkt"
-(define output (open-output-file "./Racket-Doc/output/WebPage.rkt"
+(define outputDir "./Racket-Doc/output/WebPage2.rkt")
+
+;(define output (open-output-file outputDir
+;                                 #:mode 'text
+;                                 #:exists 'replace))
+
+(define output "")
+
+(define (generationMaster myOutputDir fileList fileNameList reqList inclList provList procList procBodyList docList)
+  ;(set! outputDir myOutputDir)
+  (set! output (open-output-file myOutputDir
                                  #:mode 'text
                                  #:exists 'replace))
-
-(define (generationMaster fileList fileNameList reqList inclList provList procList procBodyList docList)
   (display "fine (1)\n")
   (generateFileHeader)
   (display "fine (2)\n")
   (generateMainPage)
   (display "fine (3)\n")
-  (generatefileNameListPage fileNameList)
+  (generatefileNameListPage (cdr fileNameList))
   (display "fine (4)\n")
-  (generateSpecifiedFile fileList (cons "PLACE_HOLDER" fileNameList))
+  (generateSpecifiedFile fileList  fileNameList)
   (display "fine (5)\n")
   (generateRequiresPage reqList)
   (display "fine (6)\n")
@@ -124,7 +87,7 @@
 
 ;generate static main page
 (define (generateMainPage)
-  (write-string "#lang racket\n\n" output)
+  (write-string "#lang web-server/insta\n\n" output)
   (write-string "(require web-server/servlet web-server/servlet-env)\n" output)
   (write-string "(require racket/gui)\n" output)
   (write-string "\n" output)
@@ -143,7 +106,10 @@
   (write-string "(define (main-page request)\n" output)
   (write-string "  (local ((define (response-generator embed/url)\n" output)
   (write-string "            (response/xexpr\n" output)
-  (write-string "             `(html (head (title \"Racket-Doc\"))\n" output)
+  (write-string "             `(html (head (title \"Racket-Doc\")" output)
+  (write-string "                          (link ((rel \"stylesheet\")" output)
+  (write-string "                                 (href \"/test-static.css\")" output)
+  (write-string "                                 (type \"text/css\"))))" output)
   (write-string "                    (body (h1 (center \"Racket-Doc Home\"))\n" output)
   (write-string "                          (center\n" output)
   (write-string "                          (a ((href, (embed/url fileNameList-page))) \"File List\")\n" output)
@@ -202,7 +168,7 @@
 (define (generateSpecifiedFile fileList fileNameList)
   (define (fileLooper fileList fileNameList)
     (cond ( (null? fileList)
-            (display "")
+            (set! isFirstItFlag #t)
           )
           (else
            (write-string ";;page for a specified file\n" output);;begin---------------
@@ -218,6 +184,7 @@
            (cond ( (equal? isFirstItFlag #t)
                    ;(display isFirstItFlag)
                    (set! isFirstItFlag #f)
+                   (display "\n\nFIRST RUN !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n\n")
                  )
                  (else
                   ;(display isFirstItFlag)
@@ -360,6 +327,7 @@
 
 ;;generate procedure body pages (each will be named "codeblock[number]-page")
 (define (generateProcBodyPages procBodyList)
+  (set! globalCounter 0)
   ;(display "******This is the list of proc bodies*******\n")
   ;(display procBodyList)
   ;(display "\n\n\n")
@@ -410,17 +378,13 @@
   (write-string "                     (p \"help page...\")\n" output)
   (write-string "                     )))))\n" output)
   (write-string "    (send/suspend/dispatch response-generator)))\n" output)
-  (write-string "\n" output)
-  (write-string "\n" output)
-  (write-string "\n" output)
-  (write-string "\n" output)
-  (write-string "\n" output)
-  (write-string "\n" output)
-  (write-string "(serve/servlet start\n" output)
-  (write-string "               #:listen-ip \"127.0.0.1\"\n" output)
-  (write-string "               ;#:port 8080\n" output)
-  (write-string "               #:servlet-path \"/\")\n" output)
-  ;(close-output-port output) ; this breaks mutliple runs
+  (write-string "\n\n\n\n\n" output)
+  (write-string "(static-files-path \"../htdocs\")" output)
+  (write-string "\n\n" output)
+  (write-string ";(serve/servlet start\n" output)
+  (write-string ";               #:listen-ip \"127.0.0.1\"\n" output)
+  (write-string ";               ;#:port 8080\n" output)
+  (write-string ";               #:servlet-path \"/\")\n" output)
 )
 
 ;;-------------------------------------------------------------------------------------------
