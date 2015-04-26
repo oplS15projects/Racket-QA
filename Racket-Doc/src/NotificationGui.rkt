@@ -28,7 +28,7 @@
 
 ;create textfieldthingy
 (define procMessage (new message% [parent processingPanel]
-                            [label "(program is in testing mode)\nFinished process.  Exit out of the app.  Then\ngo to Racket-Doc/output/OutputDoc.rkt to view results"]))
+                            [label "(program is in testing mode)\nFinished process."]))
 
 ;create button
 
