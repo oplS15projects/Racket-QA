@@ -49,8 +49,7 @@
 (define (fileNameList-page request)
   (local ((define (response-generator embed/url)
             (response/xexpr
-             `(html (head (title "Racket-Doc"))
-               (body (h1 "*.rkt Files")
+             `(html (head (title "Racket-Doc")                          (link ((rel "stylesheet")                                 (href "/test-static.css")                                 (type "text/css"))))               (body (h1 "*.rkt Files")
                      (center (a ((href ,(embed/url main-page))) "Home"))
                      (br)(br)
                      (p (b "Files:"))
@@ -64,8 +63,7 @@
 (define (Test.rkt-page request)
   (local ((define (response-generator embed/url)
             (response/xexpr
-             `(html (head (title "Racket-Doc"))
-               (body (h1 "*.rkt Files")
+             `(html (head (title "Racket-Doc")                          (link ((rel "stylesheet")                                 (href "/test-static.css")                                 (type "text/css"))))               (body (h1 "*.rkt Files")
                      (center
                       (a ((href ,(embed/url main-page))) "Home")
                       (html nbsp nbsp nbsp nbsp)
@@ -94,8 +92,7 @@
 (define (required-page request)
   (local ((define (response-generator embed/url)
             (response/xexpr
-             `(html (head (title "Racket-Doc"))
-               (body (h1 "Dependencies")
+             `(html (head (title "Racket-Doc")                          (link ((rel "stylesheet")                                 (href "/test-static.css")                                 (type "text/css"))))               (body (h1 "Dependencies")
                      (center (a ((href ,(embed/url main-page))) "Home"))
                      (br)(br)
                      (b "Required")
@@ -108,8 +105,7 @@
 (define (provided-page request)
   (local ((define (response-generator embed/url)
             (response/xexpr
-             `(html (head (title "Racket-Doc"))
-               (body (h1 "Provided")
+             `(html (head (title "Racket-Doc")                          (link ((rel "stylesheet")                                 (href "/test-static.css")                                 (type "text/css"))))               (body (h1 "Provided")
                      (center (a ((href ,(embed/url main-page))) "Home"))
                      (b "Provided")
                      (fieldset (code (list "(provide square)" (br) )))
@@ -121,8 +117,7 @@
 (define (procAndData-page request)
   (local ((define (response-generator embed/url)
             (response/xexpr
-             `(html (head (title "Racket-Doc"))
-               (body (h1 "Procedures & Data")
+             `(html (head (title "Racket-Doc")                          (link ((rel "stylesheet")                                 (href "/test-static.css")                                 (type "text/css"))))               (body (h1 "Procedures & Data")
                      (center (a ((href ,(embed/url main-page))) "Home"))
                      ;;add procs and data
                      (br) (br)
@@ -166,8 +161,7 @@
 (define (codeblock0-page request)
   (local ((define (response-generator embed/url)
             (response/xexpr
-             `(html (head (title "Racket-Doc"))
-               (body (h1 "Procedure")
+             `(html (head (title "Racket-Doc")                          (link ((rel "stylesheet")                                 (href "/test-static.css")                                 (type "text/css"))))               (body (h1 "Procedure")
                      (center (a ((href ,(embed/url fileNameList-page))) "<--Back"))
                      (br)(br)
                      (p "  (* num num)
@@ -181,8 +175,7 @@
 (define (codeblock1-page request)
   (local ((define (response-generator embed/url)
             (response/xexpr
-             `(html (head (title "Racket-Doc"))
-               (body (h1 "Procedure")
+             `(html (head (title "Racket-Doc")                          (link ((rel "stylesheet")                                 (href "/test-static.css")                                 (type "text/css"))))               (body (h1 "Procedure")
                      (center (a ((href ,(embed/url fileNameList-page))) "<--Back"))
                      (br)(br)
                      (p "  (display \"this is a string to be printed\")
@@ -195,8 +188,7 @@
 (define (codeblock2-page request)
   (local ((define (response-generator embed/url)
             (response/xexpr
-             `(html (head (title "Racket-Doc"))
-               (body (h1 "Procedure")
+             `(html (head (title "Racket-Doc")                          (link ((rel "stylesheet")                                 (href "/test-static.css")                                 (type "text/css"))))               (body (h1 "Procedure")
                      (center (a ((href ,(embed/url fileNameList-page))) "<--Back"))
                      (br)(br)
                      (p "     5)")
@@ -208,11 +200,10 @@
 (define (help-page request)
   (local ((define (response-generator embed/url)
             (response/xexpr
-             `(html (head (title "Racket-Doc"))
-               (body (h1 "Help")
+             `(html (head (title "Racket-Doc")                          (link ((rel "stylesheet")                                 (href "/test-static.css")                                 (type "text/css"))))               (body (h1 "Help")
                      (center (a ((href ,(embed/url main-page))) "Home"))
                      (br)(br)
-                     (p "help page...")
+                     (p "For more information, run the project and select the About Me option")
                      )))))
     (send/suspend/dispatch response-generator)))
 
