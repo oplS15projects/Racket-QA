@@ -96,7 +96,7 @@
               ( (and (equal? (procBody? thisLine) #t)
                      (equal? prevLine 'procBody)
                 )
-                (each-line file fileNm requireLst includeLst provideLst procHeaderLst (cons (string-append (car procBodyLst) "\n" (string-replace thisLine "\"" "\\\"")) (cdr procBodyLst)) procDocLst)
+                (each-line file fileNm requireLst includeLst provideLst procHeaderLst (cons (string-append (car procBodyLst) "|" (string-replace thisLine "\"" "\\\"")) (cdr procBodyLst)) procDocLst)
               )
               (else
                (set! prevLine 'null) ;; inside procedure

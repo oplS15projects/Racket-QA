@@ -17,7 +17,11 @@
 (define (square num)
   (* num num)
   (display "finished doing math")
-  (display "reached end of procedure squre"))
+  (display "reached end of procedure squre")
+  (dispayy "testing")
+  (display "longish")
+  (display "procedure")
+  (display "body"))
 
 
 #||
