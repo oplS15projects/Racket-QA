@@ -5,7 +5,7 @@
 ;; directory containing this file, and run			;;
 ;; "racket [file_name].rkt".					;;
 ;;                                                              ;;
-;; Date Generated On: 4/25/2015                                 ;;
+;; Date Generated On: 4/27/2015                                 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
@@ -86,38 +86,6 @@
                      (br) (br) (br)
                      ;;add procs and data
                      (b "Procedures & Data")
-                     (fieldset
-                      (code (list (b "(define (square num)") (br)
-                             (i "#||
- | This function squares a given number.
- | @param num Is the number to be squared.
- |          
- | @return the square of the numbers
- |#") (br))))
-                     (a ((href, (embed/url codeblock0-page))) "Code")
-                             (br) (br) (br)
-                     (fieldset
-                      (code (list (b "(define (addFour num1 num2 num3 num4)") (br)
-                             (i "#||
- | This function adds four numbers together.
- | @param num1 The first number.
- | @param num2 The
- |	       second
- |	       number.
- | @param num3 The third number.
- | @param num4 The fourth number.
- | @return The sum of the numbers.
- |#") (br))))
-                     (a ((href, (embed/url codeblock1-page))) "Code")
-                             (br) (br) (br)
-                     (fieldset
-                      (code (list (b "(define five") (br)
-                             (i "#||
- | Created a variable named five.
- | and gave it a value.
- |#") (br))))
-                     (a ((href, (embed/url codeblock2-page))) "Code")
-                             (br) (br) (br)
                          )))))
     (send/suspend/dispatch response-generator)))
 
@@ -160,34 +128,34 @@
                      (br) (br)
                      (fieldset
                       (code (list (b "(define (square num)") (br)
-                             (i "#||
- | This function squares a given number.
- | @param num Is the number to be squared.
- |          
- | @return the square of the numbers
- |#") (br))))
+                             (i "#
+  This function squares a given number.
+  @param num Is the number to be squared.
+           
+  @return the square of the numbers
+ #") (br))))
                      (a ((href, (embed/url codeblock0-page))) "Code")
                              (br) (br) (br)
                      (fieldset
                       (code (list (b "(define (addFour num1 num2 num3 num4)") (br)
-                             (i "#||
- | This function adds four numbers together.
- | @param num1 The first number.
- | @param num2 The
- |	       second
- |	       number.
- | @param num3 The third number.
- | @param num4 The fourth number.
- | @return The sum of the numbers.
- |#") (br))))
+                             (i "#
+  This function adds four numbers together.
+  @param num1 The first number.
+  @param num2 The
+ 	       second
+ 	       number.
+  @param num3 The third number.
+  @param num4 The fourth number.
+  @return The sum of the numbers.
+ #") (br))))
                      (a ((href, (embed/url codeblock1-page))) "Code")
                              (br) (br) (br)
                      (fieldset
                       (code (list (b "(define five") (br)
-                             (i "#||
- | Created a variable named five.
- | and gave it a value.
- |#") (br))))
+                             (i "#
+  Created a variable named five.
+  and gave it a value.
+ #") (br))))
                      (a ((href, (embed/url codeblock2-page))) "Code")
                              (br) (br) (br)
                      )))))

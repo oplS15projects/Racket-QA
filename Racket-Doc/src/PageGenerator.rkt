@@ -245,10 +245,11 @@
            ;(display "\n\n\n%%%%%%%%%%%%%%%%\n\n")
            ;(display (car (cdr (cdr (cdr (cdr (cdr (cdr (cdr (car fileList))))))))))
            ;(display "\n%%%%%%%%%%%%%%%%\n\n")
-           (procLooper
+           ;;error here--shut of feature
+           #|(procLooper
             (car (cdr (cdr (cdr (cdr (cdr (car fileList)))))))
             (car (cdr (cdr (cdr (cdr (cdr (cdr (cdr (car fileList)))))))))
-            0)
+            0)|#
            (write-string "                         )))))\n" output)  
            (write-string "    (send/suspend/dispatch response-generator)))" output)
            (write-string "\n\n\n" output)
@@ -375,7 +376,7 @@
   (write-string "               (body (h1 \"Help\")\n" output)
   (write-string "                     (center (a ((href ,(embed/url main-page))) \"Home\"))\n" output)
   (write-string "                     (br)(br)\n" output)
-  (write-string "                     (p \"help page...\")\n" output)
+  (write-string "                     (p \"For more information, run the project and select the About Me option\")\n" output)
   (write-string "                     )))))\n" output)
   (write-string "    (send/suspend/dispatch response-generator)))\n" output)
   (write-string "\n\n\n\n\n" output)
