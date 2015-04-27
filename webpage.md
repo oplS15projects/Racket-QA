@@ -67,7 +67,7 @@ This code segment generates Racket code for a web server and static web pages, i
 
 #How to Download and Run
 
-Latest release is [**Racket-QA v0.3.0**][WebPageRelease].
+Latest release is [**Racket-QA v0.4.0**][RacketDocRelease].
 Repository can be found [**here**][repo].
 
 There are 4 main components to Racket-QA, with a 5th helper component.
@@ -110,4 +110,4 @@ The script you want to run is `master-gui.rkt`, which is found in the Racket-QA 
 [Scheduler-Readme]: https://github.com/oplS15projects/Racket-QA/blob/master/Test-Automation/readme.md
 [Racket-Doc-Readme]: https://github.com/oplS15projects/Racket-QA/blob/master/Racket-Doc/README.md
 [QA-Email-Readme]: https://github.com/oplS15projects/Racket-QA/blob/master/QA-Email/readme.md
-[WebPageRelease]: https://github.com/oplS15projects/Racket-QA/releases/tag/v0.3.0
+[RacketDocRelease]: https://github.com/oplS15projects/Racket-QA/releases/tag/v0.4.0

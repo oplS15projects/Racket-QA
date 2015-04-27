@@ -27,6 +27,10 @@
 ;; the Racket executable during system calls.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+#||
+ | Full path to Racket executable. However, this might have
+ | slashes mixed with backslashes.
+ |#
 (define RACKET-PATH-UNFIXED
    (string-append (path->string (find-console-bin-dir))
                   (cond ((eq? (system-type) 'windows) "racket.exe")
@@ -34,6 +38,10 @@
                         ((eq? (system-type) 'macosx) "/racket")
                         (else (error "Platform not supported")))))
 
+#||
+ | This global variable allows the Racket executable path
+ | to be compatible on all Operating systems.
+ |#
 (define RACKET-PATH
    (cond ((eq? (system-type) 'windows) (valid-path-windows RACKET-PATH-UNFIXED))
          ((eq? (system-type) 'unix) (valid-path-linux RACKET-PATH-UNFIXED))

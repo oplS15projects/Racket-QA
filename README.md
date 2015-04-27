@@ -4,6 +4,7 @@
 
 
 ### Versions
+* [**Racket-QA v0.4.0**][RacketDocRelease]
 * [**Racket-QA v0.3.0**][WebPageRelease]
 * [**Racket-QA v0.2.0**][Milestone2]
 * [**Racket-QA v0.1.0**][Milestone1]
@@ -31,6 +32,7 @@
 <!-- Links -->
 [WebPage]: http://opls15projects.github.io/Racket-QA/
 [WebPageRelease]: https://github.com/oplS15projects/Racket-QA/releases/tag/v0.3.0
+[RacketDocRelease]: https://github.com/oplS15projects/Racket-QA/releases/tag/v0.4.0
 [Milestone1]: https://github.com/oplS15projects/Racket-QA/releases/tag/v0.1.0
 [Milestone2]: https://github.com/oplS15projects/Racket-QA/releases/tag/v0.2.0
 [QA-Email Document]: https://github.com/oplS15projects/Racket-QA/blob/master/QA-Email/readme.md
