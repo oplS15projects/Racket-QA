@@ -73,12 +73,6 @@
   ;;each-line will return a list of lists: a list containing the requires, includes, etc.
   (cond ( (= (send fileOrDirRBtn get-selection) 0)
           (let ([aFileStruct (each-line (open-input-file (send inputTextField get-value)) (file-name-from-path (send inputTextField get-value)) '() '() '() '() '() '())])
-            ;(display "\nHERE!\n")
-            ;(display (car (cdr (cdr (cdr (cdr (cdr (cdr aFileStruct))))))))
-            ;(display "\n\n")
-            ;(display "\nDang-didde-dang-dang-dang!\n")
-            ;(display (list (car aFileStruct)))
-            ;(display "\nDang-didde-dang-dang-dang!\n")
             (generationMaster outputDir
                               (list aFileStruct) ;;list of file structures (i.e. "objects")
                               (cons "PLACE_HOLDER" (list (car aFileStruct))) ;;list of file names
@@ -96,20 +90,6 @@
             (define (loopEachLine fileList finalList)
               (cond ( (null? fileList)
                       (display "successfully finished extracting data from files.")
-                      ;;call ElementOrganizer
-                      ;(let ([combinedRequireLst (catWithoutDuplLst
-                      
-                      ;;call generationMaster
-                      ;(display (getFileNameLooper finalList '()))
-                      #|(generationMaster finalList
-                                        (getFileNameLooper finalList '()) ;; this will extract the file names and return them in the empty list provided
-                                        (car (cdr (cdr (car finalList)))) ;; list of "requires"
-                                        (car (cdr (cdr (cdr (car finalList))))) ;; list of "includes"
-                                        (car (cdr (cdr (cdr (cdr (car finalList)))))) ;; list of "provides"
-                                        (car (cdr (cdr (cdr (cdr (cdr (car finalList))))))) ;; list of proc "headers"
-                                        (car (cdr (cdr (cdr (cdr (cdr (cdr (car finalList)))))))) ;; list of code blocks
-                                        (car (cdr (cdr (cdr (cdr (cdr (cdr (cdr (car finalList))))))))) ;; list of proc doc blocks
-                      )|#
                       (display "\n---------------------------\n")
                       (display (getRequiresLooper finalList '()) )
                       (display "\n---------------------------\n")
