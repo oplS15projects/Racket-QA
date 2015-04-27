@@ -17,12 +17,10 @@
 (provide reqs?)
 (provide incls?)
 (provide provs?)
-(provide procs?)
 
 (define reqs? #t)
 (define incls? #t)
 (define provs? #t)
-(define procs? #t)
 
 (define advFrame (new frame%
                    (label "Racket-Doc")
@@ -55,11 +53,6 @@
   (set! provs? (flip-bool provs?))
   (display provs?))
 
-(define (procCbCallback cb event)
-  (display "\"Proc\"cb clicked\n")
-  (set! procs? (flip-bool procs?))
-  (display procs?))
-
 
 (define (okBtnCallback button event)
   (display "\"ok\" button pressed\n")
@@ -70,7 +63,6 @@
   (set! reqs? #t)
   (set! incls? #t)
   (set! provs? #t)
-  (set! procs? #t)
   (send advFrame show #f))
 
 ;;helper to flip a bool true->false or false->true
@@ -94,11 +86,6 @@
                                [parent optionPanel]
                                [value #t]
                                [callback provCbCallback]))
-
-(define procCb (new check-box% [label "Procedures"]
-                               [parent optionPanel]
-                               [value #t]
-                               [callback procCbCallback]))
 
 
 ;create buttons

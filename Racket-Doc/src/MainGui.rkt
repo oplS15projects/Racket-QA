@@ -76,9 +76,9 @@
             (generationMaster outputDir
                               (list aFileStruct) ;;list of file structures (i.e. "objects")
                               (cons "PLACE_HOLDER" (list (car aFileStruct))) ;;list of file names
-                              (car (cdr (cdr aFileStruct))) ;;list of "requires"
-                              (car (cdr (cdr (cdr aFileStruct)))) ;;list of "includes"
-                              (car (cdr (cdr (cdr (cdr aFileStruct))))) ;;list of "provides"
+                              (if (equal? reqs? #t) (car (cdr (cdr aFileStruct))) '() ) ;;list of "requires"
+                              (if (equal? incls? #t) (car (cdr (cdr (cdr aFileStruct)))) '()) ;;list of "includes"
+                              (if (equal? provs? #t) (car (cdr (cdr (cdr (cdr aFileStruct))))) '())  ;;list of "provides"
                               (car (cdr (cdr (cdr (cdr (cdr aFileStruct)))))) ;;list of proc "headers"
                               (car (cdr (cdr (cdr (cdr (cdr (cdr aFileStruct))))))) ;;list of code blocks
                               (car (cdr (cdr (cdr (cdr (cdr (cdr (cdr aFileStruct))))))))) ;; list of proc doc blocks 
@@ -96,9 +96,9 @@
                       (generationMaster outputDir
                                         finalList
                                         (cons "PLACE_HOLDER" (getFileNameLooper finalList '()))
-                                        (catWithoutDuplLst (getRequiresLooper finalList '()) )
-                                        (catWithoutDuplLst (getIncludesLooper finalList '()) )
-                                        (getProvidesLooper finalList '())
+                                        (if (equal? reqs? #t) (catWithoutDuplLst (getRequiresLooper finalList '()) ) '())
+                                        (if (equal? incls? #t) (catWithoutDuplLst (getIncludesLooper finalList '()) ) '())
+                                        (if (equal? provs? #t) (getProvidesLooper finalList '()) '())
                                         (getProcHeadersLooper finalList '())
                                         (getProcBodiesLooper finalList '())
                                         (getProcDocBlocksLooper finalList '())

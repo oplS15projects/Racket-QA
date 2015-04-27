@@ -28,7 +28,7 @@
 
 ;create textfieldthingy
 (define procMessage (new message% [parent processingPanel]
-                            [label "(program is in testing mode)\nFinished process."]))
+                            [label "Finished process!"]))
 
 ;create button
 
