@@ -17,6 +17,8 @@ I've split up this README into four parts:
 
 ###The Structure of a Test Suite File
 
+#### Please keep in mind at the end of the test suite file you need to do a `(provide (all-defined-out))` or you will get unbound identifier errors.
+
 The test suites to run with this application are meant to be minimalistic and easy to follow. Test Suites in this context contain the following:
 * Top: `require` statements for RackUnit, along with the necessary source files with procedure definitions for testing
 * Body: test suite bodies composed of test cases, made with `define-test-suite`
