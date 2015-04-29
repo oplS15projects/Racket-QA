@@ -6,7 +6,7 @@
 
 This portion of Racket-QA deals with two components:
 * `Bottle-Racket` is just a converter. It converts a Bottlenose Perl test file from the OPL course into Racket test cases. This is intended to be used on Problem Sets 1, 2, 3, and 5 which are provided in the testing directory. For our purposes this is all we need for test suites.
-* `Test-Capture` has changed significantly since the first release. It takes a specified test suite file and is able to run the test suites with the option of also sending an email of the test results.
+* `Test-Capture` has changed significantly since the first release. It takes a specified test suite file and is able to run the test suites with the option of also sending an email of the test results. This is a nice, simple tool to check that the specified test suite file was written in the standardized format.
 
 I've split up this README into four parts:
 * The Structure of a Test Suite File
@@ -17,7 +17,7 @@ I've split up this README into four parts:
 
 ###The Structure of a Test Suite File
 
-#### Please keep in mind at the end of the test suite file you need to do a `(provide (all-defined-out))` or you will get unbound identifier errors.
+#### Please keep in mind at the end of the source file used in the test suite file you need to do a `(provide (all-defined-out))` or you will get unbound identifier errors.
 
 The test suites to run with this application are meant to be minimalistic and easy to follow. Test Suites in this context contain the following:
 * Top: `require` statements for RackUnit, along with the necessary source files with procedure definitions for testing
