@@ -57,10 +57,6 @@
                      (p (b "Files:"))
                      (a ((href, (embed/url Test.rkt-page))) "Test.rkt")
                      (br)(br)
-                     (a ((href, (embed/url Test2.rkt-page))) "Test2.rkt")
-                     (br)(br)
-                     (a ((href, (embed/url Test3.rkt-page))) "Test3.rkt")
-                     (br)(br)
                      )))))
     (send/suspend/dispatch response-generator)))
 
@@ -69,11 +65,10 @@
 (define (Test.rkt-page request)
   (local ((define (response-generator embed/url)
             (response/xexpr
-             `(html (head (title "Racket-Doc")                          (link ((rel "stylesheet")                                 (href "/test-static.css")                                 (type "text/css"))))               (body (h1 "*.rkt Files")
+             `(html (head (title "Racket-Doc")                          (link ((rel "stylesheet")                                 (href "/test-static.css")                                 (type "text/css"))))               (body (h1 "Test.rkt")
                      (center
                       (a ((href ,(embed/url main-page))) "Home")
                       (html nbsp nbsp nbsp nbsp)
-                      (a ((href ,(embed/url Test2.rkt-page))) "-->")
                       )
                      (br)(br)
                      (p "Specified File page")
@@ -121,97 +116,6 @@
     (send/suspend/dispatch response-generator)))
 
 
-;;page for a specified file
-(define (Test2.rkt-page request)
-  (local ((define (response-generator embed/url)
-            (response/xexpr
-             `(html (head (title "Racket-Doc")                          (link ((rel "stylesheet")                                 (href "/test-static.css")                                 (type "text/css"))))               (body (h1 "*.rkt Files")
-                     (center
-                      (a ((href ,(embed/url Test.rkt-page))) "<--")
-                      (html nbsp nbsp nbsp nbsp)
-                      (a ((href ,(embed/url main-page))) "Home")
-                      (html nbsp nbsp nbsp nbsp)
-                      (a ((href ,(embed/url Test3.rkt-page))) "-->")
-                      )
-                     (br)(br)
-                     (p "Specified File page")
-                     ;add requires
-                     (b "Required")
-                     (fieldset (code (list "#lang racket" (br) )))
-                     (br) (br) (br)
-                     ;add included
-                     (b "Included")
-                     (fieldset (code (list "(include \"fileIO.rkt\")" (br) "(include racket/filesystem)" (br) )))
-                     (br) (br) (br)
-                     ;add provided
-                     (b "Provided")
-                     (fieldset (code (list )))
-                     (br) (br) (br)
-                     ;;add procs and data
-                     (b "Procedures & Data")
-                     (fieldset
-                      (code (list (b "(define (printStrings substr1 substr2)") (br)
-                             (i "#
-  This proc concatinates two strings
-  together.
-  @param substr1 The first string
-  @param substr2 The second string         
-  @return the square of the numbers
- #") (br))))                             (br) (br) (br)
-                     (fieldset
-                      (code (list (b "(define status") (br)
-                             (i "#
-  This variable stores the status of something.
- #") (br))))                             (br) (br) (br)
-                         )))))
-    (send/suspend/dispatch response-generator)))
-
-
-;;page for a specified file
-(define (Test3.rkt-page request)
-  (local ((define (response-generator embed/url)
-            (response/xexpr
-             `(html (head (title "Racket-Doc")                          (link ((rel "stylesheet")                                 (href "/test-static.css")                                 (type "text/css"))))               (body (h1 "*.rkt Files")
-                     (center
-                      (a ((href ,(embed/url Test2.rkt-page))) "<--")
-                      (html nbsp nbsp nbsp nbsp)
-                      (a ((href ,(embed/url main-page))) "Home")
-                      (html nbsp nbsp nbsp nbsp)
-                      )
-                     (br)(br)
-                     (p "Specified File page")
-                     ;add requires
-                     (b "Required")
-                     (fieldset (code (list "#lang racket" (br) "(require \"testing.rkt\")" (br) )))
-                     (br) (br) (br)
-                     ;add included
-                     (b "Included")
-                     (fieldset (code (list "(include \"fileIO.rkt\")" (br) "(include racket/filesystem)" (br) )))
-                     (br) (br) (br)
-                     ;add provided
-                     (b "Provided")
-                     (fieldset (code (list )))
-                     (br) (br) (br)
-                     ;;add procs and data
-                     (b "Procedures & Data")
-                     (fieldset
-                      (code (list (b "(define (printStrings3 substr1 substr2)") (br)
-                             (i "#
-  This proc concatinates two strings
-  together.
-  @param substr1 The first string
-  @param substr2 The second string         
-  @return the square of the numbers
- #") (br))))                             (br) (br) (br)
-                     (fieldset
-                      (code (list (b "(define status3") (br)
-                             (i "#
-  This variable stores the status of something.
- #") (br))))                             (br) (br) (br)
-                         )))))
-    (send/suspend/dispatch response-generator)))
-
-
 ;;page for displaying dependencies
 (define (required-page request)
   (local ((define (response-generator embed/url)
@@ -220,7 +124,7 @@
                      (center (a ((href ,(embed/url main-page))) "Home"))
                      (br)(br)
                      (b "Required")
-                     (fieldset (code (list "(require \"andThisTest.rkt\")" (br) "(require \"testing.rkt\")" (br) "#lang racket" (br) )))
+                     (fieldset (code (list "#lang racket" (br) "(require \"testing.rkt\")" (br) "(require \"andThisTest.rkt\")" (br) )))
                      )))))
     (send/suspend/dispatch response-generator)))
 
@@ -233,7 +137,7 @@
                      (center (a ((href ,(embed/url main-page))) "Home"))
                      (br)(br)
                      (b "Included")
-                     (fieldset (code (list "(include \"secIncl.rkt\")" (br) "(include \"firstIncl.rkt\")" (br) "(include racket/filesystem)" (br) "(include \"fileIO.rkt\")" (br) )))
+                     (fieldset (code (list "(include \"firstIncl.rkt\")" (br) "(include \"secIncl.rkt\")" (br) )))
                      )))))
     (send/suspend/dispatch response-generator)))
 
@@ -259,42 +163,6 @@
                      ;;add procs and data
                      (br) (br)
                      (fieldset
-                      (code (list (b "(define (printStrings3 substr1 substr2)") (br)
-                             (i "#
-  This proc concatinates two strings
-  together.
-  @param substr1 The first string
-  @param substr2 The second string         
-  @return the square of the numbers
- #") (br))))
-                     (a ((href, (embed/url codeblock0-page))) "Code")
-                             (br) (br) (br)
-                     (fieldset
-                      (code (list (b "(define status3") (br)
-                             (i "#
-  This variable stores the status of something.
- #") (br))))
-                     (a ((href, (embed/url codeblock1-page))) "Code")
-                             (br) (br) (br)
-                     (fieldset
-                      (code (list (b "(define (printStrings substr1 substr2)") (br)
-                             (i "#
-  This proc concatinates two strings
-  together.
-  @param substr1 The first string
-  @param substr2 The second string         
-  @return the square of the numbers
- #") (br))))
-                     (a ((href, (embed/url codeblock2-page))) "Code")
-                             (br) (br) (br)
-                     (fieldset
-                      (code (list (b "(define status") (br)
-                             (i "#
-  This variable stores the status of something.
- #") (br))))
-                     (a ((href, (embed/url codeblock3-page))) "Code")
-                             (br) (br) (br)
-                     (fieldset
                       (code (list (b "(define (square num)") (br)
                              (i "#
   This function squares a given number.
@@ -302,7 +170,7 @@
            
   @return the square of the numbers
  #") (br))))
-                     (a ((href, (embed/url codeblock4-page))) "Code")
+                     (a ((href, (embed/url codeblock0-page))) "Code")
                              (br) (br) (br)
                      (fieldset
                       (code (list (b "(define (addFour num1 num2 num3 num4)") (br)
@@ -316,7 +184,7 @@
   @param num4 The fourth number.
   @return The sum of the numbers.
  #") (br))))
-                     (a ((href, (embed/url codeblock5-page))) "Code")
+                     (a ((href, (embed/url codeblock1-page))) "Code")
                              (br) (br) (br)
                      (fieldset
                       (code (list (b "(define five") (br)
@@ -324,7 +192,7 @@
   Created a variable named five.
   and gave it a value.
  #") (br))))
-                     (a ((href, (embed/url codeblock6-page))) "Code")
+                     (a ((href, (embed/url codeblock2-page))) "Code")
                              (br) (br) (br)
                      )))))
     (send/suspend/dispatch response-generator)))
@@ -332,70 +200,6 @@
 
 ;;page for displaying a procedure body.;;help page
 (define (codeblock0-page request)
-  (local ((define (response-generator embed/url)
-            (response/xexpr
-             `(html (head (title "Racket-Doc")                          (link ((rel "stylesheet")                                 (href "/test-static.css")                                 (type "text/css"))))                (body (h3 "Procedure:  (define (printStrings3 substr1 substr2)")
-                     (center (a ((href ,(embed/url fileNameList-page))) "<--Back"))
-                     (br)(br)
-                      (fieldset (code (list "  (display \"Answer:\n\")"
-(br)
-"  (display (string-append substr1 substr2)"
-(br)
-")"
-(br)
-)))
-                     )))))
-    (send/suspend/dispatch response-generator)))
-
-
-;;page for displaying a procedure body.;;help page
-(define (codeblock1-page request)
-  (local ((define (response-generator embed/url)
-            (response/xexpr
-             `(html (head (title "Racket-Doc")                          (link ((rel "stylesheet")                                 (href "/test-static.css")                                 (type "text/css"))))                (body (h3 "Procedure:  (define status3")
-                     (center (a ((href ,(embed/url fileNameList-page))) "<--Back"))
-                     (br)(br)
-                      (fieldset (code (list "  'null)"
-(br)
-)))
-                     )))))
-    (send/suspend/dispatch response-generator)))
-
-
-;;page for displaying a procedure body.;;help page
-(define (codeblock2-page request)
-  (local ((define (response-generator embed/url)
-            (response/xexpr
-             `(html (head (title "Racket-Doc")                          (link ((rel "stylesheet")                                 (href "/test-static.css")                                 (type "text/css"))))                (body (h3 "Procedure:  (define (printStrings substr1 substr2)")
-                     (center (a ((href ,(embed/url fileNameList-page))) "<--Back"))
-                     (br)(br)
-                      (fieldset (code (list "  (display \"Answer:\n\")"
-(br)
-"  (display (string-append substr1 substr2)"
-(br)
-")"
-(br)
-)))
-                     )))))
-    (send/suspend/dispatch response-generator)))
-
-
-;;page for displaying a procedure body.;;help page
-(define (codeblock3-page request)
-  (local ((define (response-generator embed/url)
-            (response/xexpr
-             `(html (head (title "Racket-Doc")                          (link ((rel "stylesheet")                                 (href "/test-static.css")                                 (type "text/css"))))                (body (h3 "Procedure:  (define status")
-                     (center (a ((href ,(embed/url fileNameList-page))) "<--Back"))
-                     (br)(br)
-                      (fieldset (code (list "  'null)"
-(br)
-)))
-                     )))))
-    (send/suspend/dispatch response-generator)))
-
-
-;;page for displaying a procedure body.;;help page
-(define (codeblock4-page request)
   (local ((define (response-generator embed/url)
             (response/xexpr
              `(html (head (title "Racket-Doc")                          (link ((rel "stylesheet")                                 (href "/test-static.css")                                 (type "text/css"))))                (body (h3 "Procedure:  (define (square num)")
@@ -409,7 +213,7 @@
 
 
 ;;page for displaying a procedure body.;;help page
-(define (codeblock5-page request)
+(define (codeblock1-page request)
   (local ((define (response-generator embed/url)
             (response/xexpr
              `(html (head (title "Racket-Doc")                          (link ((rel "stylesheet")                                 (href "/test-static.css")                                 (type "text/css"))))                (body (h3 "Procedure:  (define (addFour num1 num2 num3 num4)")
@@ -423,7 +227,7 @@
 
 
 ;;page for displaying a procedure body.;;help page
-(define (codeblock6-page request)
+(define (codeblock2-page request)
   (local ((define (response-generator embed/url)
             (response/xexpr
              `(html (head (title "Racket-Doc")                          (link ((rel "stylesheet")                                 (href "/test-static.css")                                 (type "text/css"))))                (body (h3 "Procedure:  (define five")
