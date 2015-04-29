@@ -19,6 +19,7 @@
 ;;compile a list of "required" packages, OR "included" packages, OR etc.  The firstList can 
 ;;double as the final list.
 (define (catWithoutDuplLst firstList . listOfOtherLists)
+  (display "\n\n$$$$$$$$$$$$$$$$\n\n")
    (looper firstList (flatten listOfOtherLists))
 )
 
@@ -27,13 +28,16 @@
 ;;the master list.
 (define (looper finalList myList)
   (cond ( (null? myList)
+  (display "\n%%%%%%found null--returning%%%%%%%\n")
           finalList
         )
         (else
-         (cond ( (exists? finalList (car myList))
+         (cond ( (equal? (exists? finalList (car myList)) #t)
+  (display "\n%%%%%%%%%%%%%%%%%%%%%%%%\n")
                  (looper finalList (cdr myList))
                )
                (else
+  (display "\n%%%%%%%%%%%%%%%%%%%%%%%%\n")
                 (looper (cons (car myList) finalList) (cdr myList))
                )
 
@@ -45,6 +49,10 @@
 
 ;;This procedure compares a given element against a master list.
 (define (exists? masterList element)
+  (display "comparing:\n")
+  ;(if (null? masterList #t) (display "null") (display (car masterList)))
+  ;(display "\nwith\n")
+  ;(display element)
   (cond ( (null? masterList)
           #f
         )

@@ -93,11 +93,12 @@
                       (display "\n---------------------------\n")
                       (display (getRequiresLooper finalList '()) )
                       (display "\n---------------------------\n")
+		      (catWithoutDuplLst '() (getRequiresLooper finalList '()) )
                       (generationMaster outputDir
                                         finalList
                                         (cons "PLACE_HOLDER" (getFileNameLooper finalList '()))
-                                        (if (equal? reqs? #t) (catWithoutDuplLst (getRequiresLooper finalList '()) ) '())
-                                        (if (equal? incls? #t) (catWithoutDuplLst (getIncludesLooper finalList '()) ) '())
+                                        (if (equal? reqs? #t) (catWithoutDuplLst '() (getRequiresLooper finalList '()) ) '())
+                                        (if (equal? incls? #t) (catWithoutDuplLst '() (getIncludesLooper finalList '()) ) '())
                                         (if (equal? provs? #t) (getProvidesLooper finalList '()) '())
                                         (getProcHeadersLooper finalList '())
                                         (getProcBodiesLooper finalList '())

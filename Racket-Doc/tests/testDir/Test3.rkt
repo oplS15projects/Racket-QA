@@ -3,6 +3,8 @@
 (include "fileIO.rkt")
 (include racket/filesystem)
 
+(require "testing.rkt")
+
 #||
  | This proc concatinates two strings
  | together.
