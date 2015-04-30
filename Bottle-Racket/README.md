@@ -17,7 +17,7 @@ I've split up this README into four parts:
 
 ###The Structure of a Test Suite File
 
-#### Please keep in mind at the end of the source file used in the test suite file you need to do a `(provide (all-defined-out))` or you will get unbound identifier errors.
+#### Please keep in mind at the end of the source file used in the test suite file you need to do a `(provide (all-defined-out))` or you will get unbound identifier errors. In addition, Bottle-Racket was only meant to handle ps1, ps2a/ps2b, ps3a/ps3b, and ps5a/ps5b.
 
 The test suites to run with this application are meant to be minimalistic and easy to follow. Test Suites in this context contain the following:
 * Top: `require` statements for RackUnit, along with the necessary source files with procedure definitions for testing
