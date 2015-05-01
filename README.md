@@ -4,6 +4,7 @@
 
 
 ### Versions
+* [**Racket-QA v1.0.0**][FinalRelease]
 * [**Racket-QA v0.4.0**][RacketDocRelease]
 * [**Racket-QA v0.3.0**][WebPageRelease]
 * [**Racket-QA v0.2.0**][Milestone2]
@@ -31,11 +32,12 @@
 ### Note Concerning "**About Me**" Page
 Due to the way Racket handles multi-threading and web servers, if you click the `About Me` button you MUST click `Exit` if you wish to return to the main GUI (the main thread).
 
-**DO NOT** click the web browser's X button until **AFTER** you click `Exit`. Otherwise, the web server thread will still be running and the main GUI thread will be unable to process events.
+**DO NOT** click the web browser's `X` button until **AFTER** you click `Exit`. Otherwise, the web server thread will still be running and the main GUI thread will be unable to process events.
 
 
 <!-- Links -->
 [WebPage]: http://opls15projects.github.io/Racket-QA/
+[FinalRelease]: https://github.com/oplS15projects/Racket-QA/releases/tag/v1.0.0
 [WebPageRelease]: https://github.com/oplS15projects/Racket-QA/releases/tag/v0.3.0
 [RacketDocRelease]: https://github.com/oplS15projects/Racket-QA/releases/tag/v0.4.0
 [Milestone1]: https://github.com/oplS15projects/Racket-QA/releases/tag/v0.1.0
