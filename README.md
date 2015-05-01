@@ -29,9 +29,9 @@
 * [**QA-Email**][QA-Email Document]
 
 ### Note Concerning "**About Me**" Page
-Due to the way Racket handles multi-threading and web servers, if you click the **About Me** button, you MUST click "**Exit**" when you wish to return to the main GUI and main thread.
+Due to the way Racket handles multi-threading and web servers, if you click the `About Me` button you MUST click `Exit` if you wish to return to the main GUI (the main thread).
 
-**DO NOT** click the web browsers X untill **AFTER** you do this.  Otherwise, the web server will still be the thread running, and the main GUI will be unable to process events.
+**DO NOT** click the web browser's X button until **AFTER** you click `Exit`. Otherwise, the web server thread will still be running and the main GUI thread will be unable to process events.
 
 
 <!-- Links -->

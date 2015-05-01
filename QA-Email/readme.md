@@ -1,6 +1,6 @@
 ## Racket QA Email Feature
 
-Racket-QA Email component provides functionality to send out a unit test result to a mailing list. It is best used when combined with the [Test Scheduler][Scheduler Document] to notify the result of a scheduled test run-up to a group of developers involved. You can also use it with the [Test-Capture utility][Test-Capture Document] to send out the result of a manual test run-up. It does not provide an option for you to compose an email of your own. Instead, you can create mailing lists using its UI and associate it with the test suite when you run or schedule a unit test using the aforementioned utilities.
+Racket-QA Email is the component of Racket-QA which provides the functionality to send out a test suite result to a mailing list. It is best used when combined with the [Test Scheduler][Scheduler Document] to notify the result of a scheduled test run-up to a group of developers involved. You can also use it with the [Test-Capture utility][Test-Capture Document] to send out the result of a manual test run-up. It does not provide an option for you to compose an email of your own. Instead, you can create mailing lists using its UI and associate it with the test suite when you run or schedule a unit test using the aforementioned utilities.
 
 
 ### How to use mailing list UI
@@ -42,21 +42,21 @@ You have created a new mailing list. Let's add some email addresses to it.
 ![New mailing list entry](images/documentation/ui_new_mailist_list_entry.png)
 ![New entry created](images/documentation/ui_new_address_created.png)
 
-Racket-QA does not have its own mail server. In order to send out an email, it relies on your own email account. You can click the "SMTP Config" button to provide an SMTP information for your email account. This is the same information you would normally need on email clients like Thunderbird or Outlook. Here, we have created a gmail account for demo.
+Racket-QA does not have its own mail server. In order to send out an email, it relies on your own email account. You can click the `SMTP Config` button to provide an SMTP information for your email account. This is the same information you would normally need on email clients like Thunderbird or Outlook. Here, we have created a gmail account for demo.
 ![SMTP Config](images/documentation/ui_smtp_config.png)
 Note: Enter the SMTP information only on a trusted computer because it will be stored on the machine.
 
 
-If you have opened the mailing list UI through either Test-Capture or Test Scheduler utility, you will see an Ok and Cancel button in the bottom. When you select one of the mailing lists on the left side and click Ok, the Test-Capture or Test Scheduler utility will see this mailing list and use it to send out the test results.
+If you have opened the mailing list UI through either Test-Capture or Test Scheduler utility, you will see an `Ok` and `Cancel` button in the bottom. When you select one of the mailing lists on the left side and click `Ok`, the Test-Capture or Test Scheduler utility will see this mailing list and use it to send out the test results.
 ![opened_from_scheduler](images/documentation/ui_with_scheduler.png)
 
 
-If you have opened the UI from the main Racket-QA UI, you won't see the Ok and Cancel buttons. You can use this to pre-configure your mailing lists so you can use them later with Test-Capture or Test Scheduler.
+If you have opened the UI from the main Racket-QA UI, you won't see the `Ok` and `Cancel` buttons. You can use this to pre-configure your mailing lists so you can use them later with Test-Capture or Test Scheduler.
 
 ![UI no buttons](images/documentation/ui_no_buttons.png)
 
 
-Now you know how to manage mailing lists on Racket-QA. You can go ahead and run a unit test with Test-Capture utility or schedule an overnight test with Test Scheduler and have the results mailed to your dev team (or yourself). You can click the links below to learn how to use Test-Capture and Test Scheduler.
+Now you know how to manage mailing lists on Racket-QA. You can go ahead and run a unit test with Test-Capture utility or schedule an overnight test with Test Scheduler and have the results mailed to your development team (or yourself). You can click the links below to learn how to use Test-Capture and Test Scheduler.
 
 [Test-Capture utility][Test-Capture Document] <br />
 [Test Scheduler utility][Scheduler Document]
