@@ -27,6 +27,11 @@
 * [**Test Scheduler**][Test Scheduler Document]
 * [**QA-Email**][QA-Email Document]
 
+### Note Concerning "**About Me**" Page
+Due to the way Racket handles multi-threading and web servers, if you click the **About Me** button, you MUST click "**Exit**" when you wish to return to the main GUI and main thread.
+
+**DO NOT** click the web browsers X untill **AFTER** you do this.  Otherwise, the web server will still be the thread running, and the main GUI will be unable to process events.
+
 
 <!-- Links -->
 [WebPage]: http://opls15projects.github.io/Racket-QA/
